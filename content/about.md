@@ -1,17 +1,19 @@
-# About
+# Avery's Portfolio
+- [LinkedIn](https://www.linkedin.com/in/cheng-en-tsai)
+- [GitHub](https://github.com/Avery320)
 
-你好,我是一名設計師與開發者。
 
-我專注於建築設計與機器人系統開發,致力於創造兼具美學與功能性的作品。
+## About Me
+- I am an architectural designer and engineer specializing in parametric design and robotic fabrication. 
+- My research focuses on robotic concrete printing, autonomous brick-stacking robot, algorithm design, and AI integration in design and fabrication, using Rhino/Grasshopper, Python, and ROS.
+- Previously, I worked as a BIM designer on projects including social housing and landscape design. I'm passionate about digital construction and interdisciplinary innovation and welcome collaboration with like-minded professionals.
 
-## 專長
+## Projects
+- [Graphcrete](#PROJECT/Graphcrete)
+- [Robot_Caly_Printing](#PROJECT/Robot_Caly_Printing)
 
-- 建築設計
-- 室內規劃
-- 機器人系統開發
-- Web 前端開發
+## Development
+- [RoboSim](#DEVELOP/RoboSim)
 
-## 聯絡方式
-
-- Email: your@email.com
-- GitHub: github.com/yourusername
+## Contact
+- Email: n76124052@gs.ncku.edu.tw
