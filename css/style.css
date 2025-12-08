@@ -1,0 +1,209 @@
+/* ===== 基礎設定 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* 色彩 - Apple 風格 */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F7;
+    --text-primary: #1D1D1F;
+    --text-secondary: #353434;
+    --border-color: #D2D2D7;
+
+    /* 間距 */
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-panel: 60px;
+
+    /* 圓角 */
+    --radius-md: 8px;
+
+    /* 過渡 */
+    --transition: 0.25s ease;
+
+    /* Grid 參數 (供 JS 讀取) */
+    --grid-gap: 8px;
+    --grid-height: 280px;
+}
+
+html,
+body {
+    height: 100%;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+}
+
+/* ===== 主容器 ===== */
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ===== 左側內容面板 ===== */
+.content-panel {
+    flex: 0 0 85%;
+    overflow-y: auto;
+    padding: var(--spacing-panel);
+}
+
+/* ===== 右側側邊欄 ===== */
+.sidebar {
+    flex: 0 0 15%;
+    background: var(--bg-secondary);
+    padding: var(--spacing-xl);
+    overflow-y: auto;
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+}
+
+/* ===== 導航區塊 ===== */
+.nav-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.nav-title {
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: var(--spacing-sm) 0;
+    transition: color var(--transition);
+}
+
+.nav-title:hover {
+    color: var(--text-secondary);
+}
+
+
+/* ===== 專案列表 ===== */
+.nav-list {
+    list-style: none;
+    margin-top: var(--spacing-sm);
+    display: none;
+}
+
+.nav-list.expanded {
+    display: block;
+}
+
+.nav-item {
+    color: var(--text-secondary);
+    padding: var(--spacing-sm) 0;
+    padding-left: var(--spacing-md);
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.nav-item:hover {
+    color: var(--text-primary);
+}
+
+.nav-item.active {
+    color: var(--text-primary);
+}
+
+/* ===== 內容樣式 ===== */
+.content-wrapper h1 {
+    margin-bottom: var(--spacing-lg);
+}
+
+.content-wrapper h2 {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.content-wrapper h3 {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.content-wrapper p {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-secondary);
+}
+
+.content-wrapper ul,
+.content-wrapper ol {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-lg);
+    color: var(--text-secondary);
+}
+
+.content-wrapper li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.content-wrapper img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.content-wrapper video {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+}
+
+/* ===== iframe 容器 ===== */
+.iframe-container {
+    width: 100%;
+    height: 70vh;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin: var(--spacing-lg) 0;
+    background: var(--bg-secondary);
+}
+
+.iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ===== 動畫 ===== */
+.fade-in {
+    animation: fadeIn var(--transition);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== 響應式 ===== */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column-reverse;
+    }
+
+    .content-panel {
+        flex: 1;
+        padding: var(--spacing-lg);
+    }
+
+    .sidebar {
+        flex: none;
+        padding: var(--spacing-md);
+    }
+
+    .nav-section {
+        display: inline-block;
+        margin-right: var(--spacing-lg);
+    }
+}

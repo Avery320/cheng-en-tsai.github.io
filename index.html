@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="個人作品集">
+    <title>Portfolio</title>
+
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/grid.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左側內容面板 -->
+        <main class="content-panel" id="contentPanel">
+            <div class="content-wrapper" id="contentWrapper">
+                <!-- 動態載入內容 -->
+            </div>
+        </main>
+
+        <!-- 右側導航側邊欄 -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="nav">
+                <!-- ABOUT -->
+                <div class="nav-section">
+                    <div class="nav-title" data-section="about">ABOUT</div>
+                </div>
+
+                <!-- PROJECT -->
+                <div class="nav-section">
+                    <div class="nav-title" data-section="PROJECT">PROJECT</div>
+                    <ul class="nav-list" id="projectList"></ul>
+                </div>
+
+                <!-- DEVELOP -->
+                <div class="nav-section">
+                    <div class="nav-title" data-section="DEVELOP">DEVELOP</div>
+                    <ul class="nav-list" id="developList"></ul>
+                </div>
+            </nav>
+        </aside>
+    </div>
+
+    <script src="js/markdown-extensions.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

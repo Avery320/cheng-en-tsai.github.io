@@ -1,0 +1,44 @@
+/* ===== Justified Image Gallery ===== */
+.image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--grid-gap, 8px);
+    margin: 32px 0;
+}
+
+/* 讓 marked 產生的 p 標籤不影響 flex 排版 */
+.image-grid p {
+    display: contents;
+}
+
+/* 隱藏換行符號 */
+.image-grid br {
+    display: none;
+}
+
+.image-grid img {
+    height: var(--grid-height, 280px);
+    width: auto;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    margin: 0 !important;
+    background-color: var(--bg-secondary);
+    transition: opacity 0.3s ease;
+}
+
+/* 圖片載入前隱藏，避免閃爍 */
+.image-grid img:not([data-justified]) {
+    opacity: 0;
+}
+
+.image-grid img[data-justified="true"] {
+    opacity: 1;
+}
+
+/* 響應式：小螢幕改為單欄 */
+@media (max-width: 768px) {
+    .image-grid img {
+        height: auto;
+        width: 100%;
+    }
+}
