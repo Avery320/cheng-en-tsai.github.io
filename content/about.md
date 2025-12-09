@@ -1,5 +1,5 @@
 # Avery's Portfolio
-- [LinkedIn](https://www.linkedin.com/in/cheng-en-tsai)
+- [LinkedIn](https://www.linkedin.com/in/cheng-en-tsai-94b77a352?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app)
 - [GitHub](https://github.com/Avery320)
 
 

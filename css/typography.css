@@ -54,18 +54,18 @@ body {
     font-weight: var(--font-medium);
 }
 
-/* 導航文字樣式 */
+/* 導航文字樣式 - 套用標題樣式 */
 .nav-title {
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
+    font-size: var(--text-xl);
+    font-weight: 600;
 }
 
 .nav-item {
-    font-size: var(--text-sm);
+    font-size: var(--text-lg);
+    font-weight: var(--font-medium);
 }
 
 .nav-title.active,
 .nav-item.active {
     font-weight: var(--font-bold);
-    /* 使用粗體強調 */
 }

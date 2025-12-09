@@ -1,9 +1,22 @@
 {
+    "categories": [
+        "PROJECT",
+        "ROBOT",
+        "DESIGN",
+        "WORKSHOP"
+    ],
     "PROJECT": [
         "Graphcrete",
-        "Robot_Caly_Printing"
+        "Robotic_Tectionics"
     ],
-    "DEVELOP": [
-        "RoboSim"
+    "ROBOT": [
+        "RoboSim",
+        "ROS_Docker"
+    ],
+    "DESIGN": [
+        "Mycelium_Vault"
+    ],
+    "WORKSHOP": [
+        "Robot_Caly_Printing"
     ]
 }

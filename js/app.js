@@ -1,5 +1,6 @@
 /**
  * 作品集應用程式
+ * 支援動態分類系統
  */
 
 class PortfolioApp {
@@ -15,8 +16,6 @@ class PortfolioApp {
         await this.loadConfig();
         this.renderNavigation();
         this.setupEventListeners();
-
-        // 根據目前的 Hash 載入內容，如果沒有 Hash 則預設載入 About
         this.handleInitialRoute();
     }
 
@@ -24,9 +23,9 @@ class PortfolioApp {
      * 處理初始路由
      */
     handleInitialRoute() {
-        const hash = window.location.hash.slice(1); // 移除 #
+        const hash = window.location.hash.slice(1);
         if (!hash || hash === 'about') {
-            this.loadAbout(false); // false = 不更新 hash (避免循環)
+            this.loadAbout(false);
         } else {
             const [category, id] = hash.split('/');
             if (category && id) {
@@ -44,58 +43,73 @@ class PortfolioApp {
         try {
             const response = await fetch('content/config.json');
             this.config = await response.json();
+
+            // 確保 categories 存在
+            if (!this.config.categories) {
+                this.config.categories = [];
+            }
         } catch (error) {
             console.error('無法載入設定檔:', error);
-            this.config = { PROJECT: [], DEVELOP: [] };
+            this.config = { categories: [] };
         }
     }
 
     /**
-     * 渲染導航選單
+     * 動態渲染導航選單
      */
     renderNavigation() {
-        // 渲染 PROJECT 列表
-        const projectList = document.getElementById('projectList');
-        this.config.PROJECT.forEach(id => {
-            const li = document.createElement('li');
-            li.className = 'nav-item';
-            li.dataset.category = 'PROJECT';
-            li.dataset.id = id;
-            li.textContent = id;
-            projectList.appendChild(li);
-        });
+        const nav = document.getElementById('nav');
 
-        // 渲染 DEVELOP 列表
-        const developList = document.getElementById('developList');
-        this.config.DEVELOP.forEach(id => {
-            const li = document.createElement('li');
-            li.className = 'nav-item';
-            li.dataset.category = 'DEVELOP';
-            li.dataset.id = id;
-            li.textContent = id;
-            developList.appendChild(li);
+        // 遍歷所有分類並動態生成
+        this.config.categories.forEach(category => {
+            const projects = this.config[category] || [];
+
+            // 建立分類區塊
+            const section = document.createElement('div');
+            section.className = 'nav-section';
+
+            // 建立分類標題
+            const title = document.createElement('div');
+            title.className = 'nav-title';
+            title.dataset.section = category;
+            title.textContent = category;
+            section.appendChild(title);
+
+            // 建立專案列表
+            const list = document.createElement('ul');
+            list.className = 'nav-list';
+            list.id = `${category.toLowerCase()}List`;
+
+            projects.forEach(id => {
+                const li = document.createElement('li');
+                li.className = 'nav-item';
+                li.dataset.category = category;
+                li.dataset.id = id;
+                li.textContent = id;
+                list.appendChild(li);
+            });
+
+            section.appendChild(list);
+            nav.appendChild(section);
         });
     }
 
     /**
-     * 設定事件監聯
+     * 設定事件監聽
      */
     setupEventListeners() {
         // 分類標題點擊
-        document.querySelectorAll('.nav-title').forEach(title => {
-            title.addEventListener('click', (e) => {
+        document.getElementById('nav').addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-title')) {
                 const section = e.target.dataset.section;
-
                 if (section === 'about') {
                     this.updateHash('about');
                 } else {
                     this.toggleSection(section);
                 }
-            });
-        });
+            }
 
-        // 專案項目點擊 (使用事件委派)
-        document.querySelector('.sidebar').addEventListener('click', (e) => {
+            // 專案項目點擊
             if (e.target.classList.contains('nav-item')) {
                 const category = e.target.dataset.category;
                 const id = e.target.dataset.id;
@@ -108,7 +122,7 @@ class PortfolioApp {
             this.handleInitialRoute();
         });
 
-        // 監聽視窗縮放,重新計算圖片寬度 (使用 debounce 優化效能)
+        // 監聽視窗縮放,重新計算圖片寬度
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
@@ -116,7 +130,7 @@ class PortfolioApp {
                 if (window.MarkdownExtensions && MarkdownExtensions.justifyImages) {
                     MarkdownExtensions.justifyImages();
                 }
-            }, 150); // 150ms debounce
+            }, 150);
         });
     }
 
@@ -132,7 +146,9 @@ class PortfolioApp {
      */
     toggleSection(section) {
         const allLists = document.querySelectorAll('.nav-list');
-        const targetList = document.getElementById(section === 'PROJECT' ? 'projectList' : 'developList');
+        const targetList = document.getElementById(`${section.toLowerCase()}List`);
+        if (!targetList) return;
+
         const isExpanded = targetList.classList.contains('expanded');
 
         // 先收合所有列表
@@ -170,8 +186,6 @@ class PortfolioApp {
         try {
             const response = await fetch(`content/${category}/${id}/content.md`);
             const markdown = await response.text();
-
-            // 處理相對路徑的圖片
             const processedMarkdown = this.processImagePaths(markdown, category, id);
             this.renderContent(processedMarkdown);
         } catch (error) {
@@ -183,7 +197,6 @@ class PortfolioApp {
      * 處理圖片路徑
      */
     processImagePaths(markdown, category, id) {
-        // 將 assets/ 轉換為完整路徑
         return markdown.replace(/!\[(.*?)\]\(assets\/(.*?)\)/g,
             `![$1](content/${category}/${id}/assets/$2)`);
     }
@@ -195,23 +208,18 @@ class PortfolioApp {
         const wrapper = document.getElementById('contentWrapper');
         if (!wrapper) return;
 
-        // 使用 MarkdownExtensions 解析自訂語法 (網格、iframe、video)
         let processed = markdown;
         if (window.MarkdownExtensions) {
             processed = MarkdownExtensions.parse(markdown);
-        } else {
-            console.warn('MarkdownExtensions module not found');
         }
 
-        // 使用 marked 解析標準 Markdown
         const html = marked.parse(processed);
 
         wrapper.innerHTML = html;
-        wrapper.classList.remove('fade-in'); // 重置動畫
-        void wrapper.offsetWidth; // 觸發 reflow
+        wrapper.classList.remove('fade-in');
+        void wrapper.offsetWidth;
         wrapper.classList.add('fade-in');
 
-        // 計算 Justified Image Gallery 寬度
         if (window.MarkdownExtensions && MarkdownExtensions.justifyImages) {
             MarkdownExtensions.justifyImages();
         }
@@ -234,10 +242,10 @@ class PortfolioApp {
             if (activeItem) activeItem.classList.add('active');
 
             // 確保分類展開
-            const list = document.getElementById(category === 'PROJECT' ? 'projectList' : 'developList');
+            const list = document.getElementById(`${category.toLowerCase()}List`);
             if (list) list.classList.add('expanded');
 
-            // 收合其他分類 (保持 Accordion 效果)
+            // 收合其他分類
             document.querySelectorAll('.nav-list').forEach(l => {
                 if (l !== list) l.classList.remove('expanded');
             });
