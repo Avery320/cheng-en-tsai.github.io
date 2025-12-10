@@ -11,7 +11,8 @@
     ],
     "ROBOT": [
         "RoboSim",
-        "ROS_Docker"
+        "ROS_Docker",
+        "URDF_Loader"
     ],
     "DESIGN": [
         "Mycelium_Vault"

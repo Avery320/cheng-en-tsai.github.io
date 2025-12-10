@@ -47,14 +47,14 @@ body {
 
 /* ===== 左側內容面板 ===== */
 .content-panel {
-    flex: 0 0 85%;
+    flex: 0 0 80%;
     overflow-y: auto;
     padding: var(--spacing-panel);
 }
 
 /* ===== 右側側邊欄 ===== */
 .sidebar {
-    flex: 0 0 15%;
+    flex: 0 0 20%;
     background: var(--bg-secondary);
     padding: var(--spacing-xl);
     overflow-y: auto;
