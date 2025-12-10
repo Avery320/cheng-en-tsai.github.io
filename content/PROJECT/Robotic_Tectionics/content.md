@@ -7,5 +7,5 @@
 ---
 
 ## Demo
-@iframe[https://vimeo.com/1033609545?fl=ip&fe=ec]
+@iframe[https://player.vimeo.com/video/1033609545]
 
