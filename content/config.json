@@ -7,7 +7,8 @@
     ],
     "PROJECT": [
         "Graphcrete",
-        "Robotic_Tectionics"
+        "Robotic_Tectionics",
+        "建築研究所"
     ],
     "ROBOT": [
         "RoboSim",
@@ -15,7 +16,9 @@
         "URDF_Loader"
     ],
     "DESIGN": [
-        "Mycelium_Vault"
+        "Mycelium_Vault",
+        "Customized_Marching_Cubes",
+        "Robotic_Hot_Wire_cutting"
     ],
     "WORKSHOP": [
         "Robot_Caly_Printing"
