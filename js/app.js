@@ -6,9 +6,6 @@
 class PortfolioApp {
     constructor() {
         this.config = null;
-        this.currentSection = null;
-        this.currentProject = null;
-
         this.init();
     }
 
@@ -16,6 +13,7 @@ class PortfolioApp {
         await this.loadConfig();
         this.renderNavigation();
         this.setupEventListeners();
+        this.setupMobileMenu();
         this.handleInitialRoute();
     }
 
@@ -98,8 +96,9 @@ class PortfolioApp {
      * 設定事件監聽
      */
     setupEventListeners() {
-        // 分類標題點擊
+        // 導航點擊事件（統一處理）
         document.getElementById('nav').addEventListener('click', (e) => {
+            // 分類標題點擊
             if (e.target.classList.contains('nav-title')) {
                 const section = e.target.dataset.section;
                 if (section === 'about') {
@@ -114,6 +113,15 @@ class PortfolioApp {
                 const category = e.target.dataset.category;
                 const id = e.target.dataset.id;
                 this.updateHash(`${category}/${id}`);
+            }
+
+            // 行動版：僅在跳轉頁面時關閉側邊欄
+            // - 點擊項目 (nav-item)
+            // - 點擊 ABOUT 標題
+            if (e.target.classList.contains('nav-item') ||
+                (e.target.classList.contains('nav-title') &&
+                    e.target.dataset.section === 'about')) {
+                this.closeMobileSidebar();
             }
         });
 
@@ -250,6 +258,41 @@ class PortfolioApp {
                 if (l !== list) l.classList.remove('expanded');
             });
         }
+    }
+
+    /**
+     * 關閉行動版側邊欄
+     */
+    closeMobileSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (sidebar && overlay) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    }
+
+    /**
+     * 設定行動裝置選單
+     */
+    setupMobileMenu() {
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (!menuToggle || !sidebar || !overlay) return;
+
+        // 漢堡按鈕點擊
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        // 遮罩層點擊關閉
+        overlay.addEventListener('click', () => {
+            this.closeMobileSidebar();
+        });
     }
 }
 

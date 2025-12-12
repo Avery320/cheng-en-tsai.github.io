@@ -17,13 +17,29 @@
 </head>
 
 <body>
+    <!-- 側邊欄遮罩層 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="container">
-        <!-- 左側內容面板 -->
-        <main class="content-panel" id="contentPanel">
-            <div class="content-wrapper" id="contentWrapper">
-                <!-- 動態載入內容 -->
-            </div>
-        </main>
+        <!-- 左側主區塊 -->
+        <div class="main-area">
+            <!-- 頂部工具列 -->
+            <header class="top-toolbar" id="topToolbar">
+                <div class="toolbar-title" id="toolbarTitle">Avery's Portfolio</div>
+                <button class="menu-toggle" id="menuToggle" aria-label="開啟選單">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </header>
+
+            <!-- 內容面板 -->
+            <main class="content-panel" id="contentPanel">
+                <div class="content-wrapper" id="contentWrapper">
+                    <!-- 動態載入內容 -->
+                </div>
+            </main>
+        </div>
 
         <!-- 右側導航側邊欄 -->
         <aside class="sidebar" id="sidebar">
