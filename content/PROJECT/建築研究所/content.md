@@ -1,6 +1,6 @@
 # 智慧建造：基於數位雙生演算與機械手臂列印發展減碳預鑄免拆模鋼筋混凝土柱體工法之研究
 - Principal Investigators (PIs): Chia-Ching Yen（顏嘉慶）, Yang-Ting Shen（沈揚庭）
-- Project Researchers:  Lien-Kai Huang（黃廉凱）, Cheng-En Tsai（蔡承恩）, Meng-Tse Tu（杜孟澤）
+- Project Researchers: Lien-Kai Huang（黃廉凱）, Cheng-En Tsai（蔡承恩）, Meng-Tse Tu（杜孟澤）
 - Location: Tainan, Taiwan
 - Date: 2025.10
 

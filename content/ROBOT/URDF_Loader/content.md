@@ -1,6 +1,6 @@
 # URDF_Loader
 
-- Developer: Avery, Tsai
+- Developer: Avery Tsai
 - Update: 2025.10
 
 - GitHub: [URDF_Loader](https://github.com/Avery320/hiwin_prc)

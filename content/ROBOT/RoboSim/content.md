@@ -1,6 +1,6 @@
 # RoboSim
 
-- Developer: Avery, Tsai
+- Developer: Avery Tsai
 - Update: 2025.11
 
 - GitHub: [RoboSim](https://github.com/avery320/robot-demo)

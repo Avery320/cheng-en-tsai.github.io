@@ -1,6 +1,6 @@
 # ROS_Docker
 
-- Developer: Avery, Tsai
+- Developer: Avery Tsai
 - Update: 2025.06
 
 - GitHub: [ROS_Docker](https://github.com/Avery320/ROS_docker_GUI.git)

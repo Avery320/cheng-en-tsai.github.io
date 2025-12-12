@@ -11,6 +11,7 @@
 ## PROJECT
 - [Graphcrete](#PROJECT/Graphcrete)
 - [Robot_Caly_Printing](#PROJECT/Robot_Caly_Printing)
+- [建築研究所](#PROJECT/建築研究所)
 
 ## ROBOT
 - [RoboSim](#ROBOT/RoboSim)
@@ -18,7 +19,9 @@
 - [URDF_Loader](#ROBOT/RUDF_Loader)
 
 ## DESIGN
-- [DESIGN](#DESIGN/Mycelium_Vault)
+- [Mycelium_Vault](#DESIGN/Mycelium_Vault)
+- [Customized_Marching_Cubes](#DESIGN/Customized_Marching_Cubes)
+- [Robotic_Hot_Wire_cutting](#DESIGN/Robotic_Hot_Wire_cutting)
 
 ## WORKSHOP
 - [Robot_Caly_Printing](#WORKSHOP/Robot_Caly_Printing)

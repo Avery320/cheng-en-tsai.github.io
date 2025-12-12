@@ -1,10 +1,8 @@
 # Customized_Marching_Cubes
 
-- Designer and researcher: Cheng-En Tsai, Huai-An Tai
-- Advisor: Yu-Liang Hsu, Chia-Ching Yen
-- Studio: Biomass Materials x Algorithm Structure Studio (BMAS)
-- Location: Tainan, Taiwan  
-- Date: 2024.12
+- Designer: Avery Tsai
+- Location: Pingtung, Taiwan  
+- Date: 2023.06
 
 ---
 

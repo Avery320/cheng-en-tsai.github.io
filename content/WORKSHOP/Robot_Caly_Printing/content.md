@@ -1,6 +1,6 @@
 # Robot Caly Printing
 
-- Designer: Avery, Tsai
+- Designer: Avery Tsai
 - Location: Tainan, Taiwan
 - Update: 2024.02
 

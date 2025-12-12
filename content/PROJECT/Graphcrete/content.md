@@ -1,5 +1,5 @@
 # Graphcrete
-- Designers: Avery, Tsai, Willian, Shen
+- Designers: Avery Tsai, Willian Shen
 - Location: Tainan, Taiwan
 - Date: 2024.11
 
