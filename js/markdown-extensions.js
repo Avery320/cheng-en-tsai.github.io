@@ -118,6 +118,111 @@ const MarkdownExtensions = (function () {
         });
     }
 
+    /**
+     * 取得平均欄寬百分比
+     * @private
+     * @param {number} count
+     * @returns {number[]}
+     */
+    function getEvenRatios(count) {
+        if (count <= 0) return [];
+        const evenRatio = 100 / count;
+        return Array.from({ length: count }, () => evenRatio);
+    }
+
+    /**
+     * 解析欄寬百分比設定並標準化為 100%
+     * @private
+     * @param {string} rawRatios
+     * @param {number} slotCount
+     * @returns {number[]}
+     */
+    function parseLayoutRatios(rawRatios, slotCount) {
+        const fallbackRatios = getEvenRatios(slotCount);
+        if (!rawRatios) return fallbackRatios;
+
+        const ratioValues = rawRatios
+            .split(/[^0-9.]+/g)
+            .map(value => parseFloat(value))
+            .filter(value => Number.isFinite(value) && value > 0);
+
+        if (ratioValues.length !== slotCount) return fallbackRatios;
+
+        const ratioTotal = ratioValues.reduce((sum, value) => sum + value, 0);
+        if (ratioTotal <= 0) return fallbackRatios;
+
+        return ratioValues.map((value) =>
+            Number(((value / ratioTotal) * 100).toFixed(4))
+        );
+    }
+
+    /**
+     * 轉換 layout 內單一欄位內容
+     * @private
+     * @param {string} slotMarkdown
+     * @returns {string}
+     */
+    function renderLayoutSlot(slotMarkdown) {
+        const cleanSlotMarkdown = slotMarkdown.trim();
+        if (!cleanSlotMarkdown) return '';
+
+        let processed = cleanSlotMarkdown;
+        processed = parseGrid(processed);
+        processed = parseIframe(processed);
+        processed = parseVideo(processed);
+
+        if (window.marked && typeof marked.parse === 'function') {
+            return marked.parse(processed);
+        }
+
+        return processed;
+    }
+
+    /**
+     * 解析多欄混合排版語法
+     * 語法：
+     * :::layout[40,60]
+     * @slot
+     * 左欄內容
+     * @slot
+     * 右欄內容
+     * :::end-layout
+     *
+     * @private
+     * @param {string} markdown
+     * @returns {string}
+     */
+    function parseLayout(markdown) {
+        return markdown.replace(
+            /:::layout(?:\[(.*?)\])?\s*([\s\S]*?):::end-layout/g,
+            (match, rawRatios = '', content = '') => {
+                const slotContents = content
+                    .split(/^\s*@slot\s*$/gm)
+                    .map(slot => slot.trim())
+                    .filter(Boolean);
+
+                if (slotContents.length === 0) return '';
+
+                const normalizedRatios = parseLayoutRatios(rawRatios, slotContents.length);
+
+                const slotHtml = slotContents
+                    .map((slotContent, index) => {
+                        const basis = normalizedRatios[index];
+                        const renderedSlot = renderLayoutSlot(slotContent);
+                        return `<div class="media-slot" style="--media-basis:${basis}%;">\n${renderedSlot}\n</div>`;
+                    })
+                    .join('\n');
+
+                log('parseLayout:', {
+                    slots: slotContents.length,
+                    ratios: normalizedRatios
+                });
+
+                return `<div class="media-layout">\n${slotHtml}\n</div>`;
+            }
+        );
+    }
+
     // ===== Justified Gallery =====
 
     /**
@@ -195,6 +300,7 @@ const MarkdownExtensions = (function () {
             if (!markdown) return '';
 
             let processed = markdown;
+            processed = parseLayout(processed);
             processed = parseGrid(processed);
             processed = parseIframe(processed);
             processed = parseVideo(processed);
@@ -242,6 +348,7 @@ const MarkdownExtensions = (function () {
         getSupportedSyntax() {
             return [
                 { syntax: ':::grid ... :::', description: '圖片並排網格' },
+                { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
                 { syntax: '@video[url]', description: '影片播放器' },
                 { syntax: '@iframe[url]', description: '嵌入外部網站' }
             ];

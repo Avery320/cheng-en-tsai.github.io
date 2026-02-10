@@ -8,6 +8,7 @@
 - 行動裝置優化：直式畫面自動切換為隱藏式側邊欄
 - 使用 Markdown 管理所有內容
 - 支援圖片並排網格 (Justified Gallery)
+- 支援文字/圖片/影片多欄混合排版（可設定欄寬百分比）
 - 支援影片播放與 iframe 嵌入
 - URL Hash 路由,支援上一頁/下一頁
 - 視窗縮放時自動重新計算圖片排版
@@ -39,7 +40,8 @@
 
 ## 自訂 Markdown 語法
 
-圖片並排:
+### Layout
+#### 圖片並排:
 ```
 :::grid
 ![alt](url)
@@ -47,22 +49,60 @@
 :::
 ```
 
-影片:
+#### 文字圖片混合排版（左右 / 多欄）
+
+- 混合排版規則:
+  - `:::layout[40,60]` 中的數字代表各欄比例,會自動正規化為 100%，若未提供比例,或比例格式不正確,會自動平均分配欄寬。
+  - 欄位由 `@slot` 分隔,比例數量需對應欄位數量
+
+基礎語法
+```
+:::layout[40,60] 
+@slot
+![img](assets/cover.jpg)
+@slot
+### 文字說明
+這裡可以放段落、清單或其他 Markdown。
+:::end-layout
+```
+
+多欄混合排版（同一行多張圖片與文字）
+```
+:::layout[25,35,40] 
+@slot
+![img1](assets/a.jpg)
+@slot
+![img2](assets/b.jpg)
+@slot
+### Notes
+可混用文字、圖片、@video、@iframe、:::grid。
+:::end-layout
+```
+
+> 註記：
+> - `:::grid` 主要用於圖片並排，建議只放圖片。
+> - 若放入 `@video` 或 `@iframe` 雖可能被解析，但排版與 justify 行為不保證。
+> - `:::layout` 支援在欄位中混用文字、圖片、`@video`、`@iframe`、連結網址。
+> - 需要「圖片 + 影片 + 網址」混合內容時，優先使用 `:::layout`。
+
+
+### Media
+#### 影片:
 ```
 @video[url]
 ```
 
-嵌入網頁:
+#### 嵌入網頁:
 ```
 @iframe[url]
 ```
 
 ## 新增專案
 
-1. 在 `content/` 下的對應分類資料夾（如 `PROJECT`, `ROBOT`, `DESIGN`, `WORKSHOP`）建立新的專案資料夾
+1. 在 `content/` 下的對應分類資料夾（如 `PROJECT`, `ROBOT`, `DESIGN`, `WORKSHOP`）建立新的專案資料夾。
 2. 在該資料夾內新增 `content.md`
-3. 更新 `content/config.json` 加入專案 ID 到對應分類
-4. 專案會依照 `content/config.json` 的順序顯示專案內容
+3. 更新 `content/config.json` 加入專案 ID 到對應分類。
+4. 專案會依照 `content/config.json` 的順序顯示專案內容。
 
 ## 本地開發
 

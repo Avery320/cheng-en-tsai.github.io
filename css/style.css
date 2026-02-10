@@ -199,6 +199,39 @@ body {
     border: none;
 }
 
+/* ===== 文字圖片混合排版 ===== */
+.media-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1rem, 2.2vw, 2rem);
+    margin: var(--spacing-lg) 0;
+}
+
+.media-slot {
+    flex: 0 0 var(--media-basis, 50%);
+    width: var(--media-basis, 50%);
+    min-width: 0;
+}
+
+.media-slot>:first-child {
+    margin-top: 0;
+}
+
+.media-slot>:last-child {
+    margin-bottom: 0;
+}
+
+.media-slot img,
+.media-slot video,
+.media-slot .iframe-container {
+    width: 100%;
+    margin: 0;
+}
+
+.media-slot .image-grid {
+    margin: 0;
+}
+
 /* ===== 動畫 ===== */
 .fade-in {
     animation: fadeIn var(--transition);
@@ -331,6 +364,16 @@ body {
 
     .sidebar.open {
         right: 0;
+    }
+
+    .media-layout {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+
+    .media-slot {
+        flex: 1 1 100%;
+        width: 100%;
     }
 }
 
