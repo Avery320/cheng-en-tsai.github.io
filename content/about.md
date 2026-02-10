@@ -16,7 +16,7 @@
 ## ROBOT
 - [RoboSim](#ROBOT/RoboSim)
 - [ROS_Docker](#ROBOT/ROS_Docker)
-- [URDF_Loader](#ROBOT/RUDF_Loader)
+- [URDF_Loader](#ROBOT/URDF_Loader)
 
 ## DESIGN
 - [Mycelium_Vault](#DESIGN/Mycelium_Vault)

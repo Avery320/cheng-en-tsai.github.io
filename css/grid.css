@@ -37,8 +37,14 @@
 
 /* 響應式：小螢幕改為單欄 */
 @media (max-width: 768px) {
+    .image-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
     .image-grid img {
         height: auto;
-        width: 100%;
+        width: 100% !important;
+        display: block;
     }
 }

@@ -22,6 +22,7 @@ const MarkdownExtensions = (function () {
 
     // ===== 私有變數 =====
     const VERSION = '1.0.0';
+    const MOBILE_BREAKPOINT = 768;
 
     // 預設設定
     let config = {
@@ -50,6 +51,29 @@ const MarkdownExtensions = (function () {
         const value = getComputedStyle(document.documentElement)
             .getPropertyValue(name);
         return parseInt(value) || fallback;
+    }
+
+    /**
+     * 是否為小螢幕
+     * @private
+     * @returns {boolean}
+     */
+    function isMobileViewport() {
+        return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
+    }
+
+    /**
+     * 清除圖片寬度設定，交給 CSS 響應式控制
+     * @private
+     * @param {HTMLImageElement[]} images
+     */
+    function resetImageStyles(images) {
+        images.forEach((img) => {
+            img.style.removeProperty('width');
+            img.style.removeProperty('flex-grow');
+            img.style.removeProperty('flex-shrink');
+            img.setAttribute('data-justified', 'true');
+        });
     }
 
     // ===== 解析器 =====
@@ -117,6 +141,10 @@ const MarkdownExtensions = (function () {
         const totalImageWidth = imageWidths.reduce((sum, w) => sum + w, 0);
         const totalGapWidth = (images.length - 1) * gap;
         const availableWidth = containerWidth - totalGapWidth;
+        if (totalImageWidth <= 0 || availableWidth <= 0) {
+            resetImageStyles(images);
+            return;
+        }
         const scale = availableWidth / totalImageWidth;
 
         // 設定每張圖片的寬度
@@ -198,6 +226,10 @@ const MarkdownExtensions = (function () {
                 });
 
                 Promise.all(imageLoadPromises).then(() => {
+                    if (isMobileViewport()) {
+                        resetImageStyles(images);
+                        return;
+                    }
                     calculateJustifiedWidths(grid, images);
                 });
             });
