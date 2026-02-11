@@ -30,6 +30,7 @@
     /* Grid 參數 (供 JS 讀取) */
     --grid-gap: 8px;
     --grid-height: 280px;
+    --media-block-margin: var(--spacing-lg);
 
     /* 版面參數 */
     --sidebar-width: clamp(240px, 22vw, 360px);
@@ -176,7 +177,11 @@ body {
     width: 100%;
     height: auto;
     border-radius: var(--radius-md);
-    margin: var(--spacing-lg) 0;
+}
+
+.content-wrapper :is(.image-grid, .project-video, .iframe-container, .media-layout) {
+    width: 100%;
+    margin: var(--media-block-margin) 0;
 }
 
 /* ===== iframe 容器（響應式 16:9 比例）===== */
@@ -186,7 +191,6 @@ body {
     aspect-ratio: 16 / 9;
     border-radius: var(--radius-md);
     overflow: hidden;
-    margin: var(--spacing-lg) 0;
     background: var(--bg-secondary);
 }
 
@@ -201,15 +205,13 @@ body {
 
 /* ===== 文字圖片混合排版 ===== */
 .media-layout {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--media-columns, minmax(0, 1fr) minmax(0, 1fr));
     align-items: flex-start;
     gap: clamp(1rem, 2.2vw, 2rem);
-    margin: var(--spacing-lg) 0;
 }
 
 .media-slot {
-    flex: 0 0 var(--media-basis, 50%);
-    width: var(--media-basis, 50%);
     min-width: 0;
 }
 
@@ -221,14 +223,13 @@ body {
     margin-bottom: 0;
 }
 
-.media-slot img,
-.media-slot video,
-.media-slot .iframe-container {
+.media-slot img {
     width: 100%;
     margin: 0;
 }
 
-.media-slot .image-grid {
+.media-slot :is(.image-grid, .project-video, .iframe-container) {
+    width: 100%;
     margin: 0;
 }
 
@@ -367,13 +368,8 @@ body {
     }
 
     .media-layout {
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
         gap: var(--spacing-lg);
-    }
-
-    .media-slot {
-        flex: 1 1 100%;
-        width: 100%;
     }
 }
 

@@ -157,6 +157,22 @@ const MarkdownExtensions = (function () {
     }
 
     /**
+     * 依比例轉換為 grid-template-columns 字串
+     * @private
+     * @param {number[]} ratios
+     * @returns {string}
+     */
+    function toGridColumnsTemplate(ratios) {
+        if (!Array.isArray(ratios) || ratios.length === 0) {
+            return 'minmax(0, 1fr)';
+        }
+
+        return ratios
+            .map((ratio) => `minmax(0, ${ratio}fr)`)
+            .join(' ');
+    }
+
+    /**
      * 轉換 layout 內單一欄位內容
      * @private
      * @param {string} slotMarkdown
@@ -204,12 +220,12 @@ const MarkdownExtensions = (function () {
                 if (slotContents.length === 0) return '';
 
                 const normalizedRatios = parseLayoutRatios(rawRatios, slotContents.length);
+                const gridColumnsTemplate = toGridColumnsTemplate(normalizedRatios);
 
                 const slotHtml = slotContents
-                    .map((slotContent, index) => {
-                        const basis = normalizedRatios[index];
+                    .map((slotContent) => {
                         const renderedSlot = renderLayoutSlot(slotContent);
-                        return `<div class="media-slot" style="--media-basis:${basis}%;">\n${renderedSlot}\n</div>`;
+                        return `<div class="media-slot">\n${renderedSlot}\n</div>`;
                     })
                     .join('\n');
 
@@ -218,7 +234,7 @@ const MarkdownExtensions = (function () {
                     ratios: normalizedRatios
                 });
 
-                return `<div class="media-layout">\n${slotHtml}\n</div>`;
+                return `<div class="media-layout" style="--media-columns:${gridColumnsTemplate};">\n${slotHtml}\n</div>`;
             }
         );
     }

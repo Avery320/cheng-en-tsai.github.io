@@ -3,7 +3,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--grid-gap, 8px);
-    margin: 32px 0;
 }
 
 /* 讓 marked 產生的 p 標籤不影響 flex 排版 */
