@@ -13,7 +13,8 @@
     "ROBOT": [
         "RoboSim",
         "ROS_Docker",
-        "URDF_Loader"
+        "URDF_Loader",
+        "RoboSimxGrasshopper"
     ],
     "DESIGN": [
         "Mycelium_Vault",
