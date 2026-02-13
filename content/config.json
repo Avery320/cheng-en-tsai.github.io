@@ -12,6 +12,7 @@
     ],
     "ROBOT": [
         "RoboSim",
+        "Hiwin_rak",
         "ROS_Docker",
         "URDF_Loader",
         "RoboSimxGrasshopper"
