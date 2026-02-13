@@ -93,6 +93,19 @@ const MarkdownExtensions = (function () {
     }
 
     /**
+     * 解析封面語法
+     * @private
+     * @param {string} markdown
+     * @returns {string}
+     */
+    function parseCover(markdown) {
+        return markdown.replace(/@cover\[(.*?)\]/g, (match, url) => {
+            log('parseCover:', url);
+            return `<div class="notion-cover"><img src="${url}" alt="Cover"></div>`;
+        });
+    }
+
+    /**
      * 解析 iframe 語法
      * @private
      * @param {string} markdown
@@ -316,6 +329,7 @@ const MarkdownExtensions = (function () {
             if (!markdown) return '';
 
             let processed = markdown;
+            processed = parseCover(processed);
             processed = parseLayout(processed);
             processed = parseGrid(processed);
             processed = parseIframe(processed);
@@ -363,6 +377,7 @@ const MarkdownExtensions = (function () {
          */
         getSupportedSyntax() {
             return [
+                { syntax: '@cover[url]', description: '扉頁封面圖' },
                 { syntax: ':::grid ... :::', description: '圖片並排網格' },
                 { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
                 { syntax: '@video[url]', description: '影片播放器' },

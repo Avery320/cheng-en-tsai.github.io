@@ -1,3 +1,5 @@
+@cover[content/ROBOT/Hiwin_rak/asset/rviz.png]
+
 # Hiwin Robot Arm Kinematics (hiwin_rak)
 
 - Developer: Avery Tsai

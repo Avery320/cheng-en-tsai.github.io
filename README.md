@@ -7,10 +7,11 @@
 - 左右分屏佈局,左側展示內容,右側為導航
 - 行動裝置優化：直式畫面自動切換為隱藏式側邊欄
 - 使用 Markdown 管理所有內容
+- 支援首頁扉頁封面（Notion 風格）
 - 支援圖片並排網格 (Justified Gallery)
 - 支援文字/圖片/影片多欄混合排版（可設定欄寬百分比）
 - 支援影片播放與 iframe 嵌入
-- URL Hash 路由,支援上一頁/下一頁
+- URL Hash 路由,支援上一頁/下一頁（預設進入 `home`）
 - 視窗縮放時自動重新計算圖片排版
 
 ## 技術
@@ -31,6 +32,7 @@
 │   └── markdown-extensions.js
 └── content/
     ├── config.json
+    ├── landing.md
     ├── about.md
     ├── PROJECT/
     ├── ROBOT/
@@ -39,6 +41,14 @@
 ```
 
 ## 自訂 Markdown 語法
+
+### Cover
+#### 扉頁封面:
+```
+@cover[url]
+```
+註記：
+- 封面容器會將圖片以中心點柴切成16:4的比列，填滿目前內容區寬度。
 
 ### Layout
 #### 圖片並排:

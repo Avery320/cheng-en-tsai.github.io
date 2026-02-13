@@ -22,7 +22,9 @@ class PortfolioApp {
      */
     handleInitialRoute() {
         const hash = window.location.hash.slice(1);
-        if (!hash || hash === 'about') {
+        if (!hash || hash === 'home') {
+            this.loadLanding(false);
+        } else if (hash === 'about') {
             this.loadAbout(false);
         } else {
             const [category, id] = hash.split('/');
@@ -185,6 +187,22 @@ class PortfolioApp {
     }
 
     /**
+     * 載入扉頁內容
+     */
+    async loadLanding(updateHash = true) {
+        if (updateHash) this.updateHash('home');
+        this.clearActiveNav();
+
+        try {
+            const response = await fetch('content/landing.md');
+            const markdown = await response.text();
+            this.renderContent(markdown);
+        } catch (error) {
+            this.renderContent('# Home\n\n載入失敗');
+        }
+    }
+
+    /**
      * 載入專案內容
      */
     async loadProject(category, id, updateHash = true) {
@@ -258,6 +276,15 @@ class PortfolioApp {
                 if (l !== list) l.classList.remove('expanded');
             });
         }
+    }
+
+    /**
+     * 清除選中狀態
+     */
+    clearActiveNav() {
+        document.querySelectorAll('.nav-title, .nav-item').forEach(el => {
+            el.classList.remove('active');
+        });
     }
 
     /**
