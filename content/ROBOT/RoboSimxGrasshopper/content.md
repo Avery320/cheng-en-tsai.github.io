@@ -12,8 +12,8 @@
 ## Demo
 @iframe[https://ik.imagekit.io/cheng3n/RoboSim/connectgh.mp4]
 
-## RoboSim & Grasshopper UI
+## RoboSim Interface & Rhino/Grasshopper
 :::grid
-![robosimUI](https://ik.imagekit.io/cheng3n/RoboSim/robosimUI.png?updatedAt=1770900765312)
-![gh](https://ik.imagekit.io/cheng3n/RoboSim/gh.png?updatedAt=1770900798735)
+![robosimUI](https://ik.imagekit.io/cheng3n/RoboSim/robosimUI.png)
+![gh](https://ik.imagekit.io/cheng3n/RoboSim/robosim_gh.png)
 :::
