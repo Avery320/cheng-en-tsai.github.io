@@ -1,8 +1,24 @@
+/* ===== Shared Tokens ===== */
+:root {
+    --panel-content-padding: clamp(1.25rem, 4vw, var(--spacing-panel));
+    --panel-content-padding-mobile: clamp(1rem, 5vw, var(--spacing-lg));
+
+    --outline-panel-padding: 10px;
+    --outline-panel-gap: 10px;
+    --outline-header-gap: 8px;
+    --outline-title-size: 20px;
+    --outline-text-size: 16px;
+    --outline-toggle-size: 1rem;
+    --outline-item-gap: 0.1rem;
+    --outline-indent-step: 0.85rem;
+}
+
 /* ===== Panel Layout ===== */
 .container {
     display: flex;
     min-height: 100vh;
     height: 100vh;
+    /* 新版瀏覽器優先用動態視窗高度，避免行動端網址列造成高度跳動。 */
     height: 100dvh;
     overflow: hidden;
 }
@@ -12,19 +28,22 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 100%;
-    height: 100%;
     overflow: hidden;
 }
 
 .content-panel {
+    /* 左：大綱；右：內容。桌機版固定雙欄。 */
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    padding: clamp(1.25rem, 4vw, var(--spacing-panel));
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: var(--outline-panel-width) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
 }
 
 .sidebar {
+    /* 右側主導航面板。 */
     flex: 0 0 var(--sidebar-width);
     width: var(--sidebar-width);
     background: var(--bg-secondary);
@@ -32,14 +51,139 @@
     overflow-y: auto;
 }
 
+.content-scroll {
+    min-height: 0;
+    /* 讓中間內容區獨立捲動，不與外層容器共用捲軸。 */
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .content-wrapper {
+    /* 中央內容最大寬度與內距控制。 */
     width: min(100%, var(--content-max-width));
     margin: 0 auto;
+    min-width: 0;
+    padding: var(--panel-content-padding);
 }
 
 .nav {
+    /* 右側導航在面板內維持頂部吸附。 */
     position: sticky;
     top: 0;
+}
+
+/* ===== Document Outline ===== */
+.outline-panel {
+    /* 左側文件大綱面板。 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--outline-panel-gap);
+    min-width: 0;
+    background: var(--bg-secondary);
+    padding: var(--outline-panel-padding);
+    height: 100%;
+}
+
+.outline-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: var(--outline-header-gap);
+}
+
+.outline-title {
+    font-size: var(--outline-title-size);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.outline-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    /* 左側大綱面板獨立捲動。 */
+    overflow-y: auto;
+    padding-top: 2px;
+    padding-right: 0.1rem;
+}
+
+.outline-list {
+    list-style: none;
+}
+
+.outline-item + .outline-item {
+    margin-top: var(--outline-item-gap);
+}
+
+.outline-row {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.outline-node-toggle,
+.outline-node-spacer {
+    width: var(--outline-toggle-size);
+    height: var(--outline-toggle-size);
+    flex: 0 0 var(--outline-toggle-size);
+}
+
+.outline-node-toggle {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--outline-text-size);
+    font-weight: var(--font-medium);
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.outline-node-toggle:hover {
+    color: var(--text-primary);
+}
+
+.outline-link {
+    /* 標題層級以 --outline-level 控制左縮排。 */
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--outline-text-size);
+    font-weight: var(--font-medium);
+    text-align: left;
+    line-height: 1.4;
+    cursor: pointer;
+    width: 100%;
+    padding: var(--spacing-sm) 0;
+    padding-left: calc((var(--outline-level, 1) - 1) * var(--outline-indent-step));
+    transition: color var(--transition);
+}
+
+.outline-link:hover {
+    color: var(--text-primary);
+}
+
+.outline-link.active {
+    color: var(--text-primary);
+    font-weight: var(--font-bold);
+}
+
+.outline-children {
+    margin-top: var(--outline-item-gap);
+}
+
+.outline-empty {
+    display: none;
+    color: var(--text-secondary);
+    font-size: var(--outline-text-size);
+    line-height: 1.45;
+}
+
+.outline-panel.is-empty .outline-nav {
+    display: none;
+}
+
+.outline-panel.is-empty .outline-empty {
+    display: block;
 }
 
 /* ===== Navigation ===== */
@@ -85,6 +229,7 @@
 
 /* ===== Toolbar ===== */
 .top-toolbar {
+    /* 頂部工具列（行動版固定在頂端）。 */
     display: flex;
     flex-shrink: 0;
     height: var(--toolbar-height);
@@ -102,6 +247,7 @@
 }
 
 .menu-toggle {
+    /* 行動版 hamburger 按鈕。 */
     display: none;
     width: 44px;
     height: 44px;
@@ -124,6 +270,7 @@
 
 /* ===== Overlay ===== */
 .sidebar-overlay {
+    /* 行動版右側導航展開時的遮罩。 */
     display: none;
     position: fixed;
     top: 0;
@@ -146,10 +293,7 @@
     :root {
         --sidebar-width: clamp(220px, 26vw, 320px);
         --content-max-width: 920px;
-    }
-
-    .content-panel {
-        padding: clamp(1.125rem, 3.5vw, 2.5rem);
+        --outline-panel-width: clamp(180px, 22vw, 230px);
     }
 }
 
@@ -157,14 +301,11 @@
     :root {
         --sidebar-width: clamp(210px, 28vw, 280px);
         --content-max-width: 840px;
+        --outline-panel-width: clamp(180px, 24vw, 220px);
     }
 }
 
 @media (max-width: 768px) {
-    .main-area {
-        flex: 1;
-    }
-
     .top-toolbar {
         position: fixed;
         top: 0;
@@ -175,13 +316,22 @@
 
     .menu-toggle {
         display: flex;
-        position: static;
         background: transparent;
     }
 
     .content-panel {
-        padding: clamp(1rem, 5vw, var(--spacing-lg));
-        padding-top: calc(var(--toolbar-height) + clamp(1rem, 5vw, var(--spacing-lg)));
+        /* 手機版收斂為單欄，避免左側大綱佔用閱讀空間。 */
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .content-wrapper {
+        padding: var(--panel-content-padding-mobile);
+        padding-top: calc(var(--toolbar-height) + var(--panel-content-padding-mobile));
+    }
+
+    .outline-panel {
+        /* 手機版隱藏大綱，交由主內容閱讀優先。 */
+        display: none;
     }
 
     .sidebar {

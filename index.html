@@ -36,8 +36,17 @@
 
             <!-- 內容面板 -->
             <main class="content-panel" id="contentPanel">
-                <div class="content-wrapper" id="contentWrapper">
-                    <!-- 動態載入內容 -->
+                <aside class="outline-panel is-empty" id="outlinePanel" aria-label="章節目錄">
+                    <div class="outline-header">
+                        <span class="outline-title" id="outlineTitle">ABOUT</span>
+                    </div>
+                    <nav class="outline-nav" id="outlineNav" aria-label="章節導覽"></nav>
+                    <p class="outline-empty" id="outlineEmpty">目前頁面沒有 h1~h3 標題。</p>
+                </aside>
+                <div class="content-scroll" id="contentScroll">
+                    <div class="content-wrapper" id="contentWrapper">
+                        <!-- 動態載入內容 -->
+                    </div>
                 </div>
             </main>
         </div>

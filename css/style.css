@@ -37,12 +37,14 @@
     --sidebar-width: clamp(240px, 22vw, 360px);
     --content-max-width: 1080px;
     --mobile-sidebar-width: min(82vw, 320px);
+    --outline-panel-width: clamp(210px, 20vw, 270px);
     --cover-aspect-ratio: 16 / 4;
     --embed-aspect-ratio: 16 / 9;
 }
 
 html,
 body {
+    /* 讓主版面可正確使用 100% 高度容器。 */
     height: 100%;
     color: var(--text-primary);
     background: var(--bg-primary);
@@ -93,6 +95,7 @@ body {
 }
 
 .media-figure {
+    /* 所有媒體（圖/影/iframe）統一外距入口。 */
     width: 100%;
     margin: var(--media-block-margin) 0;
 }
@@ -106,6 +109,7 @@ body {
 }
 
 .media-caption {
+    /* 媒體說明文字：置中且比主文略小。 */
     margin: var(--spacing-sm) 0 0;
     text-align: center;
     color: var(--text-secondary);
@@ -114,6 +118,7 @@ body {
 }
 
 .notion-cover {
+    /* 扉頁：固定比例，圖片以 cover 填滿。 */
     width: 100%;
     aspect-ratio: var(--cover-aspect-ratio);
     border-radius: var(--radius-md);
@@ -156,6 +161,7 @@ body {
 
 /* ===== 文字圖片混合排版 ===== */
 .media-layout {
+    /* 多欄混合排版（由 markdown layout 指令控制欄寬）。 */
     display: grid;
     grid-template-columns: var(--media-columns, minmax(0, 1fr) minmax(0, 1fr));
     align-items: flex-start;
@@ -163,6 +169,7 @@ body {
 }
 
 .media-slot {
+    /* 避免內容過寬造成 grid 欄位撐爆。 */
     min-width: 0;
 }
 
@@ -175,11 +182,13 @@ body {
 }
 
 .media-slot img {
+    /* slot 內圖片預設填滿欄寬。 */
     width: 100%;
     margin: 0;
 }
 
 .media-slot :is(.image-grid, .project-video, .iframe-container) {
+    /* slot 內媒體區塊取消額外外距，保持欄位對齊。 */
     width: 100%;
     margin: 0;
 }
@@ -207,6 +216,7 @@ body {
 
 @media (max-width: 768px) {
     .media-layout {
+        /* 小螢幕時改成單欄，提升閱讀與觸控體驗。 */
         grid-template-columns: minmax(0, 1fr);
         gap: var(--spacing-lg);
     }

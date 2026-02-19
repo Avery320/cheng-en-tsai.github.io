@@ -1,57 +1,119 @@
 /**
- * 作品集應用程式
- * 支援動態分類系統
+ * Portfolio 應用程式
+ * - 動態分類導航
+ * - Markdown 內容渲染
+ * - 文件標題面板（h1~h3）
  */
-
 class PortfolioApp {
+    /**
+     * 初始化應用程式的狀態與 DOM 快取。
+     */
     constructor() {
-        this.config = null;
+        this.config = { categories: [] };
+
+        this.dom = {
+            nav: document.getElementById('nav'),
+            contentPanel: document.getElementById('contentPanel'),
+            contentScroll: document.getElementById('contentScroll'),
+            contentWrapper: document.getElementById('contentWrapper'),
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            menuToggle: document.getElementById('menuToggle'),
+            outlinePanel: document.getElementById('outlinePanel'),
+            outlineNav: document.getElementById('outlineNav'),
+            outlineTitle: document.getElementById('outlineTitle')
+        };
+
+        this.outlineTree = [];
+        this.outlineHeadings = [];
+        this.outlineNodesById = new Map();
+        this.outlineParentById = new Map();
+        this.outlineLinkById = new Map();
+        this.outlineCollapsedNodeIds = new Set();
+        this.activeOutlineId = '';
+
+        this.removeOutlineScrollListener = null;
+        this.outlineScrollTicking = false;
+
         this.init();
     }
 
+    /**
+     * 啟動流程：載入設定、渲染導覽、綁定事件、處理初始路由。
+     */
     async init() {
         await this.loadConfig();
         this.renderNavigation();
         this.setupEventListeners();
-        this.setupMobileMenu();
         this.handleInitialRoute();
     }
 
     /**
-     * 處理初始路由
+     * 解析目前 hash，並導向 about 或對應專案頁。
      */
     handleInitialRoute() {
-        const hash = window.location.hash.slice(1);
+        // hash 規則：
+        // - 空值/home -> about
+        // - about -> about.md
+        // - category/id -> 專案頁
+        const hash = window.location.hash.replace(/^#/, '').trim();
+
         if (!hash || hash === 'home') {
             this.updateHash('about');
             return;
         }
 
-        if (hash === 'about') {
-            this.loadAbout(false);
+        const pageConfig = this.getPageConfigByHash(hash);
+        if (pageConfig) {
+            this.loadPage(pageConfig, false);
             return;
         }
 
-        const [category, id] = hash.split('/');
-        if (category && id) {
-            this.loadProject(category, id, false);
-        } else {
-            this.updateHash('about');
-        }
+        this.updateHash('about');
     }
 
     /**
-     * 載入設定檔
+     * 依 hash 產生頁面載入設定。
+     * about -> about.md；category/id -> content/<category>/<id>/content.md
+     */
+    getPageConfigByHash(hash) {
+        if (hash === 'about') {
+            return {
+                hash: 'about',
+                navId: 'about',
+                markdownPath: 'content/about.md',
+                fallbackMarkdown: '# About\n\n載入失敗'
+            };
+        }
+
+        const [category, id] = hash.split('/');
+        if (!category || !id) return null;
+
+        return {
+            hash: `${category}/${id}`,
+            navId: id,
+            navCategory: category,
+            markdownPath: `content/${category}/${id}/content.md`,
+            fallbackMarkdown: `# ${id}\n\n載入失敗`,
+            transformMarkdown: (markdown) => this.processImagePaths(markdown, category, id)
+        };
+    }
+
+    /**
+     * 讀取導航設定檔 content/config.json。
      */
     async loadConfig() {
         try {
             const response = await fetch('content/config.json');
-            this.config = await response.json();
-
-            // 確保 categories 存在
-            if (!this.config.categories) {
-                this.config.categories = [];
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
+
+            const config = await response.json();
+            this.config = {
+                ...config,
+                categories: Array.isArray(config.categories) ? config.categories : []
+            };
         } catch (error) {
             console.error('無法載入設定檔:', error);
             this.config = { categories: [] };
@@ -59,200 +121,202 @@ class PortfolioApp {
     }
 
     /**
-     * 動態渲染導航選單
+     * 依 config 動態建立左側導航結構。
      */
     renderNavigation() {
-        const nav = document.getElementById('nav');
+        const nav = this.dom.nav;
+        if (!nav) return;
 
-        // 遍歷所有分類並動態生成
-        this.config.categories.forEach(category => {
-            const projects = this.config[category] || [];
+        const sections = Array.from(nav.querySelectorAll('.nav-section'));
+        sections.slice(1).forEach((section) => section.remove());
 
-            // 建立分類區塊
+        this.config.categories.forEach((category) => {
+            const projects = Array.isArray(this.config[category]) ? this.config[category] : [];
+
             const section = document.createElement('div');
             section.className = 'nav-section';
 
-            // 建立分類標題
             const title = document.createElement('div');
             title.className = 'nav-title';
             title.dataset.section = category;
             title.textContent = category;
-            section.appendChild(title);
 
-            // 建立專案列表
             const list = document.createElement('ul');
             list.className = 'nav-list';
             list.id = `${category.toLowerCase()}List`;
 
-            projects.forEach(id => {
-                const li = document.createElement('li');
-                li.className = 'nav-item';
-                li.dataset.category = category;
-                li.dataset.id = id;
-                li.textContent = id;
-                list.appendChild(li);
+            projects.forEach((id) => {
+                const item = document.createElement('li');
+                item.className = 'nav-item';
+                item.dataset.category = category;
+                item.dataset.id = id;
+                item.textContent = id;
+                list.appendChild(item);
             });
 
+            section.appendChild(title);
             section.appendChild(list);
             nav.appendChild(section);
         });
     }
 
     /**
-     * 設定事件監聽
+     * 綁定所有互動事件：導覽點擊、路由變更、視窗縮放、大綱互動、行動版選單。
      */
     setupEventListeners() {
-        // 導航點擊事件（統一處理）
-        document.getElementById('nav').addEventListener('click', (e) => {
-            // 分類標題點擊
-            if (e.target.classList.contains('nav-title')) {
-                const section = e.target.dataset.section;
-                if (section === 'about') {
-                    this.updateHash('about');
-                } else {
-                    this.toggleSection(section);
+        const { sidebar, sidebarOverlay } = this.dom;
+        // 行動版側欄關閉邏輯集中在同一個函式，避免事件中重複操作 class。
+        const closeSidebar = () => {
+            if (!sidebar || !sidebarOverlay) return;
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        };
+
+        const nav = this.dom.nav;
+        if (nav) {
+            nav.addEventListener('click', (event) => {
+                const titleElement = event.target.closest('.nav-title');
+                if (titleElement) {
+                    const section = titleElement.dataset.section;
+                    if (section === 'about') {
+                        this.updateHash('about');
+                        closeSidebar();
+                    } else if (section) {
+                        const targetList = document.getElementById(`${section.toLowerCase()}List`);
+                        if (!targetList) return;
+                        this.setExpandedNavList(targetList, !targetList.classList.contains('expanded'));
+                    }
+                    return;
                 }
-            }
 
-            // 專案項目點擊
-            if (e.target.classList.contains('nav-item')) {
-                const category = e.target.dataset.category;
-                const id = e.target.dataset.id;
+                const itemElement = event.target.closest('.nav-item');
+                if (!itemElement) return;
+
+                const category = itemElement.dataset.category;
+                const id = itemElement.dataset.id;
+                if (!category || !id) return;
+
                 this.updateHash(`${category}/${id}`);
-            }
+                closeSidebar();
+            });
+        }
 
-            // 行動版：僅在跳轉頁面時關閉側邊欄
-            // - 點擊項目 (nav-item)
-            // - 點擊 ABOUT 標題
-            if (e.target.classList.contains('nav-item') ||
-                (e.target.classList.contains('nav-title') &&
-                    e.target.dataset.section === 'about')) {
-                this.closeMobileSidebar();
-            }
-        });
-
-        // 監聽瀏覽器上一頁/下一頁
         window.addEventListener('hashchange', () => {
             this.handleInitialRoute();
         });
 
-        // 監聽視窗縮放,重新計算圖片寬度
-        let resizeTimeout;
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                if (window.MarkdownExtensions && MarkdownExtensions.justifyImages) {
-                    MarkdownExtensions.justifyImages();
-                }
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                this.justifyImages();
+                this.updateActiveOutlineByScroll();
             }, 150);
+        });
+
+        const { outlineNav, menuToggle } = this.dom;
+        if (outlineNav) {
+            outlineNav.addEventListener('click', (event) => {
+                const toggleButton = event.target.closest('.outline-node-toggle');
+                if (toggleButton) {
+                    this.toggleOutlineNode(toggleButton.dataset.id || '');
+                    return;
+                }
+
+                const linkButton = event.target.closest('.outline-link');
+                if (linkButton) {
+                    this.scrollToHeading(linkButton.dataset.id || '');
+                }
+            });
+        }
+
+        if (!menuToggle || !sidebar || !sidebarOverlay) return;
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        });
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+
+    /**
+     * 更新 URL hash，避免重複寫入造成多餘事件。
+     */
+    updateHash(hash) {
+        const targetHash = `#${hash}`;
+        if (window.location.hash !== targetHash) {
+            window.location.hash = hash;
+        }
+    }
+
+    /**
+     * 設定展開中的導航清單（單選展開）。
+     */
+    setExpandedNavList(targetList, isExpanded) {
+        document.querySelectorAll('.nav-list').forEach((list) => {
+            list.classList.toggle('expanded', Boolean(isExpanded) && list === targetList);
         });
     }
 
     /**
-     * 更新 URL Hash
+     * 載入頁面 Markdown 並渲染到主內容區。
      */
-    updateHash(hash) {
-        window.location.hash = hash;
-    }
-
-    /**
-     * 切換分類展開/收合 (Accordion 效果)
-     */
-    toggleSection(section) {
-        const allLists = document.querySelectorAll('.nav-list');
-        const targetList = document.getElementById(`${section.toLowerCase()}List`);
-        if (!targetList) return;
-
-        const isExpanded = targetList.classList.contains('expanded');
-
-        // 先收合所有列表
-        allLists.forEach(list => list.classList.remove('expanded'));
-
-        // 如果原本是收合的,則展開目標列表
-        if (!isExpanded) {
-            targetList.classList.add('expanded');
+    async loadPage(pageConfig, updateHash = true) {
+        if (updateHash) {
+            this.updateHash(pageConfig.hash);
         }
-    }
 
-    /**
-     * 載入 ABOUT 內容
-     */
-    async loadAbout(updateHash = true) {
-        if (updateHash) this.updateHash('about');
-        this.setActiveNav('about');
-
+        this.setActiveNav(pageConfig.navId, pageConfig.navCategory ?? null);
+        let markdown = pageConfig.fallbackMarkdown;
         try {
-            const response = await fetch('content/about.md');
-            const markdown = await response.text();
-            this.renderContent(markdown);
+            const response = await fetch(pageConfig.markdownPath);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            markdown = await response.text();
         } catch (error) {
-            this.renderContent('# About\n\n載入失敗');
+            console.error(`無法載入檔案: ${pageConfig.markdownPath}`, error);
         }
+
+        const renderedMarkdown = typeof pageConfig.transformMarkdown === 'function'
+            ? pageConfig.transformMarkdown(markdown)
+            : markdown;
+
+        this.renderContent(renderedMarkdown);
     }
 
     /**
-     * 載入專案內容
-     */
-    async loadProject(category, id, updateHash = true) {
-        if (updateHash) this.updateHash(`${category}/${id}`);
-        this.setActiveNav(id, category);
-
-        try {
-            const response = await fetch(`content/${category}/${id}/content.md`);
-            const markdown = await response.text();
-            const processedMarkdown = this.processImagePaths(markdown, category, id);
-            this.renderContent(processedMarkdown);
-        } catch (error) {
-            this.renderContent(`# ${id}\n\n載入失敗`);
-        }
-    }
-
-    /**
-     * 將專案內相對資源路徑轉為完整路徑
-     * - ![...](assets/...)
-     * - @video[...](assets/...)
-     * - @iframe[...](assets/...)
-     * - @cover(assets/...)
+     * 將專案內 assets 相對路徑改寫為可直接載入的絕對相對路徑。
      */
     processImagePaths(markdown, category, id) {
         const basePath = `content/${category}/${id}`;
         const resolveAssetPath = (url) => {
             const cleanUrl = url.trim();
             if (!cleanUrl.startsWith('assets/')) return cleanUrl;
+            // 將專案內相對資源路徑補成完整路徑。
             return `${basePath}/${cleanUrl}`;
         };
 
-        let processed = markdown;
-
-        processed = processed.replace(
-            /!\[([^\]]*)\]\(\s*(assets\/[^)\s]+)\s*\)/g,
-            (match, title, url) => `![${title}](${resolveAssetPath(url)})`
-        );
-
-        processed = processed.replace(
-            /@video\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
-            (match, title, url) => `@video[${title}](${resolveAssetPath(url)})`
-        );
-
-        processed = processed.replace(
-            /@iframe\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
-            (match, title, url) => `@iframe[${title}](${resolveAssetPath(url)})`
-        );
-
-        processed = processed.replace(
-            /@cover\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
-            (match, url) => `@cover(${resolveAssetPath(url)})`
-        );
-
-        return processed;
+        return markdown
+            .replace(
+                /!\[([^\]]*)\]\(\s*(assets\/[^)\s]+)\s*\)/g,
+                (_match, title, url) => `![${title}](${resolveAssetPath(url)})`
+            )
+            .replace(
+                /@(video|iframe)\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+                (_match, directive, title, url) => `@${directive}[${title}](${resolveAssetPath(url)})`
+            )
+            .replace(
+                /@cover\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+                (_match, url) => `@cover(${resolveAssetPath(url)})`
+            );
     }
 
     /**
-     * 渲染內容
+     * 將 Markdown 轉為 HTML 並刷新內容與大綱。
      */
     renderContent(markdown) {
-        const wrapper = document.getElementById('contentWrapper');
+        const wrapper = this.dom.contentWrapper;
         if (!wrapper) return;
+
+        this.detachOutlineScrollListener();
 
         const html = (window.MarkdownExtensions && typeof MarkdownExtensions.render === 'function')
             ? MarkdownExtensions.render(markdown)
@@ -263,80 +327,412 @@ class PortfolioApp {
         void wrapper.offsetWidth;
         wrapper.classList.add('fade-in');
 
-        if (window.MarkdownExtensions && MarkdownExtensions.justifyImages) {
+        this.justifyImages();
+        this.renderDocumentOutline();
+    }
+
+    /**
+     * 重新計算 grid 圖片寬度（由 MarkdownExtensions 提供）。
+     */
+    justifyImages() {
+        if (window.MarkdownExtensions && typeof MarkdownExtensions.justifyImages === 'function') {
             MarkdownExtensions.justifyImages();
         }
     }
 
     /**
-     * 設定當前選中狀態
+     * 更新目前被選中的導航項目。
      */
     setActiveNav(id, category = null) {
-        // 移除所有 active
-        document.querySelectorAll('.nav-title, .nav-item').forEach(el => {
-            el.classList.remove('active');
+        document.querySelectorAll('.nav-title, .nav-item').forEach((element) => {
+            element.classList.remove('active');
         });
 
         if (id === 'about') {
             document.querySelector('[data-section="about"]')?.classList.add('active');
+            return;
+        }
+
+        const activeItem = document.querySelector(`.nav-item[data-id="${id}"]`);
+        if (activeItem) activeItem.classList.add('active');
+
+        const list = category
+            ? document.getElementById(`${category.toLowerCase()}List`)
+            : null;
+
+        if (list) {
+            this.setExpandedNavList(list, true);
+        }
+    }
+
+    /**
+     * 重新建立文件大綱（h1~h3）並綁定捲動同步。
+     */
+    renderDocumentOutline() {
+        const { outlinePanel, outlineNav } = this.dom;
+        if (!outlinePanel || !outlineNav) return;
+
+        // 先收集標題，再統一更新大綱狀態與視圖。
+        const headings = this.collectOutlineHeadings();
+        this.outlineHeadings = headings;
+        this.updateOutlineTitle();
+
+        if (headings.length === 0) {
+            this.outlineTree = [];
+            this.outlineHeadings = [];
+            this.outlineNodesById = new Map();
+            this.outlineParentById = new Map();
+            this.outlineLinkById = new Map();
+            this.outlineCollapsedNodeIds.clear();
+            this.activeOutlineId = '';
+            outlineNav.innerHTML = '';
+            this.detachOutlineScrollListener();
+            outlinePanel.classList.add('is-empty');
+            return;
+        }
+
+        const treeState = this.buildOutlineTree(headings);
+        this.outlineTree = treeState.tree;
+        this.outlineNodesById = treeState.nodesById;
+        this.outlineParentById = treeState.parentById;
+        this.outlineCollapsedNodeIds = new Set(
+            Array.from(this.outlineCollapsedNodeIds).filter((id) => treeState.collapsibleNodeIds.has(id))
+        );
+
+        this.renderOutlineNavigation();
+
+        outlinePanel.classList.remove('is-empty');
+        this.bindOutlineScrollSync();
+    }
+
+    /**
+     * 依當前路由更新大綱標題（ABOUT 或專案名稱）。
+     */
+    updateOutlineTitle() {
+        const outlineTitle = this.dom.outlineTitle;
+        if (!outlineTitle) return;
+
+        const hash = window.location.hash.replace(/^#/, '').trim();
+        if (!hash || hash === 'about') {
+            outlineTitle.textContent = 'ABOUT';
+            return;
+        }
+
+        const [, projectId] = hash.split('/');
+        const normalized = String(projectId || '')
+            .trim()
+            .replace(/_/g, ' ')
+            .replace(/\s+/g, ' ');
+        outlineTitle.textContent = normalized ? normalized.toUpperCase() : 'PROJECT';
+    }
+
+    /**
+     * 收集內容區中的 h1~h3，並保證每個標題都有唯一 id。
+     */
+    collectOutlineHeadings() {
+        const wrapper = this.dom.contentWrapper;
+        if (!wrapper) return [];
+
+        const headingElements = Array.from(wrapper.querySelectorAll('h1, h2, h3'));
+        const usedIds = new Set();
+        const createHeadingId = (element, title, index) => {
+            const existingId = (element.id || '').trim();
+            if (existingId && !usedIds.has(existingId)) {
+                usedIds.add(existingId);
+                return existingId;
+            }
+
+            const baseId = String(title)
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || `section-${index + 1}`;
+
+            // 若 slug 重複，使用遞增尾碼確保唯一。
+            let nextId = baseId;
+            let suffix = 2;
+            while (usedIds.has(nextId)) {
+                nextId = `${baseId}-${suffix}`;
+                suffix += 1;
+            }
+
+            element.id = nextId;
+            usedIds.add(nextId);
+            return nextId;
+        };
+
+        return headingElements.map((element, index) => {
+            const title = (element.textContent || '').trim() || `Section ${index + 1}`;
+            const level = Number(element.tagName.slice(1));
+            const id = createHeadingId(element, title, index);
+
+            return {
+                id,
+                title,
+                level,
+                element
+            };
+        });
+    }
+
+    /**
+     * 將線性標題列表轉為樹狀結構，並建立 parent/id 索引。
+     */
+    buildOutlineTree(headings) {
+        const tree = [];
+        const stack = [];
+        const nodesById = new Map();
+        const parentById = new Map();
+        const collapsibleNodeIds = new Set();
+
+        // 以 stack 單次走訪建立 h1~h3 階層樹。
+        headings.forEach((heading) => {
+            const node = { ...heading, parentId: null, children: [] };
+            nodesById.set(node.id, node);
+
+            while (stack.length > 0 && stack[stack.length - 1].level >= node.level) {
+                stack.pop();
+            }
+
+            const parent = stack[stack.length - 1] || null;
+            if (parent) {
+                node.parentId = parent.id;
+                parent.children.push(node);
+                parentById.set(node.id, parent.id);
+                collapsibleNodeIds.add(parent.id);
+            } else {
+                tree.push(node);
+            }
+
+            stack.push(node);
+        });
+
+        return { tree, nodesById, parentById, collapsibleNodeIds };
+    }
+
+    /**
+     * 依目前樹狀資料渲染左側大綱面板。
+     */
+    renderOutlineNavigation() {
+        const outlineNav = this.dom.outlineNav;
+        if (!outlineNav) return;
+
+        this.outlineLinkById = new Map();
+        // 遞迴渲染樹狀節點並同步建立 id -> 按鈕索引，供 active 更新快速查找。
+        const renderNodes = (nodes) => {
+            const list = document.createElement('ul');
+            list.className = 'outline-list';
+
+            nodes.forEach((node) => {
+                const item = document.createElement('li');
+                item.className = 'outline-item';
+
+                const row = document.createElement('div');
+                row.className = 'outline-row';
+
+                if (node.children.length > 0) {
+                    const isCollapsed = this.outlineCollapsedNodeIds.has(node.id);
+                    const toggleButton = document.createElement('button');
+                    toggleButton.type = 'button';
+                    toggleButton.className = 'outline-node-toggle';
+                    toggleButton.dataset.id = node.id;
+                    toggleButton.textContent = isCollapsed ? '▸' : '⌵';
+                    toggleButton.setAttribute('aria-expanded', String(!isCollapsed));
+                    toggleButton.setAttribute('aria-label', `${isCollapsed ? '展開' : '收合'} ${node.title}`);
+                    row.appendChild(toggleButton);
+                } else {
+                    const spacer = document.createElement('span');
+                    spacer.className = 'outline-node-spacer';
+                    row.appendChild(spacer);
+                }
+
+                const linkButton = document.createElement('button');
+                linkButton.type = 'button';
+                linkButton.className = 'outline-link';
+                linkButton.dataset.id = node.id;
+                linkButton.textContent = node.title;
+                linkButton.style.setProperty('--outline-level', String(node.level));
+                this.outlineLinkById.set(node.id, linkButton);
+                row.appendChild(linkButton);
+                item.appendChild(row);
+
+                if (node.children.length > 0) {
+                    const childList = renderNodes(node.children);
+                    childList.classList.add('outline-children');
+                    childList.hidden = this.outlineCollapsedNodeIds.has(node.id);
+                    item.appendChild(childList);
+                }
+
+                list.appendChild(item);
+            });
+
+            return list;
+        };
+
+        outlineNav.innerHTML = '';
+        outlineNav.appendChild(renderNodes(this.outlineTree));
+        this.setActiveOutlineItem(this.activeOutlineId, { forceUpdate: true });
+    }
+
+    /**
+     * 切換大綱節點展開/收合狀態。
+     */
+    toggleOutlineNode(nodeId) {
+        if (!nodeId) return;
+
+        if (this.outlineCollapsedNodeIds.has(nodeId)) {
+            this.outlineCollapsedNodeIds.delete(nodeId);
         } else {
-            // 設定專案 active
-            const activeItem = document.querySelector(`.nav-item[data-id="${id}"]`);
-            if (activeItem) activeItem.classList.add('active');
+            this.outlineCollapsedNodeIds.add(nodeId);
+        }
 
-            // 確保分類展開
-            const list = document.getElementById(`${category.toLowerCase()}List`);
-            if (list) list.classList.add('expanded');
+        this.renderOutlineNavigation();
+    }
 
-            // 收合其他分類
-            document.querySelectorAll('.nav-list').forEach(l => {
-                if (l !== list) l.classList.remove('expanded');
+    /**
+     * 捲動至指定標題，並同步更新 active 狀態。
+     */
+    scrollToHeading(headingId) {
+        if (!headingId) return;
+
+        this.expandOutlineAncestors(headingId);
+
+        const headingElement = this.outlineNodesById.get(headingId)?.element || document.getElementById(headingId);
+        if (!headingElement) return;
+
+        headingElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+        this.setActiveOutlineItem(headingId);
+    }
+
+    /**
+     * 展開目前標題的所有父節點，確保 active 項可見。
+     */
+    expandOutlineAncestors(headingId) {
+        let currentParentId = this.outlineParentById.get(headingId);
+        let changed = false;
+
+        while (currentParentId) {
+            if (this.outlineCollapsedNodeIds.delete(currentParentId)) {
+                changed = true;
+            }
+            currentParentId = this.outlineParentById.get(currentParentId);
+        }
+
+        if (changed) {
+            this.renderOutlineNavigation();
+        }
+    }
+
+    /**
+     * 綁定內容捲動事件，驅動大綱 active 同步。
+     */
+    bindOutlineScrollSync() {
+        const headings = this.outlineHeadings;
+        const contentScroll = this.dom.contentScroll || this.dom.contentPanel;
+        if (!contentScroll || headings.length === 0) return;
+
+        this.detachOutlineScrollListener();
+
+        // 使用 requestAnimationFrame 節流，避免滾動時高頻 DOM 讀寫。
+        const handleScroll = () => {
+            if (this.outlineScrollTicking) return;
+            this.outlineScrollTicking = true;
+
+            window.requestAnimationFrame(() => {
+                this.outlineScrollTicking = false;
+                this.updateActiveOutlineByScroll();
+            });
+        };
+
+        contentScroll.addEventListener('scroll', handleScroll, { passive: true });
+        this.removeOutlineScrollListener = () => {
+            contentScroll.removeEventListener('scroll', handleScroll);
+        };
+
+        this.updateActiveOutlineByScroll();
+    }
+
+    /**
+     * 根據內容區可視位置推算當前 active 標題。
+     */
+    updateActiveOutlineByScroll() {
+        const headings = this.outlineHeadings;
+        const contentScroll = this.dom.contentScroll || this.dom.contentPanel;
+        if (!contentScroll || headings.length === 0) return;
+
+        const panelTop = contentScroll.getBoundingClientRect().top;
+        const activationOffset = 96;
+        let activeId = headings[0].id;
+
+        for (const heading of headings) {
+            const headingTop = heading.element.getBoundingClientRect().top - panelTop;
+            if (headingTop <= activationOffset) {
+                activeId = heading.id;
+                continue;
+            }
+            break;
+        }
+
+        this.setActiveOutlineItem(activeId);
+    }
+
+    /**
+     * 套用大綱 active 樣式，僅更新必要節點。
+     */
+    setActiveOutlineItem(headingId, options = {}) {
+        const { forceUpdate = false } = options;
+        const nextActiveId = headingId || '';
+        const previousActiveId = this.activeOutlineId;
+        if (!forceUpdate && previousActiveId === nextActiveId) {
+            return;
+        }
+
+        this.activeOutlineId = nextActiveId;
+
+        // 僅更新前後兩個節點狀態，避免每次全量掃描。
+        if (forceUpdate) {
+            this.outlineLinkById.forEach((linkButton) => {
+                linkButton.classList.remove('active');
+                linkButton.removeAttribute('aria-current');
+            });
+        } else if (previousActiveId) {
+            const previousButton = this.outlineLinkById.get(previousActiveId);
+            if (previousButton) {
+                previousButton.classList.remove('active');
+                previousButton.removeAttribute('aria-current');
+            }
+        }
+
+        const activeButton = this.outlineLinkById.get(this.activeOutlineId);
+        if (!activeButton) return;
+
+        activeButton.classList.add('active');
+        activeButton.setAttribute('aria-current', 'true');
+
+        if (previousActiveId !== this.activeOutlineId) {
+            activeButton.scrollIntoView({
+                block: 'nearest',
+                inline: 'nearest'
             });
         }
     }
 
     /**
-     * 清除選中狀態
+     * 解除內容捲動監聽，避免重複綁定與記憶體洩漏。
      */
-    clearActiveNav() {
-        document.querySelectorAll('.nav-title, .nav-item').forEach(el => {
-            el.classList.remove('active');
-        });
-    }
-
-    /**
-     * 關閉行動版側邊欄
-     */
-    closeMobileSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-
-        if (sidebar && overlay) {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
+    detachOutlineScrollListener() {
+        if (typeof this.removeOutlineScrollListener === 'function') {
+            this.removeOutlineScrollListener();
+            this.removeOutlineScrollListener = null;
         }
-    }
 
-    /**
-     * 設定行動裝置選單
-     */
-    setupMobileMenu() {
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-
-        if (!menuToggle || !sidebar || !overlay) return;
-
-        // 漢堡按鈕點擊
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        });
-
-        // 遮罩層點擊關閉
-        overlay.addEventListener('click', () => {
-            this.closeMobileSidebar();
-        });
+        this.outlineScrollTicking = false;
     }
 }
 

@@ -1,5 +1,6 @@
 /* ===== Justified Image Gallery ===== */
 .image-grid {
+    /* 桌機版使用 flex 進行橫向對齊與換行。 */
     display: flex;
     flex-wrap: wrap;
     gap: var(--grid-gap, 8px);
@@ -26,6 +27,7 @@
 }
 
 .image-grid .media-figure {
+    /* figure 本身不額外留白，交由 grid gap 控制。 */
     margin: 0;
     min-width: 0;
 }
@@ -35,6 +37,7 @@
 }
 
 .image-grid .media-image-figure {
+    /* 圖片 + caption 垂直堆疊。 */
     display: flex;
     flex-direction: column;
 }
@@ -45,6 +48,7 @@
 }
 
 .image-grid .media-image-figure .media-caption {
+    /* caption 與圖片間保留固定間距。 */
     margin-top: var(--spacing-sm);
 }
 

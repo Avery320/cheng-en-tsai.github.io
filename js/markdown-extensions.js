@@ -20,12 +20,18 @@ const MarkdownExtensions = (function () {
         debug: false
     };
 
+    /**
+     * 除錯輸出：僅在 debug 模式下輸出。
+     */
     function log(...args) {
         if (config.debug) {
             console.log('[MarkdownExtensions]', ...args);
         }
     }
 
+    /**
+     * 轉義 HTML 特殊字元，避免注入與破版。
+     */
     function escapeHtml(text = '') {
         return String(text)
             .replace(/&/g, '&amp;')
@@ -35,6 +41,9 @@ const MarkdownExtensions = (function () {
             .replace(/'/g, '&#39;');
     }
 
+    /**
+     * 清理網址輸入，阻擋 javascript: 協定。
+     */
     function sanitizeUrl(rawUrl = '') {
         const trimmed = String(rawUrl).trim();
         if (!trimmed) return '';
@@ -45,16 +54,25 @@ const MarkdownExtensions = (function () {
         return escapeHtml(trimmed);
     }
 
+    /**
+     * 讀取 CSS 變數數值，無效時使用後備值。
+     */
     function getCSSVariable(name, fallback) {
         const value = getComputedStyle(document.documentElement)
             .getPropertyValue(name);
         return parseInt(value, 10) || fallback;
     }
 
+    /**
+     * 判斷是否為行動版 viewport。
+     */
     function isMobileViewport() {
         return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
     }
 
+    /**
+     * 取得圖片在 grid 中的實際排版元素。
+     */
     function getGridItemElement(image) {
         const mediaFigure = image.closest('.media-image-figure');
         if (mediaFigure && mediaFigure.closest('.image-grid')) {
@@ -64,6 +82,9 @@ const MarkdownExtensions = (function () {
         return image;
     }
 
+    /**
+     * 清除圖片 justify 產生的 inline style。
+     */
     function resetImageStyles(images) {
         images.forEach((img) => {
             const gridItem = getGridItemElement(img);
@@ -78,6 +99,9 @@ const MarkdownExtensions = (function () {
         });
     }
 
+    /**
+     * 取得安全的圖片長寬比，並限制在合理範圍。
+     */
     function getSafeAspectRatio(image) {
         const width = image.naturalWidth;
         const height = image.naturalHeight;
@@ -94,6 +118,9 @@ const MarkdownExtensions = (function () {
         return Math.min(Math.max(rawRatio, MIN_ASPECT_RATIO), MAX_ASPECT_RATIO);
     }
 
+    /**
+     * 等待圖片載入完成（成功或失敗皆返回）。
+     */
     function waitForImageLoad(image) {
         return new Promise((resolve) => {
             if (image.complete) {
@@ -112,12 +139,18 @@ const MarkdownExtensions = (function () {
         });
     }
 
+    /**
+     * 渲染媒體說明文字（可選）。
+     */
     function renderCaption(rawTitle = '') {
         const title = rawTitle.trim();
         if (!title) return '';
         return `<figcaption class="media-caption">${escapeHtml(title)}</figcaption>`;
     }
 
+    /**
+     * 產生統一的 figure 結構，並附加可選 caption。
+     */
     function renderFigure(contentHtml, captionTitle = '', classNames = []) {
         const classes = ['media-figure', ...classNames].join(' ').trim();
         const caption = renderCaption(captionTitle);
@@ -129,6 +162,9 @@ const MarkdownExtensions = (function () {
         return `<figure class="${classes}">\n${contentHtml}\n</figure>`;
     }
 
+    /**
+     * 渲染頁首封面區塊。
+     */
     function renderCover(url) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
@@ -136,6 +172,9 @@ const MarkdownExtensions = (function () {
         return `<div class="notion-cover"><img src="${safeUrl}" alt="Cover" loading="lazy"></div>`;
     }
 
+    /**
+     * 渲染圖片 figure（alt 同時作為 caption 來源）。
+     */
     function renderImage(url, altText) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
@@ -147,6 +186,9 @@ const MarkdownExtensions = (function () {
         return renderFigure(imageHtml, cleanAlt, ['media-image-figure']);
     }
 
+    /**
+     * 渲染影片播放器區塊。
+     */
     function renderVideo(url, title) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
@@ -159,6 +201,9 @@ const MarkdownExtensions = (function () {
         return renderFigure(videoHtml, cleanTitle);
     }
 
+    /**
+     * 渲染 iframe 嵌入區塊。
+     */
     function renderIframe(url, title) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
@@ -170,12 +215,18 @@ const MarkdownExtensions = (function () {
         return renderFigure(iframeHtml, cleanTitle);
     }
 
+    /**
+     * 生成平均分配比例（例如 3 欄 -> 33.333...）。
+     */
     function getEvenRatios(count) {
         if (count <= 0) return [];
         const evenRatio = 100 / count;
         return Array.from({ length: count }, () => evenRatio);
     }
 
+    /**
+     * 解析 layout 比例字串，失敗時回退為平均比例。
+     */
     function parseLayoutRatios(rawRatios, slotCount) {
         const fallbackRatios = getEvenRatios(slotCount);
         if (!rawRatios) return fallbackRatios;
@@ -195,6 +246,9 @@ const MarkdownExtensions = (function () {
         );
     }
 
+    /**
+     * 將比例陣列轉為 CSS grid-template-columns 片段。
+     */
     function toGridColumnsTemplate(ratios) {
         if (!Array.isArray(ratios) || ratios.length === 0) {
             return 'minmax(0, 1fr)';
@@ -205,6 +259,9 @@ const MarkdownExtensions = (function () {
             .join(' ');
     }
 
+    /**
+     * 解析 @video/@iframe 這類指令格式。
+     */
     function parseMediaDirective(src, directiveName) {
         const directivePattern = new RegExp(`^@${directiveName}\\s*\\[([^\\]]*)\\]\\s*\\((.*)\\)\\s*(?:\\n|$)`);
         const match = directivePattern.exec(src);
@@ -217,9 +274,13 @@ const MarkdownExtensions = (function () {
         };
     }
 
+    /**
+     * 建立 marked 擴充：layout/grid/cover/video/iframe/image。
+     */
     function buildMarkedExtensions() {
         return [
             {
+                // :::layout[ratio,ratio] ... :::end-layout
                 name: 'layoutBlock',
                 level: 'block',
                 start(src) {
@@ -272,6 +333,7 @@ const MarkdownExtensions = (function () {
                 }
             },
             {
+                // :::grid ... :::
                 name: 'gridBlock',
                 level: 'block',
                 start(src) {
@@ -296,6 +358,7 @@ const MarkdownExtensions = (function () {
                 }
             },
             {
+                // @cover(url)
                 name: 'coverBlock',
                 level: 'block',
                 start(src) {
@@ -317,6 +380,7 @@ const MarkdownExtensions = (function () {
                 }
             },
             {
+                // @video[title](url)
                 name: 'videoBlock',
                 level: 'block',
                 start(src) {
@@ -339,6 +403,7 @@ const MarkdownExtensions = (function () {
                 }
             },
             {
+                // @iframe[title](url)
                 name: 'iframeBlock',
                 level: 'block',
                 start(src) {
@@ -361,6 +426,7 @@ const MarkdownExtensions = (function () {
                 }
             },
             {
+                // ![alt](url)
                 name: 'imageBlock',
                 level: 'block',
                 start(src) {
@@ -385,6 +451,9 @@ const MarkdownExtensions = (function () {
         ];
     }
 
+    /**
+     * 僅初始化一次 marked extension 設定。
+     */
     function ensureMarkedConfigured() {
         if (markedConfigured) return true;
 
@@ -400,6 +469,9 @@ const MarkdownExtensions = (function () {
         return true;
     }
 
+    /**
+     * 依容器寬度與圖片比例計算 justified 目標寬度。
+     */
     function calculateJustifiedWidths(grid, images) {
         const containerWidth = grid.clientWidth;
         const gap = getCSSVariable('--grid-gap', config.gridGap);
@@ -450,15 +522,24 @@ const MarkdownExtensions = (function () {
     }
 
     return {
+        /**
+         * 擴充模組版本。
+         */
         get version() {
             return VERSION;
         },
 
+        /**
+         * 更新模組設定值。
+         */
         configure(options = {}) {
             config = { ...config, ...options };
             log('configure:', config);
         },
 
+        /**
+         * 解析 Markdown 並套用自訂語法。
+         */
         render(markdown) {
             if (!markdown) return '';
 
@@ -471,10 +552,16 @@ const MarkdownExtensions = (function () {
             return window.marked.parse(markdown);
         },
 
+        /**
+         * render 的別名，保留語意一致性。
+         */
         parse(markdown) {
             return this.render(markdown);
         },
 
+        /**
+         * 對所有 .image-grid 重新套用 justify 計算。
+         */
         justifyImages() {
             const grids = document.querySelectorAll('.image-grid');
 
@@ -493,6 +580,9 @@ const MarkdownExtensions = (function () {
             });
         },
 
+        /**
+         * 回傳目前支援的自訂語法說明。
+         */
         getSupportedSyntax() {
             return [
                 { syntax: '@cover(url)', description: '扉頁封面圖' },
