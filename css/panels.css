@@ -15,7 +15,9 @@
 
 /* ===== Panel Layout ===== */
 .container {
+    /* App 外層改為上下兩層：上方工具列、下方工作區。 */
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
     height: 100vh;
     /* 新版瀏覽器優先用動態視窗高度，避免行動端網址列造成高度跳動。 */
@@ -23,10 +25,18 @@
     overflow: hidden;
 }
 
+.workspace {
+    /* 工具列下方的主工作區：左/中內容 + 右側導航。 */
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    overflow: hidden;
+}
+
 .main-area {
     flex: 1 1 auto;
     display: flex;
-    flex-direction: column;
+    min-height: 0;
     min-width: 0;
     overflow: hidden;
 }
@@ -314,6 +324,11 @@
         z-index: 1001;
     }
 
+    .workspace {
+        /* 工具列 fixed 時，主工作區統一下移，避免被覆蓋。 */
+        padding-top: var(--toolbar-height);
+    }
+
     .menu-toggle {
         display: flex;
         background: transparent;
@@ -326,7 +341,6 @@
 
     .content-wrapper {
         padding: var(--panel-content-padding-mobile);
-        padding-top: calc(var(--toolbar-height) + var(--panel-content-padding-mobile));
     }
 
     .outline-panel {
