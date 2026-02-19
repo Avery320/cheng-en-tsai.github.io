@@ -1,0 +1,213 @@
+/* ===== Panel Layout ===== */
+.container {
+    display: flex;
+    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.main-area {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.content-panel {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: clamp(1.25rem, 4vw, var(--spacing-panel));
+}
+
+.sidebar {
+    flex: 0 0 var(--sidebar-width);
+    width: var(--sidebar-width);
+    background: var(--bg-secondary);
+    padding: clamp(1.5rem, 2.5vw, var(--spacing-xl));
+    overflow-y: auto;
+}
+
+.content-wrapper {
+    width: min(100%, var(--content-max-width));
+    margin: 0 auto;
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+}
+
+/* ===== Navigation ===== */
+.nav-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.nav-title {
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: var(--spacing-sm) 0;
+    transition: color var(--transition);
+}
+
+.nav-title:hover {
+    color: var(--text-secondary);
+}
+
+.nav-list {
+    list-style: none;
+    margin-top: var(--spacing-sm);
+    display: none;
+}
+
+.nav-list.expanded {
+    display: block;
+}
+
+.nav-item {
+    color: var(--text-secondary);
+    padding: var(--spacing-sm) 0 var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.nav-item:hover {
+    color: var(--text-primary);
+}
+
+.nav-item.active {
+    color: var(--text-primary);
+}
+
+/* ===== Toolbar ===== */
+.top-toolbar {
+    display: flex;
+    flex-shrink: 0;
+    height: var(--toolbar-height);
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 var(--spacing-md);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toolbar-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-medium);
+    color: var(--text-primary);
+}
+
+.menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text-primary);
+    transition: var(--transition);
+}
+
+/* ===== Overlay ===== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--overlay-color);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ===== Responsive Panels ===== */
+@media (max-width: 1279px) {
+    :root {
+        --sidebar-width: clamp(220px, 26vw, 320px);
+        --content-max-width: 920px;
+    }
+
+    .content-panel {
+        padding: clamp(1.125rem, 3.5vw, 2.5rem);
+    }
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: clamp(210px, 28vw, 280px);
+        --content-max-width: 840px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-area {
+        flex: 1;
+    }
+
+    .top-toolbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+    }
+
+    .menu-toggle {
+        display: flex;
+        position: static;
+        background: transparent;
+    }
+
+    .content-panel {
+        padding: clamp(1rem, 5vw, var(--spacing-lg));
+        padding-top: calc(var(--toolbar-height) + clamp(1rem, 5vw, var(--spacing-lg)));
+    }
+
+    .sidebar {
+        position: fixed;
+        top: var(--toolbar-height);
+        right: calc(-1 * var(--mobile-sidebar-width));
+        width: var(--mobile-sidebar-width);
+        height: calc(100vh - var(--toolbar-height));
+        height: calc(100dvh - var(--toolbar-height));
+        z-index: 1000;
+        transition: right var(--transition);
+    }
+
+    .sidebar.open {
+        right: 0;
+    }
+
+    .sidebar-overlay {
+        top: var(--toolbar-height);
+        height: calc(100vh - var(--toolbar-height));
+        height: calc(100dvh - var(--toolbar-height));
+    }
+}
+
+@media (max-width: 480px) {
+    .toolbar-title {
+        font-size: var(--text-base);
+    }
+}
