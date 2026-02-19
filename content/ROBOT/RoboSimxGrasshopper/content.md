@@ -10,7 +10,7 @@
 
 
 ## Demo
-@iframe[](https://ik.imagekit.io/cheng3n/RoboSim/connectgh.mp4)
+@video[](https://ik.imagekit.io/cheng3n/RoboSim/connectgh.mp4)
 
 ## RoboSim Interface & Rhino/Grasshopper
 :::grid

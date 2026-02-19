@@ -23,16 +23,20 @@ class PortfolioApp {
     handleInitialRoute() {
         const hash = window.location.hash.slice(1);
         if (!hash || hash === 'home') {
-            this.loadLanding(false);
-        } else if (hash === 'about') {
+            this.updateHash('about');
+            return;
+        }
+
+        if (hash === 'about') {
             this.loadAbout(false);
+            return;
+        }
+
+        const [category, id] = hash.split('/');
+        if (category && id) {
+            this.loadProject(category, id, false);
         } else {
-            const [category, id] = hash.split('/');
-            if (category && id) {
-                this.loadProject(category, id, false);
-            } else {
-                this.loadAbout(false);
-            }
+            this.updateHash('about');
         }
     }
 
@@ -187,22 +191,6 @@ class PortfolioApp {
     }
 
     /**
-     * 載入扉頁內容
-     */
-    async loadLanding(updateHash = true) {
-        if (updateHash) this.updateHash('home');
-        this.clearActiveNav();
-
-        try {
-            const response = await fetch('content/landing.md');
-            const markdown = await response.text();
-            this.renderContent(markdown);
-        } catch (error) {
-            this.renderContent('# Home\n\n載入失敗');
-        }
-    }
-
-    /**
      * 載入專案內容
      */
     async loadProject(category, id, updateHash = true) {
@@ -220,84 +208,43 @@ class PortfolioApp {
     }
 
     /**
-     * 處理圖片路徑
+     * 將專案內相對資源路徑轉為完整路徑
+     * - ![...](assets/...)
+     * - @video[...](assets/...)
+     * - @iframe[...](assets/...)
+     * - @cover(assets/...)
      */
     processImagePaths(markdown, category, id) {
-        return markdown.replace(
-            /!\[(.*?)\]\(\s*assets\/(.*?)\)/g,
-            `![$1](content/${category}/${id}/assets/$2)`
+        const basePath = `content/${category}/${id}`;
+        const resolveAssetPath = (url) => {
+            const cleanUrl = url.trim();
+            if (!cleanUrl.startsWith('assets/')) return cleanUrl;
+            return `${basePath}/${cleanUrl}`;
+        };
+
+        let processed = markdown;
+
+        processed = processed.replace(
+            /!\[([^\]]*)\]\(\s*(assets\/[^)\s]+)\s*\)/g,
+            (match, title, url) => `![${title}](${resolveAssetPath(url)})`
         );
-    }
 
-    /**
-     * 判斷段落是否僅由圖片、換行與空白組成
-     */
-    isImageOnlyParagraph(paragraph) {
-        if (!paragraph || paragraph.tagName !== 'P') return false;
+        processed = processed.replace(
+            /@video\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+            (match, title, url) => `@video[${title}](${resolveAssetPath(url)})`
+        );
 
-        const hasImage = Array.from(paragraph.children)
-            .some((child) => child.tagName === 'IMG');
-        if (!hasImage) return false;
+        processed = processed.replace(
+            /@iframe\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+            (match, title, url) => `@iframe[${title}](${resolveAssetPath(url)})`
+        );
 
-        return Array.from(paragraph.childNodes).every((node) => {
-            if (node.nodeType === 3) {
-                return node.textContent.trim() === '';
-            }
+        processed = processed.replace(
+            /@cover\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+            (match, url) => `@cover(${resolveAssetPath(url)})`
+        );
 
-            if (node.nodeType !== 1) {
-                return false;
-            }
-
-            return node.tagName === 'IMG' || node.tagName === 'BR';
-        });
-    }
-
-    /**
-     * 建立帶標題的圖片節點
-     */
-    createCaptionedImageNode(img, inGrid) {
-        const title = (img.getAttribute('alt') || '').trim();
-        if (!title) return img;
-
-        const figure = document.createElement('figure');
-        figure.className = 'media-figure media-image-figure';
-        if (inGrid) {
-            figure.classList.add('grid-media-item');
-        }
-
-        const caption = document.createElement('figcaption');
-        caption.className = 'media-caption';
-        caption.textContent = title;
-
-        figure.appendChild(img);
-        figure.appendChild(caption);
-        return figure;
-    }
-
-    /**
-     * 將 Markdown 圖片 alt 轉為圖片下方標題
-     * 語法：![title](url)
-     */
-    applyImageCaptions(wrapper) {
-        const paragraphs = Array.from(wrapper.querySelectorAll('p'));
-
-        paragraphs.forEach((paragraph) => {
-            if (!this.isImageOnlyParagraph(paragraph)) return;
-
-            const inGrid = Boolean(paragraph.closest('.image-grid'));
-            const imageNodes = Array.from(paragraph.querySelectorAll('img'))
-                .filter((img) => !img.closest('.notion-cover'));
-
-            if (imageNodes.length === 0) return;
-
-            const fragment = document.createDocumentFragment();
-            imageNodes.forEach((img) => {
-                const renderedNode = this.createCaptionedImageNode(img, inGrid);
-                fragment.appendChild(renderedNode);
-            });
-
-            paragraph.replaceWith(fragment);
-        });
+        return processed;
     }
 
     /**
@@ -307,15 +254,11 @@ class PortfolioApp {
         const wrapper = document.getElementById('contentWrapper');
         if (!wrapper) return;
 
-        let processed = markdown;
-        if (window.MarkdownExtensions) {
-            processed = MarkdownExtensions.parse(markdown);
-        }
-
-        const html = marked.parse(processed);
+        const html = (window.MarkdownExtensions && typeof MarkdownExtensions.render === 'function')
+            ? MarkdownExtensions.render(markdown)
+            : marked.parse(markdown);
 
         wrapper.innerHTML = html;
-        this.applyImageCaptions(wrapper);
         wrapper.classList.remove('fade-in');
         void wrapper.offsetWidth;
         wrapper.classList.add('fade-in');

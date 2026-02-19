@@ -14,9 +14,9 @@
 - RoboSim 以上述功能為基礎，延伸至 **No-code 卡片控制方法** 與 [**Grasshopper 整合**](#ROBOT/RoboSimxGrasshopper)。
 
 :::grid
-![urdf_loader](https://ik.imagekit.io/cheng3n/RoboSim/urdf_loader.mov/ik-video.mp4?updatedAt=1770955681418)
-![robosim_tcp](https://ik.imagekit.io/cheng3n/RoboSim/tcp_ctrl.mov)
-![ros_topic](https://ik.imagekit.io/cheng3n/RoboSim/ros_topic.mov/ik-video.mp4?updatedAt=1770956633417)
+@video[urdf_loader](https://ik.imagekit.io/cheng3n/RoboSim/urdf_loader.mov/ik-video.mp4?updatedAt=1770955681418)
+@video[robosim_tcp](https://ik.imagekit.io/cheng3n/RoboSim/tcp_ctrl.mov)
+@video[ros_topic](https://ik.imagekit.io/cheng3n/RoboSim/ros_topic.mov/ik-video.mp4?updatedAt=1770956633417)
 :::
 
 ### RoboSim Interface
@@ -45,5 +45,4 @@
 ## [Demo](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html)
 - <目前僅開放前端操作，無逆向運動學功能。>
 @iframe[](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html)
-
 

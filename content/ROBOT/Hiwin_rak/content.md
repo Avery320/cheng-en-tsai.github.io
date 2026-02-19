@@ -1,4 +1,4 @@
-<!-- @cover[] -->
+<!-- @cover(https://example.com/cover.jpg) -->
 
 # Hiwin Robot Arm Kinematics (hiwin_rak)
 
@@ -53,7 +53,3 @@ Hiwin_rak 的使用者介面提供基本的控制按鈕與狀態顯示，方便�
 
 ## Demo
 < to be continue...>
-
-
-![rviz](content/ROBOT/Hiwin_rak/asset/rviz.png)
-![ui](content/ROBOT/Hiwin_rak/asset/ui.png)

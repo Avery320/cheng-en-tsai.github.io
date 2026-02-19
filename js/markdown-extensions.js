@@ -1,75 +1,69 @@
 /**
  * Markdown Extensions
- * 自訂 Markdown 語法擴充模組
- * 
- * @version 1.0.0
- * @author Portfolio Project
- * @description 提供 Markdown 自訂語法解析與 Justified Image Gallery 功能
- * 
- * @example
- * // 解析自訂語法
- * const html = MarkdownExtensions.parse(markdownContent);
- * 
- * // 計算圖片排版
- * MarkdownExtensions.justifyImages();
- * 
- * // 自訂設定
- * MarkdownExtensions.configure({ gridHeight: 300 });
+ * 統一管理自訂 Markdown 語法與圖片網格排版。
  */
 
 const MarkdownExtensions = (function () {
     'use strict';
 
-    // ===== 私有變數 =====
-    const VERSION = '1.0.0';
+    const VERSION = '2.0.0';
     const MOBILE_BREAKPOINT = 768;
     const DEFAULT_ASPECT_RATIO = 16 / 9;
     const MIN_ASPECT_RATIO = 0.2;
     const MAX_ASPECT_RATIO = 6;
 
-    // 預設設定
+    let markedConfigured = false;
+
     let config = {
         gridHeight: 280,
         gridGap: 8,
         debug: false
     };
 
-    // ===== 私有方法 =====
-
-    /**
-     * 記錄 debug 訊息
-     * @private
-     */
     function log(...args) {
         if (config.debug) {
             console.log('[MarkdownExtensions]', ...args);
         }
     }
 
-    /**
-     * 從 CSS 變數讀取設定值
-     * @private
-     */
+    function escapeHtml(text = '') {
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function sanitizeUrl(rawUrl = '') {
+        const trimmed = String(rawUrl).trim();
+        if (!trimmed) return '';
+
+        const lowered = trimmed.toLowerCase();
+        if (lowered.startsWith('javascript:')) return '';
+
+        return escapeHtml(trimmed);
+    }
+
     function getCSSVariable(name, fallback) {
         const value = getComputedStyle(document.documentElement)
             .getPropertyValue(name);
-        return parseInt(value) || fallback;
+        return parseInt(value, 10) || fallback;
     }
 
-    /**
-     * 是否為小螢幕
-     * @private
-     * @returns {boolean}
-     */
     function isMobileViewport() {
         return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
     }
 
-    /**
-     * 清除圖片寬度設定，交給 CSS 響應式控制
-     * @private
-     * @param {HTMLImageElement[]} images
-     */
+    function getGridItemElement(image) {
+        const mediaFigure = image.closest('.media-image-figure');
+        if (mediaFigure && mediaFigure.closest('.image-grid')) {
+            return mediaFigure;
+        }
+
+        return image;
+    }
+
     function resetImageStyles(images) {
         images.forEach((img) => {
             const gridItem = getGridItemElement(img);
@@ -84,22 +78,6 @@ const MarkdownExtensions = (function () {
         });
     }
 
-    /**
-     * 取得網格排版單位（圖片本身或其外層 caption 容器）
-     * @private
-     * @param {HTMLImageElement} image
-     * @returns {HTMLElement}
-     */
-    function getGridItemElement(image) {
-        return image.closest('.grid-media-item') || image;
-    }
-
-    /**
-     * 取得可用的圖片寬高比，避免 NaN / Infinity 導致計算失敗
-     * @private
-     * @param {HTMLImageElement} image
-     * @returns {number}
-     */
     function getSafeAspectRatio(image) {
         const width = image.naturalWidth;
         const height = image.naturalHeight;
@@ -116,147 +94,96 @@ const MarkdownExtensions = (function () {
         return Math.min(Math.max(rawRatio, MIN_ASPECT_RATIO), MAX_ASPECT_RATIO);
     }
 
-    // ===== 解析器 =====
+    function waitForImageLoad(image) {
+        return new Promise((resolve) => {
+            if (image.complete) {
+                resolve(image);
+                return;
+            }
 
-    /**
-     * 解析圖片網格語法
-     * @private
-     * @param {string} markdown
-     * @returns {string}
-     */
-    function parseGrid(markdown) {
-        return markdown.replace(/:::grid([\s\S]*?):::/g, (match, content) => {
-            log('parseGrid:', content.trim().substring(0, 50) + '...');
-            const cleanContent = content.trim();
-            return `<div class="image-grid">\n\n${cleanContent}\n\n</div>`;
+            const finalize = () => {
+                image.removeEventListener('load', finalize);
+                image.removeEventListener('error', finalize);
+                resolve(image);
+            };
+
+            image.addEventListener('load', finalize, { once: true });
+            image.addEventListener('error', finalize, { once: true });
         });
     }
 
-    /**
-     * 解析封面語法
-     * @private
-     * @param {string} markdown
-     * @returns {string}
-     */
-    function parseCover(markdown) {
-        return markdown.replace(/@cover\[(.*?)\]/g, (match, url) => {
-            log('parseCover:', url);
-            return `<div class="notion-cover"><img src="${url}" alt="Cover"></div>`;
-        });
-    }
-
-    /**
-     * 轉義 HTML 文字，避免插入危險字元
-     * @private
-     * @param {string} text
-     * @returns {string}
-     */
-    function escapeHtml(text = '') {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
-    /**
-     * 依標題文字建立 caption
-     * @private
-     * @param {string} rawTitle
-     * @returns {string}
-     */
     function renderCaption(rawTitle = '') {
         const title = rawTitle.trim();
         if (!title) return '';
         return `<figcaption class="media-caption">${escapeHtml(title)}</figcaption>`;
     }
 
-    /**
-     * 依需求包裝媒體 caption
-     * @private
-     * @param {string} mediaHtml
-     * @param {string} title
-     * @returns {string}
-     */
-    function renderMediaWithOptionalCaption(mediaHtml, title) {
-        const captionHtml = renderCaption(title);
-        if (!captionHtml) return mediaHtml;
-        return `<figure class="media-figure">\n${mediaHtml}\n${captionHtml}\n</figure>`;
+    function renderFigure(contentHtml, captionTitle = '', classNames = []) {
+        const classes = ['media-figure', ...classNames].join(' ').trim();
+        const caption = renderCaption(captionTitle);
+
+        if (caption) {
+            return `<figure class="${classes}">\n${contentHtml}\n${caption}\n</figure>`;
+        }
+
+        return `<figure class="${classes}">\n${contentHtml}\n</figure>`;
     }
 
-    /**
-     * 解析 iframe 語法
-     * 語法：@iframe[title](url)
-     * @private
-     * @param {string} markdown
-     * @returns {string}
-     */
-    function parseIframe(markdown) {
-        return markdown.replace(/@iframe\s*\[(.*?)\]\s*\((.*?)\)/g, (match, title, url) => {
-            const cleanTitle = title.trim();
-            const cleanUrl = url.trim();
+    function renderCover(url) {
+        const safeUrl = sanitizeUrl(url);
+        if (!safeUrl) return '';
 
-            log('parseIframe:', { title: cleanTitle, url: cleanUrl });
-            if (!cleanUrl) return '';
-
-            const safeUrl = escapeHtml(cleanUrl);
-            const safeTitle = escapeHtml(cleanTitle || 'Embedded content');
-            const iframeHtml = `<div class="iframe-container"><iframe src="${safeUrl}" loading="lazy" title="${safeTitle}"></iframe></div>`;
-            return renderMediaWithOptionalCaption(iframeHtml, cleanTitle);
-        });
+        return `<div class="notion-cover"><img src="${safeUrl}" alt="Cover" loading="lazy"></div>`;
     }
 
-    /**
-     * 解析影片語法
-     * 語法：@video[title](url)
-     * @private
-     * @param {string} markdown
-     * @returns {string}
-     */
-    function parseVideo(markdown) {
-        return markdown.replace(/@video\s*\[(.*?)\]\s*\((.*?)\)/g, (match, title, url) => {
-            const cleanTitle = title.trim();
-            const cleanUrl = url.trim();
+    function renderImage(url, altText) {
+        const safeUrl = sanitizeUrl(url);
+        if (!safeUrl) return '';
 
-            log('parseVideo:', { title: cleanTitle, url: cleanUrl });
-            if (!cleanUrl) return '';
+        const cleanAlt = String(altText || '').trim();
+        const safeAlt = escapeHtml(cleanAlt);
+        const imageHtml = `<img src="${safeUrl}" alt="${safeAlt}" loading="lazy">`;
 
-            const safeUrl = escapeHtml(cleanUrl);
-            const safeTitle = escapeHtml(cleanTitle);
-            const titleAttribute = cleanTitle ? ` title="${safeTitle}"` : '';
-            const videoHtml = `<video controls class="project-video"${titleAttribute}><source src="${safeUrl}" type="video/mp4"></video>`;
-            return renderMediaWithOptionalCaption(videoHtml, cleanTitle);
-        });
+        return renderFigure(imageHtml, cleanAlt, ['media-image-figure']);
     }
 
-    /**
-     * 取得平均欄寬百分比
-     * @private
-     * @param {number} count
-     * @returns {number[]}
-     */
+    function renderVideo(url, title) {
+        const safeUrl = sanitizeUrl(url);
+        if (!safeUrl) return '';
+
+        const cleanTitle = String(title || '').trim();
+        const safeTitle = escapeHtml(cleanTitle);
+        const titleAttribute = cleanTitle ? ` title="${safeTitle}"` : '';
+        const videoHtml = `<video controls class="project-video"${titleAttribute}><source src="${safeUrl}" type="video/mp4"></video>`;
+
+        return renderFigure(videoHtml, cleanTitle);
+    }
+
+    function renderIframe(url, title) {
+        const safeUrl = sanitizeUrl(url);
+        if (!safeUrl) return '';
+
+        const cleanTitle = String(title || '').trim();
+        const safeTitle = escapeHtml(cleanTitle || 'Embedded content');
+        const iframeHtml = `<div class="iframe-container"><iframe src="${safeUrl}" loading="lazy" title="${safeTitle}"></iframe></div>`;
+
+        return renderFigure(iframeHtml, cleanTitle);
+    }
+
     function getEvenRatios(count) {
         if (count <= 0) return [];
         const evenRatio = 100 / count;
         return Array.from({ length: count }, () => evenRatio);
     }
 
-    /**
-     * 解析欄寬百分比設定並標準化為 100%
-     * @private
-     * @param {string} rawRatios
-     * @param {number} slotCount
-     * @returns {number[]}
-     */
     function parseLayoutRatios(rawRatios, slotCount) {
         const fallbackRatios = getEvenRatios(slotCount);
         if (!rawRatios) return fallbackRatios;
 
         const ratioValues = rawRatios
             .split(/[^0-9.]+/g)
-            .map(value => parseFloat(value))
-            .filter(value => Number.isFinite(value) && value > 0);
+            .map((value) => parseFloat(value))
+            .filter((value) => Number.isFinite(value) && value > 0);
 
         if (ratioValues.length !== slotCount) return fallbackRatios;
 
@@ -268,12 +195,6 @@ const MarkdownExtensions = (function () {
         );
     }
 
-    /**
-     * 依比例轉換為 grid-template-columns 字串
-     * @private
-     * @param {number[]} ratios
-     * @returns {string}
-     */
     function toGridColumnsTemplate(ratios) {
         if (!Array.isArray(ratios) || ratios.length === 0) {
             return 'minmax(0, 1fr)';
@@ -284,105 +205,224 @@ const MarkdownExtensions = (function () {
             .join(' ');
     }
 
-    /**
-     * 轉換 layout 內單一欄位內容
-     * @private
-     * @param {string} slotMarkdown
-     * @returns {string}
-     */
-    function renderLayoutSlot(slotMarkdown) {
-        const cleanSlotMarkdown = slotMarkdown.trim();
-        if (!cleanSlotMarkdown) return '';
+    function parseMediaDirective(src, directiveName) {
+        const directivePattern = new RegExp(`^@${directiveName}\\s*\\[([^\\]]*)\\]\\s*\\((.*)\\)\\s*(?:\\n|$)`);
+        const match = directivePattern.exec(src);
+        if (!match) return null;
 
-        let processed = cleanSlotMarkdown;
-        processed = parseGrid(processed);
-        processed = parseIframe(processed);
-        processed = parseVideo(processed);
+        return {
+            raw: match[0],
+            title: match[1].trim(),
+            url: match[2].trim()
+        };
+    }
 
-        if (window.marked && typeof marked.parse === 'function') {
-            return marked.parse(processed);
+    function buildMarkedExtensions() {
+        return [
+            {
+                name: 'layoutBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf(':::layout');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const match = /^:::layout(?:\[(.*?)\])?[ \t]*\n([\s\S]*?)\n:::end-layout[ \t]*(?:\n|$)/.exec(src);
+                    if (!match) return undefined;
+
+                    const raw = match[0];
+                    const rawRatios = (match[1] || '').trim();
+                    const layoutContent = match[2] || '';
+
+                    const slots = layoutContent
+                        .split(/^\s*@slot\s*$/gm)
+                        .map((slot) => slot.trim())
+                        .filter(Boolean);
+
+                    if (slots.length === 0) {
+                        return {
+                            type: 'layoutBlock',
+                            raw,
+                            ratios: [100],
+                            slotTokens: [this.lexer.blockTokens('', [])]
+                        };
+                    }
+
+                    const normalizedRatios = parseLayoutRatios(rawRatios, slots.length);
+                    const slotTokens = slots.map((slotMarkdown) =>
+                        this.lexer.blockTokens(slotMarkdown, [])
+                    );
+
+                    log('layoutBlock:', { slots: slots.length, ratios: normalizedRatios });
+
+                    return {
+                        type: 'layoutBlock',
+                        raw,
+                        ratios: normalizedRatios,
+                        slotTokens
+                    };
+                },
+                renderer(token) {
+                    const template = toGridColumnsTemplate(token.ratios);
+                    const slotHtml = token.slotTokens
+                        .map((slotTokenList) => `<div class="media-slot">\n${this.parser.parse(slotTokenList)}\n</div>`)
+                        .join('\n');
+
+                    return `<div class="media-layout" style="--media-columns:${template};">\n${slotHtml}\n</div>`;
+                }
+            },
+            {
+                name: 'gridBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf(':::grid');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const match = /^:::grid[ \t]*\n([\s\S]*?)\n:::[ \t]*(?:\n|$)/.exec(src);
+                    if (!match) return undefined;
+
+                    const raw = match[0];
+                    const gridContent = match[1] || '';
+
+                    return {
+                        type: 'gridBlock',
+                        raw,
+                        tokens: this.lexer.blockTokens(gridContent, [])
+                    };
+                },
+                renderer(token) {
+                    return `<div class="image-grid">\n${this.parser.parse(token.tokens)}\n</div>`;
+                }
+            },
+            {
+                name: 'coverBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf('@cover');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const match = /^@cover\s*\((.*)\)\s*(?:\n|$)/.exec(src);
+                    if (!match) return undefined;
+
+                    return {
+                        type: 'coverBlock',
+                        raw: match[0],
+                        url: match[1].trim()
+                    };
+                },
+                renderer(token) {
+                    return renderCover(token.url);
+                }
+            },
+            {
+                name: 'videoBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf('@video');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const parsed = parseMediaDirective(src, 'video');
+                    if (!parsed) return undefined;
+
+                    return {
+                        type: 'videoBlock',
+                        raw: parsed.raw,
+                        title: parsed.title,
+                        url: parsed.url
+                    };
+                },
+                renderer(token) {
+                    return renderVideo(token.url, token.title);
+                }
+            },
+            {
+                name: 'iframeBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf('@iframe');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const parsed = parseMediaDirective(src, 'iframe');
+                    if (!parsed) return undefined;
+
+                    return {
+                        type: 'iframeBlock',
+                        raw: parsed.raw,
+                        title: parsed.title,
+                        url: parsed.url
+                    };
+                },
+                renderer(token) {
+                    return renderIframe(token.url, token.title);
+                }
+            },
+            {
+                name: 'imageBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf('![');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const match = /^[ \t]{0,3}!\[([^\]]*)\]\((.*)\)\s*(?:\n|$)/.exec(src);
+                    if (!match) return undefined;
+
+                    return {
+                        type: 'imageBlock',
+                        raw: match[0],
+                        altText: match[1],
+                        url: match[2].trim()
+                    };
+                },
+                renderer(token) {
+                    return renderImage(token.url, token.altText);
+                }
+            }
+        ];
+    }
+
+    function ensureMarkedConfigured() {
+        if (markedConfigured) return true;
+
+        if (!window.marked || typeof window.marked.use !== 'function' || typeof window.marked.parse !== 'function') {
+            return false;
         }
 
-        return processed;
+        window.marked.use({
+            extensions: buildMarkedExtensions()
+        });
+
+        markedConfigured = true;
+        return true;
     }
 
-    /**
-     * 解析多欄混合排版語法
-     * 語法：
-     * :::layout[40,60]
-     * @slot
-     * 左欄內容
-     * @slot
-     * 右欄內容
-     * :::end-layout
-     *
-     * @private
-     * @param {string} markdown
-     * @returns {string}
-     */
-    function parseLayout(markdown) {
-        return markdown.replace(
-            /:::layout(?:\[(.*?)\])?\s*([\s\S]*?):::end-layout/g,
-            (match, rawRatios = '', content = '') => {
-                const slotContents = content
-                    .split(/^\s*@slot\s*$/gm)
-                    .map(slot => slot.trim())
-                    .filter(Boolean);
-
-                if (slotContents.length === 0) return '';
-
-                const normalizedRatios = parseLayoutRatios(rawRatios, slotContents.length);
-                const gridColumnsTemplate = toGridColumnsTemplate(normalizedRatios);
-
-                const slotHtml = slotContents
-                    .map((slotContent) => {
-                        const renderedSlot = renderLayoutSlot(slotContent);
-                        return `<div class="media-slot">\n${renderedSlot}\n</div>`;
-                    })
-                    .join('\n');
-
-                log('parseLayout:', {
-                    slots: slotContents.length,
-                    ratios: normalizedRatios
-                });
-
-                return `<div class="media-layout" style="--media-columns:${gridColumnsTemplate};">\n${slotHtml}\n</div>`;
-            }
-        );
-    }
-
-    // ===== Justified Gallery =====
-
-    /**
-     * 計算單一網格的圖片寬度
-     * @private
-     * @param {HTMLElement} grid
-     * @param {HTMLImageElement[]} images
-     */
     function calculateJustifiedWidths(grid, images) {
         const containerWidth = grid.clientWidth;
         const gap = getCSSVariable('--grid-gap', config.gridGap);
         const targetHeight = getCSSVariable('--grid-height', config.gridHeight);
 
-        // 計算每張圖片在目標高度下的寬度
         const imageWidths = images.map((img) => targetHeight * getSafeAspectRatio(img));
 
-        // 計算總寬度與縮放比例
-        const totalImageWidth = imageWidths.reduce((sum, w) => sum + w, 0);
+        const totalImageWidth = imageWidths.reduce((sum, width) => sum + width, 0);
         const totalGapWidth = (images.length - 1) * gap;
         const availableWidth = containerWidth - totalGapWidth;
+
         if (!Number.isFinite(totalImageWidth) || !Number.isFinite(availableWidth) ||
             totalImageWidth <= 0 || availableWidth <= 0) {
             resetImageStyles(images);
             return;
         }
+
         const scale = availableWidth / totalImageWidth;
         if (!Number.isFinite(scale) || scale <= 0) {
             resetImageStyles(images);
             return;
         }
 
-        // 設定每張圖片的寬度
         images.forEach((img, index) => {
             const width = Math.floor(imageWidths[index] * scale);
             const gridItem = getGridItemElement(img);
@@ -393,14 +433,12 @@ const MarkdownExtensions = (function () {
 
             if (gridItem !== img) {
                 img.style.width = '100%';
-                img.style.flexGrow = '0';
-                img.style.flexShrink = '0';
             } else {
                 img.style.width = `${width}px`;
-                img.style.flexGrow = '0';
-                img.style.flexShrink = '0';
             }
 
+            img.style.flexGrow = '0';
+            img.style.flexShrink = '0';
             img.setAttribute('data-justified', 'true');
         });
 
@@ -411,87 +449,53 @@ const MarkdownExtensions = (function () {
         });
     }
 
-    // ===== 公開 API =====
-
     return {
-        /**
-         * 取得版本號
-         * @returns {string}
-         */
         get version() {
             return VERSION;
         },
 
-        /**
-         * 設定模組參數
-         * @param {Object} options
-         * @param {number} [options.gridHeight=280] - 圖片網格高度
-         * @param {number} [options.gridGap=8] - 圖片間距
-         * @param {boolean} [options.debug=false] - 是否顯示 debug 訊息
-         */
-        configure(options) {
+        configure(options = {}) {
             config = { ...config, ...options };
             log('configure:', config);
         },
 
-        /**
-         * 解析所有自訂語法
-         * @param {string} markdown - 原始 Markdown 內容
-         * @returns {string} - 轉換後的內容
-         */
-        parse(markdown) {
+        render(markdown) {
             if (!markdown) return '';
 
-            let processed = markdown;
-            processed = parseCover(processed);
-            processed = parseLayout(processed);
-            processed = parseGrid(processed);
-            processed = parseIframe(processed);
-            processed = parseVideo(processed);
+            if (!ensureMarkedConfigured()) {
+                return window.marked && typeof window.marked.parse === 'function'
+                    ? window.marked.parse(markdown)
+                    : markdown;
+            }
 
-            return processed;
+            return window.marked.parse(markdown);
         },
 
-        /**
-         * 計算頁面上所有圖片網格的寬度分配
-         * @returns {Promise<void>}
-         */
+        parse(markdown) {
+            return this.render(markdown);
+        },
+
         justifyImages() {
             const grids = document.querySelectorAll('.image-grid');
 
-            grids.forEach(grid => {
+            grids.forEach((grid) => {
                 const images = Array.from(grid.querySelectorAll('img'));
                 if (images.length === 0) return;
 
-                // 等待所有圖片載入完成
-                const imageLoadPromises = images.map(img => {
-                    return new Promise((resolve) => {
-                        if (img.complete && img.naturalWidth > 0) {
-                            resolve(img);
-                        } else {
-                            img.onload = () => resolve(img);
-                            img.onerror = () => resolve(img);
-                        }
-                    });
-                });
-
-                Promise.all(imageLoadPromises).then(() => {
+                Promise.all(images.map(waitForImageLoad)).then(() => {
                     if (isMobileViewport()) {
                         resetImageStyles(images);
                         return;
                     }
+
                     calculateJustifiedWidths(grid, images);
                 });
             });
         },
 
-        /**
-         * 取得支援的語法列表
-         * @returns {Object[]}
-         */
         getSupportedSyntax() {
             return [
-                { syntax: '@cover[url]', description: '扉頁封面圖' },
+                { syntax: '@cover(url)', description: '扉頁封面圖' },
                 { syntax: ':::grid ... :::', description: '圖片並排網格' },
                 { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
                 { syntax: '![title](url)', description: '圖片（title 顯示於下方）' },
@@ -502,5 +506,4 @@ const MarkdownExtensions = (function () {
     };
 })();
 
-// 掛載到全域
 window.MarkdownExtensions = MarkdownExtensions;
