@@ -28,7 +28,7 @@
 2. 控制面板：主要的功能區塊，包括基礎的 **Visualization** 用於各種控制按鈕集成、**Topic Panel** 訂閱 ROS Topic 顯示資訊、**roslog** 顯示 ROS 運行時的 console 信息等；以及以此擴充的 **Card Programming** 使用卡片控制發布的 No-code 控制方法、[**GHBridge**](#ROBOT/RoboSimxGrasshopper) 用於 Grasshopper 介面控制橋樑等工具，與 **terminal** 集成，可直接調用電腦上的 terminal 運行 docker ，時現在同一個介面上啟動機器人完整功能。
 3. 工具列：包含 URDF 模型加載、ROS Bridge 連線，控制面板的啟用管理。
 @slot
-@video[https://ik.imagekit.io/cheng3n/RoboSim/robosim_operation.mp4]
+@video[](https://ik.imagekit.io/cheng3n/RoboSim/robosim_operation.mp4)
 :::end-layout
 
 ### ROS Topic Visualizer
@@ -44,6 +44,6 @@
 
 ## [Demo](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html)
 - <目前僅開放前端操作，無逆向運動學功能。>
-@iframe[https://avery320.github.io/robot-demo/javascript/example/bundle/main.html]
+@iframe[](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html)
 
 

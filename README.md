@@ -54,8 +54,8 @@
 #### 圖片並排:
 ```
 :::grid
-![alt](url)
-![alt](url)
+![title](url)
+![title](url)
 :::
 ```
 
@@ -97,15 +97,26 @@
 
 
 ### Media
+#### 圖片:
+```
+![title](url)
+```
+- `title` 會顯示在圖片下方並置中。
+- 若不需標題可用：`![](url)`。
+
 #### 影片:
 ```
-@video[url]
+@video[title](url)
 ```
+- `title` 可為空：`@video[](url)`。
+- 舊語法 `@video[url]` 不支援。
 
 #### 嵌入網頁:
 ```
-@iframe[url]
+@iframe[title](url)
 ```
+- `title` 可為空：`@iframe[](url)`。
+- 舊語法 `@iframe[url]` 不支援。
 
 ## 新增專案
 

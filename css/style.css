@@ -179,6 +179,27 @@ body {
     border-radius: var(--radius-md);
 }
 
+.media-figure {
+    width: 100%;
+    margin: var(--media-block-margin) 0;
+}
+
+.media-figure > :first-child {
+    margin: 0;
+}
+
+.media-image-figure > img {
+    display: block;
+}
+
+.media-caption {
+    margin: var(--spacing-sm) 0 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
 .notion-cover {
     width: 100%;
     aspect-ratio: 16 / 4;
@@ -247,6 +268,10 @@ body {
 
 .media-slot :is(.image-grid, .project-video, .iframe-container) {
     width: 100%;
+    margin: 0;
+}
+
+.media-slot .media-figure {
     margin: 0;
 }
 

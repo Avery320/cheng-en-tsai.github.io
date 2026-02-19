@@ -10,7 +10,7 @@ This is using python script for loading robot model into Rhion/Grasshopper from 
 
 
 ## Demo
-@video[content/ROBOT/URDF_Loader/assets/demo.mov]
+@video[](content/ROBOT/URDF_Loader/assets/demo.mov)
 
 
 :::grid

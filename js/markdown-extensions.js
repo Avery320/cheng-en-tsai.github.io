@@ -23,6 +23,9 @@ const MarkdownExtensions = (function () {
     // ===== 私有變數 =====
     const VERSION = '1.0.0';
     const MOBILE_BREAKPOINT = 768;
+    const DEFAULT_ASPECT_RATIO = 16 / 9;
+    const MIN_ASPECT_RATIO = 0.2;
+    const MAX_ASPECT_RATIO = 6;
 
     // 預設設定
     let config = {
@@ -69,11 +72,48 @@ const MarkdownExtensions = (function () {
      */
     function resetImageStyles(images) {
         images.forEach((img) => {
+            const gridItem = getGridItemElement(img);
+            gridItem.style.removeProperty('width');
+            gridItem.style.removeProperty('flex-grow');
+            gridItem.style.removeProperty('flex-shrink');
+
             img.style.removeProperty('width');
             img.style.removeProperty('flex-grow');
             img.style.removeProperty('flex-shrink');
             img.setAttribute('data-justified', 'true');
         });
+    }
+
+    /**
+     * 取得網格排版單位（圖片本身或其外層 caption 容器）
+     * @private
+     * @param {HTMLImageElement} image
+     * @returns {HTMLElement}
+     */
+    function getGridItemElement(image) {
+        return image.closest('.grid-media-item') || image;
+    }
+
+    /**
+     * 取得可用的圖片寬高比，避免 NaN / Infinity 導致計算失敗
+     * @private
+     * @param {HTMLImageElement} image
+     * @returns {number}
+     */
+    function getSafeAspectRatio(image) {
+        const width = image.naturalWidth;
+        const height = image.naturalHeight;
+
+        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+            return DEFAULT_ASPECT_RATIO;
+        }
+
+        const rawRatio = width / height;
+        if (!Number.isFinite(rawRatio) || rawRatio <= 0) {
+            return DEFAULT_ASPECT_RATIO;
+        }
+
+        return Math.min(Math.max(rawRatio, MIN_ASPECT_RATIO), MAX_ASPECT_RATIO);
     }
 
     // ===== 解析器 =====
@@ -106,28 +146,87 @@ const MarkdownExtensions = (function () {
     }
 
     /**
+     * 轉義 HTML 文字，避免插入危險字元
+     * @private
+     * @param {string} text
+     * @returns {string}
+     */
+    function escapeHtml(text = '') {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * 依標題文字建立 caption
+     * @private
+     * @param {string} rawTitle
+     * @returns {string}
+     */
+    function renderCaption(rawTitle = '') {
+        const title = rawTitle.trim();
+        if (!title) return '';
+        return `<figcaption class="media-caption">${escapeHtml(title)}</figcaption>`;
+    }
+
+    /**
+     * 依需求包裝媒體 caption
+     * @private
+     * @param {string} mediaHtml
+     * @param {string} title
+     * @returns {string}
+     */
+    function renderMediaWithOptionalCaption(mediaHtml, title) {
+        const captionHtml = renderCaption(title);
+        if (!captionHtml) return mediaHtml;
+        return `<figure class="media-figure">\n${mediaHtml}\n${captionHtml}\n</figure>`;
+    }
+
+    /**
      * 解析 iframe 語法
+     * 語法：@iframe[title](url)
      * @private
      * @param {string} markdown
      * @returns {string}
      */
     function parseIframe(markdown) {
-        return markdown.replace(/@iframe\[(.*?)\]/g, (match, url) => {
-            log('parseIframe:', url);
-            return `<div class="iframe-container"><iframe src="${url}" loading="lazy"></iframe></div>`;
+        return markdown.replace(/@iframe\s*\[(.*?)\]\s*\((.*?)\)/g, (match, title, url) => {
+            const cleanTitle = title.trim();
+            const cleanUrl = url.trim();
+
+            log('parseIframe:', { title: cleanTitle, url: cleanUrl });
+            if (!cleanUrl) return '';
+
+            const safeUrl = escapeHtml(cleanUrl);
+            const safeTitle = escapeHtml(cleanTitle || 'Embedded content');
+            const iframeHtml = `<div class="iframe-container"><iframe src="${safeUrl}" loading="lazy" title="${safeTitle}"></iframe></div>`;
+            return renderMediaWithOptionalCaption(iframeHtml, cleanTitle);
         });
     }
 
     /**
      * 解析影片語法
+     * 語法：@video[title](url)
      * @private
      * @param {string} markdown
      * @returns {string}
      */
     function parseVideo(markdown) {
-        return markdown.replace(/@video\[(.*?)\]/g, (match, url) => {
-            log('parseVideo:', url);
-            return `<video controls class="project-video"><source src="${url}" type="video/mp4"></video>`;
+        return markdown.replace(/@video\s*\[(.*?)\]\s*\((.*?)\)/g, (match, title, url) => {
+            const cleanTitle = title.trim();
+            const cleanUrl = url.trim();
+
+            log('parseVideo:', { title: cleanTitle, url: cleanUrl });
+            if (!cleanUrl) return '';
+
+            const safeUrl = escapeHtml(cleanUrl);
+            const safeTitle = escapeHtml(cleanTitle);
+            const titleAttribute = cleanTitle ? ` title="${safeTitle}"` : '';
+            const videoHtml = `<video controls class="project-video"${titleAttribute}><source src="${safeUrl}" type="video/mp4"></video>`;
+            return renderMediaWithOptionalCaption(videoHtml, cleanTitle);
         });
     }
 
@@ -266,27 +365,42 @@ const MarkdownExtensions = (function () {
         const targetHeight = getCSSVariable('--grid-height', config.gridHeight);
 
         // 計算每張圖片在目標高度下的寬度
-        const imageWidths = images.map(img => {
-            const aspectRatio = img.naturalWidth / img.naturalHeight;
-            return targetHeight * aspectRatio;
-        });
+        const imageWidths = images.map((img) => targetHeight * getSafeAspectRatio(img));
 
         // 計算總寬度與縮放比例
         const totalImageWidth = imageWidths.reduce((sum, w) => sum + w, 0);
         const totalGapWidth = (images.length - 1) * gap;
         const availableWidth = containerWidth - totalGapWidth;
-        if (totalImageWidth <= 0 || availableWidth <= 0) {
+        if (!Number.isFinite(totalImageWidth) || !Number.isFinite(availableWidth) ||
+            totalImageWidth <= 0 || availableWidth <= 0) {
             resetImageStyles(images);
             return;
         }
         const scale = availableWidth / totalImageWidth;
+        if (!Number.isFinite(scale) || scale <= 0) {
+            resetImageStyles(images);
+            return;
+        }
 
         // 設定每張圖片的寬度
         images.forEach((img, index) => {
             const width = Math.floor(imageWidths[index] * scale);
-            img.style.width = `${width}px`;
-            img.style.flexGrow = '0';
-            img.style.flexShrink = '0';
+            const gridItem = getGridItemElement(img);
+
+            gridItem.style.width = `${width}px`;
+            gridItem.style.flexGrow = '0';
+            gridItem.style.flexShrink = '0';
+
+            if (gridItem !== img) {
+                img.style.width = '100%';
+                img.style.flexGrow = '0';
+                img.style.flexShrink = '0';
+            } else {
+                img.style.width = `${width}px`;
+                img.style.flexGrow = '0';
+                img.style.flexShrink = '0';
+            }
+
             img.setAttribute('data-justified', 'true');
         });
 
@@ -380,8 +494,9 @@ const MarkdownExtensions = (function () {
                 { syntax: '@cover[url]', description: '扉頁封面圖' },
                 { syntax: ':::grid ... :::', description: '圖片並排網格' },
                 { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
-                { syntax: '@video[url]', description: '影片播放器' },
-                { syntax: '@iframe[url]', description: '嵌入外部網站' }
+                { syntax: '![title](url)', description: '圖片（title 顯示於下方）' },
+                { syntax: '@video[title](url)', description: '影片播放器（可選標題）' },
+                { syntax: '@iframe[title](url)', description: '嵌入外部網站（可選標題）' }
             ];
         }
     };

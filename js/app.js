@@ -223,8 +223,81 @@ class PortfolioApp {
      * 處理圖片路徑
      */
     processImagePaths(markdown, category, id) {
-        return markdown.replace(/!\[(.*?)\]\(assets\/(.*?)\)/g,
-            `![$1](content/${category}/${id}/assets/$2)`);
+        return markdown.replace(
+            /!\[(.*?)\]\(\s*assets\/(.*?)\)/g,
+            `![$1](content/${category}/${id}/assets/$2)`
+        );
+    }
+
+    /**
+     * 判斷段落是否僅由圖片、換行與空白組成
+     */
+    isImageOnlyParagraph(paragraph) {
+        if (!paragraph || paragraph.tagName !== 'P') return false;
+
+        const hasImage = Array.from(paragraph.children)
+            .some((child) => child.tagName === 'IMG');
+        if (!hasImage) return false;
+
+        return Array.from(paragraph.childNodes).every((node) => {
+            if (node.nodeType === 3) {
+                return node.textContent.trim() === '';
+            }
+
+            if (node.nodeType !== 1) {
+                return false;
+            }
+
+            return node.tagName === 'IMG' || node.tagName === 'BR';
+        });
+    }
+
+    /**
+     * 建立帶標題的圖片節點
+     */
+    createCaptionedImageNode(img, inGrid) {
+        const title = (img.getAttribute('alt') || '').trim();
+        if (!title) return img;
+
+        const figure = document.createElement('figure');
+        figure.className = 'media-figure media-image-figure';
+        if (inGrid) {
+            figure.classList.add('grid-media-item');
+        }
+
+        const caption = document.createElement('figcaption');
+        caption.className = 'media-caption';
+        caption.textContent = title;
+
+        figure.appendChild(img);
+        figure.appendChild(caption);
+        return figure;
+    }
+
+    /**
+     * 將 Markdown 圖片 alt 轉為圖片下方標題
+     * 語法：![title](url)
+     */
+    applyImageCaptions(wrapper) {
+        const paragraphs = Array.from(wrapper.querySelectorAll('p'));
+
+        paragraphs.forEach((paragraph) => {
+            if (!this.isImageOnlyParagraph(paragraph)) return;
+
+            const inGrid = Boolean(paragraph.closest('.image-grid'));
+            const imageNodes = Array.from(paragraph.querySelectorAll('img'))
+                .filter((img) => !img.closest('.notion-cover'));
+
+            if (imageNodes.length === 0) return;
+
+            const fragment = document.createDocumentFragment();
+            imageNodes.forEach((img) => {
+                const renderedNode = this.createCaptionedImageNode(img, inGrid);
+                fragment.appendChild(renderedNode);
+            });
+
+            paragraph.replaceWith(fragment);
+        });
     }
 
     /**
@@ -242,6 +315,7 @@ class PortfolioApp {
         const html = marked.parse(processed);
 
         wrapper.innerHTML = html;
+        this.applyImageCaptions(wrapper);
         wrapper.classList.remove('fade-in');
         void wrapper.offsetWidth;
         wrapper.classList.add('fade-in');
