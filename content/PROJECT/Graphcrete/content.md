@@ -4,8 +4,8 @@
 - 結構設計: 沈實
 - 指導老師：顏嘉慶、沈揚庭、杜怡萱
 - 時間: 2024.11
-
 ---
+
 ## 介紹
 本專案是以機械手臂混凝土列印製造混凝構件做為混凝土模板使用，內部以鋼筋混凝土作為柱子的結構，探索混凝土列印構件用於建築構件的可行性。
 
@@ -25,15 +25,14 @@
 設計是以 Multi-scale Truchet Pattern 創作出來的圖形做為混凝土列印的表面紋理。其特色是以簡單單元並引入多尺度的向度所構成的有趣圖形，以此結合網格結構對於造型尺度的控制。
 3. 網格：
 網格是一種在 3D 建模與電腦圖形領域中廣泛應用的資料結構，是由頂點 (Vertex)、邊 (Edge) 和面 (Face) 所構成，用於表示 3D 物體的形狀與表面。
-@br()
+@br(1)
 本設計以造型作為基礎，將形體以菱形網格型態進行重構，並利用網格結構的特性控制整體造型與造型的尺度與細節。
 @slot
 ![Design Diagram](https://ik.imagekit.io/cheng3n/Graphcrete/%E5%BD%A2%E9%AB%94%E8%A8%AD%E8%A8%88.png?updatedAt=1770897658350)
 :::end-layout
-整個設計整合了從結構出發的造型設計，將其轉化為參數化的網格表面。透過網格表面的控制特性，結合 Multi-scale Truchet Pattern 創造出具多層次紋理的柱子設計。
+本設計方法以結構條件作為造型依據，先將柱體幾何轉換為可參數化控制的網格表面，再透過網格控制特性疊加 Multi-scale Truchet Pattern，進而產生具有多層次紋理表現的柱子設計。
 
----
-#### 造型
+### 造型
 :::layout[40,60] 
 @slot
 - 造型設計上主要以結構為前提考量的設計，依照混凝土技術規則鋼筋保護層 40 公釐的規定，因此設計以圓柱體型態作為初始造型，再加上 60 公釐作為保護層的寬限，因此柱子斷面會在 450 至 570 公釐間做型態變化。
@@ -58,6 +57,7 @@
 @slot
 - 網格是一種在 3D 建模與電腦圖形領域中廣泛應用的資料結構，是由頂點 (Vertex)、邊 (Edge) 和面 (Face) 所構成，用於表示 3D 物體的形狀與表面。
 - 本設計以造型作為基礎，將形體以菱形網格型態進行重構，並利用網格結構的特性控制整體造型與造型的尺度與細節（大小與密度）。
+@br(2)
 ![Facade](https://ik.imagekit.io/cheng3n/Graphcrete/facade.png?updatedAt=1770897662159)
 @slot
 ![Mesh](https://ik.imagekit.io/cheng3n/Graphcrete/mesh.png?updatedAt=1770897644920)
@@ -80,11 +80,11 @@
 
 
 ## 建造流程
-:::layout[20,40,40]
+:::layout[30,35,35]
 @slot
 Graphcrete 的建造流程是將製造完成的混凝土模具透過吊掛的方式在現場組裝，後續澆灌混凝土形成混凝土構件。
 @slot
-![3DCP_CONSTRUCTION00](https://ik.imagekit.io/cheng3n/Graphcrete/3DCP_CONSTRUCTION0.jpg?updatedAt=1770897640286)
+![3DCP CONSTRUCTION](https://ik.imagekit.io/cheng3n/Graphcrete/3DCP_CONSTRUCTION0.jpg?updatedAt=1770897640286)
 @slot
 ![Construction Workflow](https://ik.imagekit.io/cheng3n/Graphcrete/construction_workflow.gif?updatedAt=1770897678323)
 :::end-layout
