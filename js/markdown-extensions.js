@@ -6,11 +6,13 @@
 const MarkdownExtensions = (function () {
     'use strict';
 
-    const VERSION = '2.0.0';
+    const VERSION = '2.1.0';
     const MOBILE_BREAKPOINT = 768;
     const DEFAULT_ASPECT_RATIO = 16 / 9;
     const MIN_ASPECT_RATIO = 0.2;
     const MAX_ASPECT_RATIO = 6;
+    const DEFAULT_LINE_BREAK_COUNT = 1;
+    const MAX_LINE_BREAK_COUNT = 6;
 
     let markedConfigured = false;
 
@@ -275,10 +277,68 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 建立 marked 擴充：layout/grid/cover/video/iframe/image。
+     * 將分行次數正規化到安全範圍。
+     */
+    function normalizeLineBreakCount(rawCount) {
+        if (rawCount === undefined || rawCount === null || rawCount === '') {
+            return DEFAULT_LINE_BREAK_COUNT;
+        }
+
+        const parsedCount = parseInt(rawCount, 10);
+        if (!Number.isFinite(parsedCount) || parsedCount <= 0) {
+            return DEFAULT_LINE_BREAK_COUNT;
+        }
+
+        return Math.min(parsedCount, MAX_LINE_BREAK_COUNT);
+    }
+
+    /**
+     * 解析 @br 或 @br(n) 指令。
+     */
+    function parseLineBreakDirective(src) {
+        const match = /^@br(?:\((\d+)\))?(?![\w-])/.exec(src);
+        if (!match) return null;
+
+        return {
+            raw: match[0],
+            count: normalizeLineBreakCount(match[1])
+        };
+    }
+
+    /**
+     * 渲染分行 HTML 片段。
+     */
+    function renderLineBreak(count) {
+        return '<br>'.repeat(normalizeLineBreakCount(count));
+    }
+
+    /**
+     * 建立 marked 擴充：layout/grid/cover/video/iframe/image/br。
      */
     function buildMarkedExtensions() {
         return [
+            {
+                // @br 或 @br(2)
+                name: 'lineBreakInline',
+                level: 'inline',
+                start(src) {
+                    const index = src.indexOf('@br');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const parsed = parseLineBreakDirective(src);
+                    if (!parsed) return undefined;
+
+                    return {
+                        type: 'lineBreakInline',
+                        raw: parsed.raw,
+                        count: parsed.count
+                    };
+                },
+                renderer(token) {
+                    return renderLineBreak(token.count);
+                }
+            },
             {
                 // :::layout[ratio,ratio] ... :::end-layout
                 name: 'layoutBlock',
@@ -590,7 +650,8 @@ const MarkdownExtensions = (function () {
                 { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
                 { syntax: '![title](url)', description: '圖片（title 顯示於下方）' },
                 { syntax: '@video[title](url)', description: '影片播放器（可選標題）' },
-                { syntax: '@iframe[title](url)', description: '嵌入外部網站（可選標題）' }
+                { syntax: '@iframe[title](url)', description: '嵌入外部網站（可選標題）' },
+                { syntax: '@br / @br(2)', description: '段落內分行（支援一次多行）' }
             ];
         }
     };

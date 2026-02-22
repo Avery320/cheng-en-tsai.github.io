@@ -1,6 +1,7 @@
 # Graphcrete
 ## : Robotic 3D Concrete Printing for Mold Construction Methodology
-- 設計: 蔡承恩、沈實
+- 設計與製造: 蔡承恩
+- 結構設計: 沈實
 - 指導老師：顏嘉慶、沈揚庭、杜怡萱
 - 時間: 2024.11
 
@@ -9,9 +10,9 @@
 本專案是以機械手臂混凝土列印製造混凝構件做為混凝土模板使用，內部以鋼筋混凝土作為柱子的結構，探索混凝土列印構件用於建築構件的可行性。
 
 :::grid
-![001](https://ik.imagekit.io/cheng3n/Graphcrete/001.png?updatedAt=1770897662130)
-![002](https://ik.imagekit.io/cheng3n/Graphcrete/002.jpeg?updatedAt=1770897640818)
-![003](https://ik.imagekit.io/cheng3n/Graphcrete/003.jpg?updatedAt=1770897639932)
+![](https://ik.imagekit.io/cheng3n/Graphcrete/001.png?updatedAt=1770897662130)
+![](https://ik.imagekit.io/cheng3n/Graphcrete/002.jpeg?updatedAt=1770897640818)
+![](https://ik.imagekit.io/cheng3n/Graphcrete/003.jpg?updatedAt=1770897639932)
 :::
 
 ## 設計
@@ -19,11 +20,12 @@
 :::layout[40,60] 
 @slot
 1. 造型：
-在造型設計上主要以結構為前提考量的設計，並在長寬 60cm 的平面與鋼筋籠段面為直徑 45 公分的條件之下做造型的變化。
-1. 紋理：
+在造型設計上主要以結構為前提考量的設計，並在長寬 60 公分的平面與鋼筋籠段面為直徑 45 公分的條件之下做造型的變化。
+2. 紋理：
 設計是以 Multi-scale Truchet Pattern 創作出來的圖形做為混凝土列印的表面紋理。其特色是以簡單單元並引入多尺度的向度所構成的有趣圖形，以此結合網格結構對於造型尺度的控制。
-1. 網格：
+3. 網格：
 網格是一種在 3D 建模與電腦圖形領域中廣泛應用的資料結構，是由頂點 (Vertex)、邊 (Edge) 和面 (Face) 所構成，用於表示 3D 物體的形狀與表面。
+@br()
 本設計以造型作為基礎，將形體以菱形網格型態進行重構，並利用網格結構的特性控制整體造型與造型的尺度與細節。
 @slot
 ![Design Diagram](https://ik.imagekit.io/cheng3n/Graphcrete/%E5%BD%A2%E9%AB%94%E8%A8%AD%E8%A8%88.png?updatedAt=1770897658350)
@@ -45,6 +47,7 @@
 :::layout[50,50] 
 - 紋理設計是以幾何邏輯與視覺層次為核心原則，透過 Truchet Pattern 的圖樣語彙，再以 Multi-scale Truchet Pattern 的多尺度概念進行延展。此設計方式不僅使紋理在局部具備細節變化，同時在整體上呈現秩序與隨機之間的張力。
 ![MultiScaleTruchetPattern_01](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_01.jpg?updatedAt=1770897644550)
+
 ![MultiScaleTruchetPattern_02](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_02.jpg?updatedAt=1770897643741)
 @slot
 ![Mapping Pattern](https://ik.imagekit.io/cheng3n/Graphcrete/MappingPattern.jpeg?updatedAt=1770897649109)
