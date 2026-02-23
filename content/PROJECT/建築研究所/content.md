@@ -2,7 +2,7 @@
 ## 基於數位雙生演算與機械手臂列印發展減碳預鑄免拆模鋼筋混凝土柱體工法之研究
 - 計劃主持人：顏嘉慶
 - 協同主持人：沈揚庭
-- 研究成員: 黃廉凱、蔡承恩、杜孟澤
+- 研究成員：黃廉凱、蔡承恩、杜孟澤
 - 研究期程：114.03.28 - 114.12.31
 ---
 
@@ -38,7 +38,27 @@
 本研究採用 5x5x5cm³ 立方體作為試體，沿三個互相垂直的軸向（X、Y、Z）進行抗壓測試，分別對應平行於列印路徑、橫斷於列印路徑、以及垂直於層間黏結面的方向。
 ![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/str_test_diagram.jpg)
 
-### 結構測試
+### 試體列印
+
+### 試體裁切
+:::grid
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_01.jpg)
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_02.jpg)
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_03.jpg)
+:::
+
+#### 裁切過程
+:::grid
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_01.jpg)
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_02.jpg)
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_03.jpg)
+:::
+
+### 抗壓測試
+:::grid
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_0.jpg)
+![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_02.jpg)
+:::
 
 ## 殼體製造與澆置
 
