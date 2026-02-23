@@ -14,7 +14,7 @@ const MarkdownExtensions = (function () {
     const DEFAULT_LINE_BREAK_COUNT = 1;
     const MAX_LINE_BREAK_COUNT = 6;
     const DEFAULT_VIDEO_MUTED = true;
-    const DEFAULT_VIDEO_PRELOAD = 'metadata';
+    const DEFAULT_VIDEO_PRELOAD = 'auto';
 
     let markedConfigured = false;
 
