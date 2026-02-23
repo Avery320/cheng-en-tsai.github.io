@@ -13,6 +13,8 @@ const MarkdownExtensions = (function () {
     const MAX_ASPECT_RATIO = 6;
     const DEFAULT_LINE_BREAK_COUNT = 1;
     const MAX_LINE_BREAK_COUNT = 6;
+    const DEFAULT_VIDEO_MUTED = true;
+    const DEFAULT_VIDEO_PRELOAD = 'metadata';
 
     let markedConfigured = false;
 
@@ -41,6 +43,20 @@ const MarkdownExtensions = (function () {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * 將屬性物件轉為 HTML attribute 字串。
+     * `true` 會輸出布林屬性；`false/null/undefined` 會被忽略。
+     */
+    function toHtmlAttributes(attributes = {}) {
+        return Object.entries(attributes)
+            .filter(([, value]) => value !== false && value !== null && value !== undefined && value !== '')
+            .map(([name, value]) => {
+                if (value === true) return name;
+                return `${name}="${escapeHtml(String(value))}"`;
+            })
+            .join(' ');
     }
 
     /**
@@ -196,9 +212,15 @@ const MarkdownExtensions = (function () {
         if (!safeUrl) return '';
 
         const cleanTitle = String(title || '').trim();
-        const safeTitle = escapeHtml(cleanTitle);
-        const titleAttribute = cleanTitle ? ` title="${safeTitle}"` : '';
-        const videoHtml = `<video controls class="project-video"${titleAttribute}><source src="${safeUrl}" type="video/mp4"></video>`;
+        const videoAttributes = toHtmlAttributes({
+            controls: true,
+            muted: DEFAULT_VIDEO_MUTED,
+            preload: DEFAULT_VIDEO_PRELOAD,
+            playsinline: true,
+            class: 'project-video',
+            title: cleanTitle || null
+        });
+        const videoHtml = `<video ${videoAttributes}><source src="${safeUrl}" type="video/mp4"></video>`;
 
         return renderFigure(videoHtml, cleanTitle);
     }

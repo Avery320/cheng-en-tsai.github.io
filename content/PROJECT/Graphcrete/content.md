@@ -78,6 +78,10 @@
 ### Module01 Printing Demo
 @video[](https://ik.imagekit.io/cheng3n/Graphcrete/M1_printing_demo.mp4)
 
+### Module06 Printing Demo
+@video[](https://ik.imagekit.io/cheng3n/Graphcrete/M6_printing_demo.mp4?updatedAt=1765226514854)
+
+
 
 ## 建造流程
 :::layout[30,35,35]
