@@ -2,7 +2,7 @@
  * Portfolio 應用程式
  * - 動態分類導航
  * - Markdown 內容渲染
- * - 文件標題面板（h1~h3）
+ * - 文件標題面板（h1~h6）
  */
 class PortfolioApp {
     /**
@@ -73,6 +73,20 @@ class PortfolioApp {
     }
 
     /**
+     * 安全解碼 hash 路由片段，失敗時回退原字串。
+     */
+    decodeRouteSegment(segment) {
+        const value = String(segment || '').trim();
+        if (!value) return '';
+
+        try {
+            return decodeURIComponent(value);
+        } catch (_error) {
+            return value;
+        }
+    }
+
+    /**
      * 依 hash 產生頁面載入設定。
      * about -> about.md；category/id -> content/<category>/<id>/content.md
      */
@@ -86,7 +100,9 @@ class PortfolioApp {
             };
         }
 
-        const [category, id] = hash.split('/');
+        const [rawCategory, rawId] = hash.split('/');
+        const category = this.decodeRouteSegment(rawCategory);
+        const id = this.decodeRouteSegment(rawId);
         if (!category || !id) return null;
 
         return {
@@ -366,7 +382,7 @@ class PortfolioApp {
     }
 
     /**
-     * 重新建立文件大綱（h1~h3）並綁定捲動同步。
+     * 重新建立文件大綱（h1~h6）並綁定捲動同步。
      */
     renderDocumentOutline() {
         const { outlinePanel, outlineNav } = this.dom;
@@ -418,7 +434,8 @@ class PortfolioApp {
             return;
         }
 
-        const [, projectId] = hash.split('/');
+        const [, rawProjectId] = hash.split('/');
+        const projectId = this.decodeRouteSegment(rawProjectId);
         const normalized = String(projectId || '')
             .trim()
             .replace(/_/g, ' ')
@@ -427,13 +444,13 @@ class PortfolioApp {
     }
 
     /**
-     * 收集內容區中的 h1~h3，並保證每個標題都有唯一 id。
+     * 收集內容區中的 h1~h6，並保證每個標題都有唯一 id。
      */
     collectOutlineHeadings() {
         const wrapper = this.dom.contentWrapper;
         if (!wrapper) return [];
 
-        const headingElements = Array.from(wrapper.querySelectorAll('h1, h2, h3'));
+        const headingElements = Array.from(wrapper.querySelectorAll('h1, h2, h3, h4, h5, h6'));
         const usedIds = new Set();
         const createHeadingId = (element, title, index) => {
             const existingId = (element.id || '').trim();
@@ -445,7 +462,7 @@ class PortfolioApp {
             const baseId = String(title)
                 .toLowerCase()
                 .trim()
-                .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+                .replace(/[^\p{L}\p{N}\s-]/gu, '')
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
                 .replace(/^-|-$/g, '') || `section-${index + 1}`;
@@ -487,7 +504,7 @@ class PortfolioApp {
         const parentById = new Map();
         const collapsibleNodeIds = new Set();
 
-        // 以 stack 單次走訪建立 h1~h3 階層樹。
+        // 以 stack 單次走訪建立 h1~h6 階層樹。
         headings.forEach((heading) => {
             const node = { ...heading, parentId: null, children: [] };
             nodesById.set(node.id, node);
