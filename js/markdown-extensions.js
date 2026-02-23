@@ -15,6 +15,7 @@ const MarkdownExtensions = (function () {
     const MAX_LINE_BREAK_COUNT = 6;
     const DEFAULT_VIDEO_MUTED = true;
     const DEFAULT_VIDEO_PRELOAD = 'auto';
+    const DEFAULT_GIF_PRELOAD = 'auto';
 
     let markedConfigured = false;
 
@@ -70,6 +71,35 @@ const MarkdownExtensions = (function () {
         if (lowered.startsWith('javascript:')) return '';
 
         return escapeHtml(trimmed);
+    }
+
+    /**
+     * 依檔名副檔名推斷影片 MIME 類型；未知時回傳空字串。
+     */
+    function detectVideoMimeType(rawUrl = '') {
+        const normalized = String(rawUrl || '').trim();
+        if (!normalized) return '';
+
+        let pathname = normalized;
+        try {
+            pathname = new URL(normalized, window.location.href).pathname;
+        } catch (_error) {
+            // 非標準 URL 時退回原字串處理。
+        }
+
+        const extensionMatch = /\.([a-z0-9]+)$/i.exec(pathname);
+        const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+
+        const mimeTypeByExtension = {
+            mp4: 'video/mp4',
+            m4v: 'video/mp4',
+            webm: 'video/webm',
+            ogg: 'video/ogg',
+            ogv: 'video/ogg',
+            mov: 'video/quicktime'
+        };
+
+        return mimeTypeByExtension[extension] || '';
     }
 
     /**
@@ -207,22 +237,41 @@ const MarkdownExtensions = (function () {
     /**
      * 渲染影片播放器區塊。
      */
-    function renderVideo(url, title) {
+    function renderVideoMedia(url, title, mode = 'video') {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
 
         const cleanTitle = String(title || '').trim();
+        const videoMimeType = detectVideoMimeType(url);
+        const isGifMode = mode === 'gif';
         const videoAttributes = toHtmlAttributes({
-            controls: true,
-            muted: DEFAULT_VIDEO_MUTED,
-            preload: DEFAULT_VIDEO_PRELOAD,
+            controls: isGifMode ? false : true,
+            autoplay: isGifMode,
+            loop: isGifMode,
+            muted: isGifMode ? true : DEFAULT_VIDEO_MUTED,
+            preload: isGifMode ? DEFAULT_GIF_PRELOAD : DEFAULT_VIDEO_PRELOAD,
             playsinline: true,
-            class: 'project-video',
+            class: isGifMode ? 'project-video project-gif' : 'project-video',
             title: cleanTitle || null
         });
-        const videoHtml = `<video ${videoAttributes}><source src="${safeUrl}" type="video/mp4"></video>`;
+        const sourceTypeAttribute = videoMimeType ? ` type="${videoMimeType}"` : '';
+        const videoHtml = `<video ${videoAttributes}><source src="${safeUrl}"${sourceTypeAttribute}></video>`;
 
         return renderFigure(videoHtml, cleanTitle);
+    }
+
+    /**
+     * 渲染影片播放器區塊。
+     */
+    function renderVideo(url, title) {
+        return renderVideoMedia(url, title, 'video');
+    }
+
+    /**
+     * 渲染 GIF-like 影片區塊（自動播放、循環、靜音）。
+     */
+    function renderGif(url, title) {
+        return renderVideoMedia(url, title, 'gif');
     }
 
     /**
@@ -284,7 +333,7 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 解析 @video/@iframe 這類指令格式。
+     * 解析 @video/@gif/@iframe 這類指令格式。
      */
     function parseMediaDirective(src, directiveName) {
         const directivePattern = new RegExp(`^@${directiveName}\\s*\\[([^\\]]*)\\]\\s*\\((.*)\\)\\s*(?:\\n|$)`);
@@ -335,7 +384,7 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 建立 marked 擴充：layout/grid/cover/video/iframe/image/br。
+     * 建立 marked 擴充：layout/grid/cover/video/gif/iframe/image/br。
      */
     function buildMarkedExtensions() {
         return [
@@ -482,6 +531,29 @@ const MarkdownExtensions = (function () {
                 },
                 renderer(token) {
                     return renderVideo(token.url, token.title);
+                }
+            },
+            {
+                // @gif[title](url)
+                name: 'gifBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf('@gif');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const parsed = parseMediaDirective(src, 'gif');
+                    if (!parsed) return undefined;
+
+                    return {
+                        type: 'gifBlock',
+                        raw: parsed.raw,
+                        title: parsed.title,
+                        url: parsed.url
+                    };
+                },
+                renderer(token) {
+                    return renderGif(token.url, token.title);
                 }
             },
             {
@@ -672,6 +744,7 @@ const MarkdownExtensions = (function () {
                 { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
                 { syntax: '![title](url)', description: '圖片（title 顯示於下方）' },
                 { syntax: '@video[title](url)', description: '影片播放器（可選標題）' },
+                { syntax: '@gif[title](url)', description: 'GIF-like 影片（自動播放、循環、靜音）' },
                 { syntax: '@iframe[title](url)', description: '嵌入外部網站（可選標題）' },
                 { syntax: '@br / @br(2)', description: '段落內分行（支援一次多行）' }
             ];

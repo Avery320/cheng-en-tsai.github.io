@@ -14,9 +14,9 @@
 - RoboSim 以上述功能為基礎，延伸至 **No-code 卡片控制方法** 與 [**Grasshopper 整合**](#ROBOT/RoboSimxGrasshopper)。
 
 :::grid
-@video[urdf_loader](https://ik.imagekit.io/cheng3n/RoboSim/urdf_loader.mov/ik-video.mp4?updatedAt=1770955681418)
-@video[robosim_tcp](https://ik.imagekit.io/cheng3n/RoboSim/tcp_ctrl.mov)
-@video[ros_topic](https://ik.imagekit.io/cheng3n/RoboSim/ros_topic.mov/ik-video.mp4?updatedAt=1770956633417)
+@gif[urdf_loader](https://ik.imagekit.io/cheng3n/RoboSim/urdf_loader.mov/ik-video.mp4?updatedAt=1770955681418)
+@gif[robosim_tcp](https://ik.imagekit.io/cheng3n/RoboSim/tcp_ctrl.mov)
+@gif[ros_topic](https://ik.imagekit.io/cheng3n/RoboSim/ros_topic.mov/ik-video.mp4?updatedAt=1770956633417)
 :::
 
 ### RoboSim Interface

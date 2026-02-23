@@ -13,7 +13,7 @@
 - 支援首頁扉頁封面（Notion 風格）
 - 支援圖片並排網格（Justified Gallery）
 - 支援文字/圖片/影片多欄混合排版（可設定欄寬比例）
-- 支援影片播放與 iframe 嵌入
+- 支援影片播放、GIF-like 影片與 iframe 嵌入
 - URL Hash 路由，支援上一頁/下一頁（預設進入 `about`）
 - 視窗縮放時自動重新計算圖片排版
 
@@ -114,6 +114,17 @@
 ```
 
 - `title` 可為空：`@video[](url)`。
+- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
+
+#### GIF-like 影片
+
+```md
+@gif[title](url)
+```
+
+- 語法與 `@video` 相同：`title` 可為空，例：`@gif[](url)`。
+- 行為為自動播放、循環、靜音、行動裝置內嵌播放（`autoplay + loop + muted + playsinline`）。
+- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
 
 #### 嵌入網頁
 
@@ -152,14 +163,6 @@
 2. 在該資料夾內新增 `content.md`。
 3. 更新 `content/config.json`，加入專案 ID 到對應分類。
 4. 專案會依照 `content/config.json` 順序顯示。
-
-## 本地開發
-
-```bash
-python3 -m http.server 8000
-```
-
-開啟 `http://localhost:8000`
 
 ## 授權
 

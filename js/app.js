@@ -316,7 +316,7 @@ class PortfolioApp {
                 (_match, title, url) => `![${title}](${resolveAssetPath(url)})`
             )
             .replace(
-                /@(video|iframe)\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
+                /@(video|gif|iframe)\s*\[([^\]]*)\]\s*\(\s*(assets\/[^)\s]+)\s*\)/g,
                 (_match, directive, title, url) => `@${directive}[${title}](${resolveAssetPath(url)})`
             )
             .replace(
