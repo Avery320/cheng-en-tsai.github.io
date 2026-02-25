@@ -19,6 +19,7 @@
     --text-sm: 0.875rem;
     /* 14px */
     --text-base: 1.0rem;
+    --text-base-2: 1.2rem;
     /* 16px */
     --text-lg: 1.4rem;
     /* 18px */
@@ -36,32 +37,24 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* 內容標題樣式 - 對應 Markdown H1-H3 */
+/* 內容標題樣式 */
 .content-wrapper h1 {
     font-size: var(--text-2xl);
     font-weight: var(--font-bold);
     line-height: 1.2;
 }
 
-.content-wrapper h2 {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    /* 半粗體 */
-}
-
-.content-wrapper h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-medium);
-}
-
-/* 導航文字樣式 - 套用標題樣式 */
+.content-wrapper h2,
 .nav-title {
+    /* 右側分類標題直接共用 h2 字級設定。 */
     font-size: var(--text-xl);
     font-weight: 600;
 }
 
+.content-wrapper h3,
 .nav-item {
-    font-size: var(--text-lg);
+    /* 右側項目名稱直接共用 h4-2 字級設定。 */
+    font-size: var(--text-base-2);
     font-weight: var(--font-medium);
 }
 
