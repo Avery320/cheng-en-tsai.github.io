@@ -308,12 +308,9 @@
 
 @media (max-width: 1024px) {
     :root {
-        --sidebar-width: clamp(210px, 28vw, 280px);
         --outline-panel-width: clamp(180px, 24vw, 220px);
     }
-}
 
-@media (max-width: 768px) {
     .top-toolbar {
         position: fixed;
         top: 0;
@@ -323,7 +320,7 @@
     }
 
     .workspace {
-        /* 工具列 fixed 時，主工作區統一下移，避免被覆蓋。 */
+        /* 抽屜導航模式下，固定工具列需預留內容起始高度。 */
         padding-top: var(--toolbar-height);
     }
 
@@ -332,6 +329,27 @@
         background: transparent;
     }
 
+    .sidebar,
+    .sidebar-overlay {
+        top: var(--toolbar-height);
+        height: calc(100vh - var(--toolbar-height));
+        height: calc(100dvh - var(--toolbar-height));
+    }
+
+    .sidebar {
+        position: fixed;
+        right: calc(-1 * var(--mobile-sidebar-width));
+        width: var(--mobile-sidebar-width);
+        z-index: 1000;
+        transition: right var(--transition);
+    }
+
+    .sidebar.open {
+        right: 0;
+    }
+}
+
+@media (max-width: 768px) {
     .content-panel {
         /* 手機版收斂為單欄，避免左側大綱佔用閱讀空間。 */
         grid-template-columns: minmax(0, 1fr);
@@ -344,27 +362,6 @@
     .outline-panel {
         /* 手機版隱藏大綱，交由主內容閱讀優先。 */
         display: none;
-    }
-
-    .sidebar {
-        position: fixed;
-        top: var(--toolbar-height);
-        right: calc(-1 * var(--mobile-sidebar-width));
-        width: var(--mobile-sidebar-width);
-        height: calc(100vh - var(--toolbar-height));
-        height: calc(100dvh - var(--toolbar-height));
-        z-index: 1000;
-        transition: right var(--transition);
-    }
-
-    .sidebar.open {
-        right: 0;
-    }
-
-    .sidebar-overlay {
-        top: var(--toolbar-height);
-        height: calc(100vh - var(--toolbar-height));
-        height: calc(100dvh - var(--toolbar-height));
     }
 }
 
