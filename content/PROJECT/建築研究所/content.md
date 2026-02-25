@@ -22,6 +22,7 @@
 此階段的測試中以水泥、河沙、黏著劑、減水劑、早強防水劑、水作為主要列印材料。以固定的機器列印參數與水泥、河沙、黏著劑配比，以調整早強防水劑、減水劑與水此類水泥添加劑的配比為目標，測試不同配比對於列印材料工作度的影響。
 
 #### 實驗試體
+測試方式以圓柱體作為形體進行列印，測試材料堆積過程的工作度、支撐性與穩定度。
 :::grid
 ![試體編號M1.0_02-01](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/M1.0_02-01.JPG)
 ![試體編號M1.0_02-02](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/M1.0_02-02.jpg)
@@ -38,26 +39,32 @@
 本研究採用 5x5x5cm³ 立方體作為試體，沿三個互相垂直的軸向（X、Y、Z）進行抗壓測試，分別對應平行於列印路徑、橫斷於列印路徑、以及垂直於層間黏結面的方向。
 ![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/str_test_diagram.jpg)
 
-### 試體列印
+試體以 15x15x15cm³ 立方體(切除後的尺寸)大小列印，裁切成 5x5x5cm³ 立方體作為試體，分別測試 x, y, z 三個方向的抗壓強度。
 
-### 試體裁切
+#### 試體列印
 :::grid
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_01.jpg)
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_02.jpg)
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_03.jpg)
+![試體列印](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_printing_01.jpg)
+![試體](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_printing_02.jpg)
+![試體養護](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_printing_03.jpg)
+![養護後試體](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_printing_04.jpg)
 :::
 
-#### 裁切過程
+#### 試體裁切
 :::grid
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_01.jpg)
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_02.jpg)
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_03.jpg)
+
+![試體裁切](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder_cutting_01.jpg)
+![X 向切面](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_02.jpg)
+![Y 向切面](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cutting_section_03.jpg)
+![試體](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/cylinder.jpg?)
 :::
 
-### 抗壓測試
+
+#### 抗壓測試
 :::grid
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_0.jpg)
-![](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_02.jpg)
+![試體001](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_001.jpg)
+![試體002](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_102.jpg)
+![試體201](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_201.jpg)
+![試體202](https://ik.imagekit.io/cheng3n/%E5%BB%BA%E7%AF%89%E7%A0%94%E7%A9%B6%E6%89%80/compression_test_202.jpg)
 :::
 
 ## 殼體製造與澆置
