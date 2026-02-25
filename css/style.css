@@ -98,6 +98,9 @@ body {
 
 .media-figure {
     /* 所有媒體（圖/影/iframe）統一外距入口。 */
+    --media-frame-radius: 0;
+    --media-frame-border-width: 0;
+    --media-frame-border-color: transparent;
     width: 100%;
     margin: var(--media-block-margin) 0;
 }
@@ -106,8 +109,24 @@ body {
     margin: 0;
 }
 
+.media-figure.media-radius-on {
+    --media-frame-radius: 8px;
+}
+
+.media-figure.media-with-border {
+    --media-frame-border-width: 2px;
+    --media-frame-border-color: var(--border-color);
+}
+
 .media-image-figure > img {
     display: block;
+    border-radius: var(--media-frame-radius);
+    border: var(--media-frame-border-width) solid var(--media-frame-border-color);
+}
+
+.media-figure > video {
+    border-radius: var(--media-frame-radius);
+    border: var(--media-frame-border-width) solid var(--media-frame-border-color);
 }
 
 .media-caption {
@@ -147,7 +166,8 @@ body {
     position: relative;
     width: 100%;
     aspect-ratio: var(--embed-aspect-ratio);
-    border-radius: var(--radius-md);
+    border-radius: var(--media-frame-radius);
+    border: var(--media-frame-border-width) solid var(--media-frame-border-color);
     overflow: hidden;
     background: var(--bg-secondary);
 }

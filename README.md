@@ -25,36 +25,29 @@
 ## 專案結構
 
 ```text
-├── index.html
+├── index.html                    # 入口頁：載入樣式與腳本、定義三欄容器
 ├── css/
-│   ├── typography.css
-│   ├── grid.css
-│   ├── panels.css
-│   └── style.css
+│   ├── typography.css            # 字體 token 與標題/導航字級
+│   ├── panels.css                # 工具列、三欄面板、RWD 抽屜導航
+│   ├── style.css                 # 內容區與媒體通用樣式（表格 / iframe / layout）
+│   └── grid.css                  # :::grid 的 Justified 圖片排版
 ├── js/
-│   ├── app.js
-│   └── markdown-extensions.js
+│   ├── app.js                    # 應用啟動、Hash 路由、內容載入、導航互動
+│   ├── outline.js                # 左側文件大綱（h1~h6）生成與捲動同步
+│   ├── markdown-extensions.js    # 自訂 Markdown 指令解析與 HTML 輸出
+│   ├── options.js                # 媒體參數 {border,radius} 解析與 class 映射
+│   └── justify.js                # 圖片網格比例計算與重排
 └── content/
-    ├── config.json
-    ├── about.md
-    ├── PROJECT/
-    ├── ROBOT/
-    ├── DESIGN/
-    └── WORKSHOP/
+    ├── config.json               # 分類與專案清單（右側導航來源）
+    ├── about.md                  # About 頁內容
+    └── <CATEGORY>/<PROJECT>/     # 專案資料夾（含 content.md / assets）
 ```
 
 ## 自訂 Markdown 語法
 
-### Cover
+### 排版語法
 
-```md
-@cover(url)
-```
-
-- 封面容器會以中心裁切，比例為 `16:4`，並填滿目前內容區寬度。
-
-### Grid
-
+#### Grid（圖片並排）
 ```md
 :::grid
 ![title](url)
@@ -62,12 +55,11 @@
 :::
 ```
 
-- `:::grid` 主要用途是圖片並排。
+- `:::grid` 用於圖片並排，套用 Justified Gallery。
 - 圖片標題由 `![title](url)` 的 `title` 產生，置中顯示於圖片下方。
 - 連續兩張圖片不需要空行，也可正確顯示各自標題。
 
-### Layout（文字/圖片/影片混合）
-
+#### Layout（文字 / 圖片 / 影片混合）
 ```md
 :::layout[40,60]
 @slot
@@ -93,51 +85,7 @@
 - 若比例格式不正確，或比例數量與欄位數不一致，會自動平均分配。
 - 欄位由 `@slot` 分隔。
 
-### Media
-
-#### 圖片
-
-```md
-![title](url)
-```
-
-- `title` 會顯示在圖片下方並置中。
-- 不需要標題可用 `![](url)`。
-- 一般圖片（含單張顯示與 `layout` 內圖片）預設左右填滿當前欄位（`width: 100%`）。
-- 圖片高度會隨寬度等比例調整（`height: auto`）。
-- `:::grid` 仍維持 Justified Gallery 的列對齊規則。
-
-#### 影片
-
-```md
-@video[title](url)
-```
-
-- `title` 可為空：`@video[](url)`。
-- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
-
-#### GIF-like 影片
-
-```md
-@gif[title](url)
-```
-
-- 語法與 `@video` 相同：`title` 可為空，例：`@gif[](url)`。
-- 行為為自動播放、循環、靜音、行動裝置內嵌播放（`autoplay + loop + muted + playsinline`）。
-- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
-
-#### 嵌入網頁
-
-```md
-@iframe[title](url)
-```
-
-- `title` 可為空：`@iframe[](url)`。
-- 非影片型 `@iframe` 會在右下角顯示極簡 `Full` 圖示按鈕，可直接進入全螢幕。
-- 影片型嵌入（如 YouTube/Vimeo）不顯示自訂按鈕，維持播放器原生全螢幕控制。
-
 #### 分行
-
 ```md
 第一行文字 @br 第二行文字
 ```
@@ -149,15 +97,81 @@
 - `@br`：分行 1 次。
 - `@br(n)`：分行 `n` 次（目前上限 6）。
 
-### 文件大綱面板
+### 媒體功能語法
+
+#### Cover
+```md
+@cover(url)
+```
+
+- 封面容器會以中心裁切，比例為 `16:4`，並填滿目前內容區寬度。
+
+#### 圖片
+
+```md
+![title](url)
+![title](url){border=true,radius=true}
+```
+
+- `title` 會顯示在圖片下方並置中。
+- 不需要標題可用 `![](url)`。
+- 可在尾端加樣式參數：`{border=true,radius=true}`。
+- 一般圖片（含單張顯示與 `layout` 內圖片）預設左右填滿當前欄位（`width: 100%`）。
+- 圖片高度會隨寬度等比例調整（`height: auto`）。
+
+#### 影片
+
+```md
+@video[title](url)
+@video[title](url){border=true,radius=true}
+```
+
+- `title` 可為空：`@video[](url)`。
+- 可在尾端加樣式參數：`{border=true,radius=true}`。
+- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
+
+#### GIF-like 影片
+
+```md
+@gif[title](url)
+@gif[title](url){border=true,radius=true}
+```
+
+- 語法與 `@video` 相同：`title` 可為空，例：`@gif[](url)`。
+- 可在尾端加樣式參數：`{border=true,radius=true}`。
+- 行為為自動播放、循環、靜音、行動裝置內嵌播放（`autoplay + loop + muted + playsinline`）。
+- 支援常見影片格式（如 `mp4`、`webm`、`ogg/ogv`、`mov`；實際播放能力依瀏覽器而定）。
+
+#### 嵌入網頁
+
+```md
+@iframe[title](url)
+@iframe[title](url){border=true,radius=true}
+```
+
+- `title` 可為空：`@iframe[](url)`。
+- 可在尾端加樣式參數：`{border=true,radius=true}`。
+- 非影片型 `@iframe` 會在右下角顯示極簡 `Full` 圖示按鈕，可直接進入全螢幕。
+- 影片型嵌入（如 YouTube/Vimeo）不顯示自訂按鈕，維持播放器原生全螢幕控制。
+
+#### 共用媒體樣式參數
+
+- 適用於 `![]()`、`@video`、`@gif`、`@iframe`。
+- 寫法：在語法尾端加 `{key=value,key=value}`。
+- 目前支援：
+  - `border=true|false`（預設 `false`）
+  - `radius=true|false`（預設 `true`）
+  - 僅接受 `true` / `false` 兩種值（其他寫法會回退預設）
+- 視覺效果：
+  - `border=true` 時套用 `2px` 邊框。
+  - `radius=true` 時套用 `8px` 圓角。
+
+## 文件大綱功能
 
 - 會自動讀取目前頁面的 `h1~h6` 建立左側章節大綱。
 - 支援巢狀階層、章節收合與展開（符號：`⌵` / `▸`）。
 - 捲動中央內容時，左側會自動高亮目前章節，並自動將 active 項目捲動到可視區。
 
-### 語法相容性
-
-- 舊語法 `@cover[url]`、`@video[url]`、`@iframe[url]` 已不支援。
 
 ## 新增專案
 

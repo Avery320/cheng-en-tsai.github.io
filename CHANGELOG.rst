@@ -1,6 +1,15 @@
 更新日誌
 ========
 
+[0.7.0] - 2026-02-25
+--------------------
+- 設計重構：前端程式拆分為 `app.js`、`outline.js`、`markdown-extensions.js`、`options.js`、`justify.js`，降低耦合並提升可維護性
+- 媒體樣式參數統一為布林語法：`{border=true|false,radius=true|false}`
+- 媒體預設樣式調整為 `border=false`、`radius=true`
+- 媒體樣式值調整：`border=true` 為 `2px` 邊框，`radius=true` 為 `8px` 圓角
+- `justify` 排版流程收斂：移除冗餘參數與重複呼叫，保留單一路徑並強化穩定性
+- 清理未使用 API 與樣式 token，並同步更新 README 規格說明
+
 [0.6.8] - 2026-02-25
 --------------------
 - 收斂響應式版面邏輯：`<=1024px` 統一改為抽屜導航模式（固定工具列、右側側欄抽屜化、遮罩高度與頂部偏移統一）

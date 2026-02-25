@@ -6,33 +6,21 @@
 const MarkdownExtensions = (function () {
     'use strict';
 
-    const VERSION = '2.1.0';
     const MOBILE_BREAKPOINT = 768;
-    const DEFAULT_ASPECT_RATIO = 16 / 9;
-    const MIN_ASPECT_RATIO = 0.2;
-    const MAX_ASPECT_RATIO = 6;
+    const DEFAULT_GRID_HEIGHT = 280;
     const DEFAULT_LINE_BREAK_COUNT = 1;
     const MAX_LINE_BREAK_COUNT = 6;
     const DEFAULT_VIDEO_MUTED = true;
     const DEFAULT_VIDEO_PRELOAD = 'auto';
     const DEFAULT_GIF_PRELOAD = 'auto';
+    const optionsApi = window.MarkdownOptions;
+    const justifyApi = window.MarkdownJustify;
+    const DEFAULT_MEDIA_OPTIONS = optionsApi?.DEFAULT_MEDIA_OPTIONS || { border: false, radius: true };
+    const parseMediaOptions = optionsApi?.parseMediaOptions || (() => ({ ...DEFAULT_MEDIA_OPTIONS }));
+    const getMediaOptionClasses = optionsApi?.getMediaOptionClasses
+        || ((options = DEFAULT_MEDIA_OPTIONS) => [options?.border ? 'media-with-border' : '', options?.radius ? 'media-radius-on' : ''].filter(Boolean));
 
     let markedConfigured = false;
-
-    let config = {
-        gridHeight: 280,
-        gridGap: 8,
-        debug: false
-    };
-
-    /**
-     * 除錯輸出：僅在 debug 模式下輸出。
-     */
-    function log(...args) {
-        if (config.debug) {
-            console.log('[MarkdownExtensions]', ...args);
-        }
-    }
 
     /**
      * 轉義 HTML 特殊字元，避免注入與破版。
@@ -122,91 +110,6 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 讀取 CSS 變數數值，無效時使用後備值。
-     */
-    function getCSSVariable(name, fallback) {
-        const value = getComputedStyle(document.documentElement)
-            .getPropertyValue(name);
-        return parseInt(value, 10) || fallback;
-    }
-
-    /**
-     * 判斷是否為行動版 viewport。
-     */
-    function isMobileViewport() {
-        return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
-    }
-
-    /**
-     * 取得圖片在 grid 中的實際排版元素。
-     */
-    function getGridItemElement(image) {
-        const mediaFigure = image.closest('.media-image-figure');
-        if (mediaFigure && mediaFigure.closest('.image-grid')) {
-            return mediaFigure;
-        }
-
-        return image;
-    }
-
-    /**
-     * 清除圖片 justify 產生的 inline style。
-     */
-    function resetImageStyles(images) {
-        images.forEach((img) => {
-            const gridItem = getGridItemElement(img);
-            gridItem.style.removeProperty('width');
-            gridItem.style.removeProperty('flex-grow');
-            gridItem.style.removeProperty('flex-shrink');
-
-            img.style.removeProperty('width');
-            img.style.removeProperty('flex-grow');
-            img.style.removeProperty('flex-shrink');
-            img.setAttribute('data-justified', 'true');
-        });
-    }
-
-    /**
-     * 取得安全的圖片長寬比，並限制在合理範圍。
-     */
-    function getSafeAspectRatio(image) {
-        const width = image.naturalWidth;
-        const height = image.naturalHeight;
-
-        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-            return DEFAULT_ASPECT_RATIO;
-        }
-
-        const rawRatio = width / height;
-        if (!Number.isFinite(rawRatio) || rawRatio <= 0) {
-            return DEFAULT_ASPECT_RATIO;
-        }
-
-        return Math.min(Math.max(rawRatio, MIN_ASPECT_RATIO), MAX_ASPECT_RATIO);
-    }
-
-    /**
-     * 等待圖片載入完成（成功或失敗皆返回）。
-     */
-    function waitForImageLoad(image) {
-        return new Promise((resolve) => {
-            if (image.complete) {
-                resolve(image);
-                return;
-            }
-
-            const finalize = () => {
-                image.removeEventListener('load', finalize);
-                image.removeEventListener('error', finalize);
-                resolve(image);
-            };
-
-            image.addEventListener('load', finalize, { once: true });
-            image.addEventListener('error', finalize, { once: true });
-        });
-    }
-
-    /**
      * 渲染媒體說明文字（可選）。
      */
     function renderCaption(rawTitle = '') {
@@ -242,7 +145,7 @@ const MarkdownExtensions = (function () {
     /**
      * 渲染圖片 figure（alt 同時作為 caption 來源）。
      */
-    function renderImage(url, altText) {
+    function renderImage(url, altText, options = DEFAULT_MEDIA_OPTIONS) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
 
@@ -250,13 +153,13 @@ const MarkdownExtensions = (function () {
         const safeAlt = escapeHtml(cleanAlt);
         const imageHtml = `<img src="${safeUrl}" alt="${safeAlt}" loading="lazy">`;
 
-        return renderFigure(imageHtml, cleanAlt, ['media-image-figure']);
+        return renderFigure(imageHtml, cleanAlt, ['media-image-figure', ...getMediaOptionClasses(options)]);
     }
 
     /**
      * 渲染影片播放器區塊。
      */
-    function renderVideoMedia(url, title, mode = 'video') {
+    function renderVideoMedia(url, title, mode = 'video', options = DEFAULT_MEDIA_OPTIONS) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
 
@@ -276,27 +179,27 @@ const MarkdownExtensions = (function () {
         const sourceTypeAttribute = videoMimeType ? ` type="${videoMimeType}"` : '';
         const videoHtml = `<video ${videoAttributes}><source src="${safeUrl}"${sourceTypeAttribute}></video>`;
 
-        return renderFigure(videoHtml, cleanTitle);
+        return renderFigure(videoHtml, cleanTitle, getMediaOptionClasses(options));
     }
 
     /**
      * 渲染影片播放器區塊。
      */
-    function renderVideo(url, title) {
-        return renderVideoMedia(url, title, 'video');
+    function renderVideo(url, title, options = DEFAULT_MEDIA_OPTIONS) {
+        return renderVideoMedia(url, title, 'video', options);
     }
 
     /**
      * 渲染 GIF-like 影片區塊（自動播放、循環、靜音）。
      */
-    function renderGif(url, title) {
-        return renderVideoMedia(url, title, 'gif');
+    function renderGif(url, title, options = DEFAULT_MEDIA_OPTIONS) {
+        return renderVideoMedia(url, title, 'gif', options);
     }
 
     /**
      * 渲染 iframe 嵌入區塊。
      */
-    function renderIframe(url, title) {
+    function renderIframe(url, title, options = DEFAULT_MEDIA_OPTIONS) {
         const safeUrl = sanitizeUrl(url);
         if (!safeUrl) return '';
 
@@ -304,7 +207,7 @@ const MarkdownExtensions = (function () {
         const safeTitle = escapeHtml(cleanTitle || 'Embedded content');
         const iframeHtml = `<div class="iframe-container">${isVideoIframeUrl(url) ? '' : IFRAME_FULLSCREEN_BUTTON_HTML}<iframe src="${safeUrl}" loading="lazy" title="${safeTitle}" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
 
-        return renderFigure(iframeHtml, cleanTitle);
+        return renderFigure(iframeHtml, cleanTitle, getMediaOptionClasses(options));
     }
 
     /**
@@ -352,21 +255,6 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 解析 @video/@gif/@iframe 這類指令格式。
-     */
-    function parseMediaDirective(src, directiveName) {
-        const directivePattern = new RegExp(`^@${directiveName}\\s*\\[([^\\]]*)\\]\\s*\\((.*)\\)\\s*(?:\\n|$)`);
-        const match = directivePattern.exec(src);
-        if (!match) return null;
-
-        return {
-            raw: match[0],
-            title: match[1].trim(),
-            url: match[2].trim()
-        };
-    }
-
-    /**
      * 將分行次數正規化到安全範圍。
      */
     function normalizeLineBreakCount(rawCount) {
@@ -400,6 +288,35 @@ const MarkdownExtensions = (function () {
      */
     function renderLineBreak(count) {
         return '<br>'.repeat(normalizeLineBreakCount(count));
+    }
+
+    /**
+     * 建立 @video/@gif/@iframe 共用 block 擴充，避免重複 tokenizer/renderer。
+     */
+    function createMediaBlockExtension(directiveName, tokenType, renderer) {
+        const directivePattern = new RegExp(`^@${directiveName}\\s*\\[([^\\]]*)\\]\\s*\\((.*?)\\)\\s*(?:\\{([^\\n}]*)\\})?\\s*(?:\\n|$)`);
+        return {
+            name: tokenType,
+            level: 'block',
+            start(src) {
+                const index = src.indexOf(`@${directiveName}`);
+                return index >= 0 ? index : undefined;
+            },
+            tokenizer(src) {
+                const match = directivePattern.exec(src);
+                if (!match) return undefined;
+                return {
+                    type: tokenType,
+                    raw: match[0],
+                    title: match[1].trim(),
+                    url: match[2].trim(),
+                    options: parseMediaOptions(match[3] || '')
+                };
+            },
+            renderer(token) {
+                return renderer(token.url, token.title, token.options);
+            }
+        };
     }
 
     /**
@@ -464,8 +381,6 @@ const MarkdownExtensions = (function () {
                         this.lexer.blockTokens(slotMarkdown, [])
                     );
 
-                    log('layoutBlock:', { slots: slots.length, ratios: normalizedRatios });
-
                     return {
                         type: 'layoutBlock',
                         raw,
@@ -529,75 +444,9 @@ const MarkdownExtensions = (function () {
                     return renderCover(token.url);
                 }
             },
-            {
-                // @video[title](url)
-                name: 'videoBlock',
-                level: 'block',
-                start(src) {
-                    const index = src.indexOf('@video');
-                    return index >= 0 ? index : undefined;
-                },
-                tokenizer(src) {
-                    const parsed = parseMediaDirective(src, 'video');
-                    if (!parsed) return undefined;
-
-                    return {
-                        type: 'videoBlock',
-                        raw: parsed.raw,
-                        title: parsed.title,
-                        url: parsed.url
-                    };
-                },
-                renderer(token) {
-                    return renderVideo(token.url, token.title);
-                }
-            },
-            {
-                // @gif[title](url)
-                name: 'gifBlock',
-                level: 'block',
-                start(src) {
-                    const index = src.indexOf('@gif');
-                    return index >= 0 ? index : undefined;
-                },
-                tokenizer(src) {
-                    const parsed = parseMediaDirective(src, 'gif');
-                    if (!parsed) return undefined;
-
-                    return {
-                        type: 'gifBlock',
-                        raw: parsed.raw,
-                        title: parsed.title,
-                        url: parsed.url
-                    };
-                },
-                renderer(token) {
-                    return renderGif(token.url, token.title);
-                }
-            },
-            {
-                // @iframe[title](url)
-                name: 'iframeBlock',
-                level: 'block',
-                start(src) {
-                    const index = src.indexOf('@iframe');
-                    return index >= 0 ? index : undefined;
-                },
-                tokenizer(src) {
-                    const parsed = parseMediaDirective(src, 'iframe');
-                    if (!parsed) return undefined;
-
-                    return {
-                        type: 'iframeBlock',
-                        raw: parsed.raw,
-                        title: parsed.title,
-                        url: parsed.url
-                    };
-                },
-                renderer(token) {
-                    return renderIframe(token.url, token.title);
-                }
-            },
+            createMediaBlockExtension('video', 'videoBlock', renderVideo),
+            createMediaBlockExtension('gif', 'gifBlock', renderGif),
+            createMediaBlockExtension('iframe', 'iframeBlock', renderIframe),
             {
                 // ![alt](url)
                 name: 'imageBlock',
@@ -607,18 +456,19 @@ const MarkdownExtensions = (function () {
                     return index >= 0 ? index : undefined;
                 },
                 tokenizer(src) {
-                    const match = /^[ \t]{0,3}!\[([^\]]*)\]\((.*)\)\s*(?:\n|$)/.exec(src);
+                    const match = /^[ \t]{0,3}!\[([^\]]*)\]\((.*?)\)\s*(?:\{([^}\n]*)\})?\s*(?:\n|$)/.exec(src);
                     if (!match) return undefined;
 
                     return {
                         type: 'imageBlock',
                         raw: match[0],
                         altText: match[1],
-                        url: match[2].trim()
+                        url: match[2].trim(),
+                        options: parseMediaOptions(match[3] || '')
                     };
                 },
                 renderer(token) {
-                    return renderImage(token.url, token.altText);
+                    return renderImage(token.url, token.altText, token.options);
                 }
             }
         ];
@@ -642,74 +492,7 @@ const MarkdownExtensions = (function () {
         return true;
     }
 
-    /**
-     * 依容器寬度與圖片比例計算 justified 目標寬度。
-     */
-    function calculateJustifiedWidths(grid, images) {
-        const containerWidth = grid.clientWidth;
-        const gap = getCSSVariable('--grid-gap', config.gridGap);
-        const targetHeight = getCSSVariable('--grid-height', config.gridHeight);
-
-        const imageWidths = images.map((img) => targetHeight * getSafeAspectRatio(img));
-
-        const totalImageWidth = imageWidths.reduce((sum, width) => sum + width, 0);
-        const totalGapWidth = (images.length - 1) * gap;
-        const availableWidth = containerWidth - totalGapWidth;
-
-        if (!Number.isFinite(totalImageWidth) || !Number.isFinite(availableWidth) ||
-            totalImageWidth <= 0 || availableWidth <= 0) {
-            resetImageStyles(images);
-            return;
-        }
-
-        const scale = availableWidth / totalImageWidth;
-        if (!Number.isFinite(scale) || scale <= 0) {
-            resetImageStyles(images);
-            return;
-        }
-
-        images.forEach((img, index) => {
-            const width = Math.floor(imageWidths[index] * scale);
-            const gridItem = getGridItemElement(img);
-
-            gridItem.style.width = `${width}px`;
-            gridItem.style.flexGrow = '0';
-            gridItem.style.flexShrink = '0';
-
-            if (gridItem !== img) {
-                img.style.width = '100%';
-            } else {
-                img.style.width = `${width}px`;
-            }
-
-            img.style.flexGrow = '0';
-            img.style.flexShrink = '0';
-            img.setAttribute('data-justified', 'true');
-        });
-
-        log('calculateJustifiedWidths:', {
-            containerWidth,
-            images: images.length,
-            scale: scale.toFixed(2)
-        });
-    }
-
     return {
-        /**
-         * 擴充模組版本。
-         */
-        get version() {
-            return VERSION;
-        },
-
-        /**
-         * 更新模組設定值。
-         */
-        configure(options = {}) {
-            config = { ...config, ...options };
-            log('configure:', config);
-        },
-
         /**
          * 解析 Markdown 並套用自訂語法。
          */
@@ -726,47 +509,18 @@ const MarkdownExtensions = (function () {
         },
 
         /**
-         * render 的別名，保留語意一致性。
-         */
-        parse(markdown) {
-            return this.render(markdown);
-        },
-
-        /**
          * 對所有 .image-grid 重新套用 justify 計算。
          */
         justifyImages() {
-            const grids = document.querySelectorAll('.image-grid');
+            if (typeof justifyApi.justifyImages !== 'function') {
+                return;
+            }
 
-            grids.forEach((grid) => {
-                const images = Array.from(grid.querySelectorAll('img'));
-                if (images.length === 0) return;
-
-                Promise.all(images.map(waitForImageLoad)).then(() => {
-                    if (isMobileViewport()) {
-                        resetImageStyles(images);
-                        return;
-                    }
-
-                    calculateJustifiedWidths(grid, images);
-                });
+            justifyApi.justifyImages({
+                selector: '.image-grid',
+                gridHeight: DEFAULT_GRID_HEIGHT,
+                mobileBreakpoint: MOBILE_BREAKPOINT
             });
-        },
-
-        /**
-         * 回傳目前支援的自訂語法說明。
-         */
-        getSupportedSyntax() {
-            return [
-                { syntax: '@cover(url)', description: '扉頁封面圖' },
-                { syntax: ':::grid ... :::', description: '圖片並排網格' },
-                { syntax: ':::layout[40,60] ... :::end-layout', description: '多欄混合排版（文字/圖片/影片）' },
-                { syntax: '![title](url)', description: '圖片（title 顯示於下方）' },
-                { syntax: '@video[title](url)', description: '影片播放器（可選標題）' },
-                { syntax: '@gif[title](url)', description: 'GIF-like 影片（自動播放、循環、靜音）' },
-                { syntax: '@iframe[title](url)', description: '嵌入外部網站（可選標題）' },
-                { syntax: '@br / @br(2)', description: '段落內分行（支援一次多行）' }
-            ];
         }
     };
 })();

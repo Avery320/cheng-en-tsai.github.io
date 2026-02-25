@@ -22,7 +22,7 @@
 
 在細部表現上，作品將 Marching Cubes 的標準案例拓樸對應為一組自訂構件（Customized Marching Cubes Elements），以構件取代原本的面片輸出，使局部結構具有更明確的造型語彙。最後依體素矩陣的位置關係進行元件聚合，完成整體構成。
 @slot
-![Customazied Marching Cubes Elements](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/elements.jpg)
+![Customazied Marching Cubes Elements](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/elements.jpg){border=true,radius=true}
 :::end-layout
 
 ![Game of Life](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/game_of_life.jpg)
@@ -61,4 +61,3 @@
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/003.jpg?updatedAt=1772043550549)
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/004.jpg)
 :::
-

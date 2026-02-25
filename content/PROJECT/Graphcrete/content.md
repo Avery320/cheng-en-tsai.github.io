@@ -60,7 +60,7 @@
 @br(2)
 ![Facade](https://ik.imagekit.io/cheng3n/Graphcrete/facade.png?updatedAt=1770897662159)
 @slot
-![Mesh](https://ik.imagekit.io/cheng3n/Graphcrete/mesh.png?updatedAt=1770897644920)
+![Mesh](https://ik.imagekit.io/cheng3n/Graphcrete/mesh.png?updatedAt=1770897644920){border=true,radius=true}
 :::end-layout
 
 
