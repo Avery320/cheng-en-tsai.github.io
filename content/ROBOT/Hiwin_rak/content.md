@@ -46,7 +46,7 @@ Hiwin_rak 採用低耦合的模組化分層架構，並依照控制流程，將�
 - 腳本（scripts）：腳本主要是將相關的功能組織成 ROS 節點，負責訂閱與發布 ROS Topics、Services，調用相關功能執行對應之控制流程。
 - 使用者介面（ui）：提供基本的控制介面，包含控制按鈕、狀態顯示等元素，方便使用者操作與監控。
 @slot
-![hiwin_rak_flowchart](content/ROBOT/Hiwin_rak/asset/hiwin_rak_architecture.png)
+![hiwin_rak_flowchart](content/ROBOT/Hiwin_rak/asset/hiwin_rak_architecture.png){border=true,radius=true}
 :::end-layout
 
 ## 流程
@@ -60,10 +60,8 @@ Hiwin_rak 同時也提提供圖形化操作介面作為使用者與 ROS 控制�
 介面使用 pyqt 封裝所有開發功能，包括 Joints slider 的關節控制，/tcp 位置的 MoveJ, MoveL 控制，DO 的數位控制，速度縮放控制，JSONL 的檔案讀取與發布，以及即時狀態監控等，使後端也擁有獨立的操作介面，使使用者無須直接操作 ROS 指令即可完成機械手臂控制與系統監看。
 @br(2)
 
----
-![rviz](content/ROBOT/Hiwin_rak/asset/rviz.png)
----
-![ui](content/ROBOT/Hiwin_rak/asset/ui.png)
+![rviz](content/ROBOT/Hiwin_rak/asset/rviz.png){border=true,radius=true}
+![ui](content/ROBOT/Hiwin_rak/asset/ui.png){border=true,radius=true}
 @slot
 ![rak_flowchart](content/ROBOT/Hiwin_rak/asset/rak_flowchart.png)
 :::end-layout

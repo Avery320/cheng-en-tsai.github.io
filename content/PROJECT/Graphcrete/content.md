@@ -38,18 +38,20 @@
 - 造型設計上主要以結構為前提考量的設計，依照混凝土技術規則鋼筋保護層 40 公釐的規定，因此設計以圓柱體型態作為初始造型，再加上 60 公釐作為保護層的寬限，因此柱子斷面會在 450 至 570 公釐間做型態變化。
 - 另外為了符合結構型態的前提下，增加柱體在形態上的變化，以下寬上窄的方針設計，在超出結構範圍的部分則採用雙層列印的方式，外層為完成面，符合整體柱子的紋理樣態，內層直接以 450 公釐的圓形斷面作為結構層。
 @slot
-![Structure Design](https://ik.imagekit.io/cheng3n/Graphcrete/str_design.jpeg?updatedAt=1770897653054)
+![Structure Design](https://ik.imagekit.io/cheng3n/Graphcrete/str_design.jpeg?updatedAt=1770897653054){border=false,radius=false}
 :::end-layout
 
 
 ### 紋理
 :::layout[50,50] 
 - 紋理設計是以幾何邏輯與視覺層次為核心原則，透過 Truchet Pattern 的圖樣語彙，再以 Multi-scale Truchet Pattern 的多尺度概念進行延展。此設計方式不僅使紋理在局部具備細節變化，同時在整體上呈現秩序與隨機之間的張力。
-![MultiScaleTruchetPattern_01](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_01.jpg?updatedAt=1770897644550)
+@br(2)
 
-![MultiScaleTruchetPattern_02](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_02.jpg?updatedAt=1770897643741)
+![MultiScaleTruchetPattern_01](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_01.jpg?updatedAt=1770897644550){border=true,radius=false}
+
+![MultiScaleTruchetPattern_02](https://ik.imagekit.io/cheng3n/Graphcrete/MultiScaleTruchetPattern_02.jpg?updatedAt=1770897643741){border=true,radius=false}
 @slot
-![Mapping Pattern](https://ik.imagekit.io/cheng3n/Graphcrete/MappingPattern.jpeg?updatedAt=1770897649109)
+![Mapping Pattern](https://ik.imagekit.io/cheng3n/Graphcrete/MappingPattern.jpeg?updatedAt=1770897649109){border=true,radius=false}
 :::end-layout
 
 ### 網格

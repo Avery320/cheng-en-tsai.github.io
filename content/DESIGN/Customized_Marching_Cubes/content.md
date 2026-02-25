@@ -34,9 +34,9 @@
 
 後續同樣以 Marching Cubes 從體素場中生成主要外形，並進一步以自訂構件取代標準面片輸出，最後透過體素矩陣的對位關係完成元件聚合與整體構成。 
 @slot
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/gif01.gif)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/gif01.gif){border=true,radius=true}
 @slot
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/gif02.gif)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/gif02.gif){border=true,radius=true}
 :::end-layout
 
 ## 軌道漂流城｜Orbit-Drift City

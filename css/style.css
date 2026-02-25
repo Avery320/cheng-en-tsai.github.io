@@ -115,7 +115,7 @@ body {
 
 .media-figure.media-with-border {
     --media-frame-border-width: 2px;
-    --media-frame-border-color: var(--border-color);
+    --media-frame-border-color: #3f3f3fa3;
 }
 
 .media-image-figure > img {

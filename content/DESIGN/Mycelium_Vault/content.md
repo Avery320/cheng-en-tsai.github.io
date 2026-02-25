@@ -60,9 +60,9 @@
 
 在基地設計構想上，本研究以 X-Site 原有較為線性的動線作為出發，嘗試透過三跨拱頂構造之置入，打破既有空間之單一流動方向，並重新組織廣場空間之使用方式。拱頂構造不僅作為結構系統，同時亦成為空間經驗之介面，透過其尺度與連續性，創造出具有引導性與停留性的空間節點。
 @slot
-![X-Site_plan](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_plan.png)
+![X-Site_plan](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_plan.png){border=true,radius=true}
 @slot
-![X-site_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_perspective.png)
+![X-site_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_perspective.png){border=true,radius=true}
 :::end-layout
 
 :::grid

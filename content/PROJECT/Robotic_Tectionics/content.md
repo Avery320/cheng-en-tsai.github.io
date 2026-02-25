@@ -16,7 +16,7 @@
 2. 空間放樣與數位雙生疊磚系統：
 利用 RealSense 與 ArUco Code 進行空間定位與手眼校正，完成虛實座標轉換後，由機械手臂依預設路徑自動夾取並堆疊磚塊。
 
-![](https://ik.imagekit.io/cheng3n/Robotic_Tectionics/storyboard.jpg)
+![](https://ik.imagekit.io/cheng3n/Robotic_Tectionics/storyboard.jpg){border=true,radius=false}
 
 
 ## 研究與技術架構
