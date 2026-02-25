@@ -1,7 +1,7 @@
 /* ===== Shared Tokens ===== */
 :root {
-    --panel-content-padding: clamp(1.25rem, 4vw, var(--spacing-panel));
-    --panel-content-padding-mobile: clamp(1rem, 5vw, var(--spacing-lg));
+    --panel-content-padding: 24px;
+    --panel-content-padding-mobile: 16px;
 
     --outline-panel-padding: 10px;
     --outline-panel-gap: 10px;
@@ -74,7 +74,7 @@
     width: min(100%, var(--content-max-width));
     margin: 0 auto;
     min-width: 0;
-    padding: var(--panel-content-padding);
+    padding: var(--spacing-panel) var(--panel-content-padding);
 }
 
 .nav {
@@ -302,7 +302,6 @@
 @media (max-width: 1279px) {
     :root {
         --sidebar-width: clamp(220px, 26vw, 320px);
-        --content-max-width: 920px;
         --outline-panel-width: clamp(180px, 22vw, 230px);
     }
 }
@@ -310,7 +309,6 @@
 @media (max-width: 1024px) {
     :root {
         --sidebar-width: clamp(210px, 28vw, 280px);
-        --content-max-width: 840px;
         --outline-panel-width: clamp(180px, 24vw, 220px);
     }
 }
@@ -340,7 +338,7 @@
     }
 
     .content-wrapper {
-        padding: var(--panel-content-padding-mobile);
+        padding: var(--spacing-lg) var(--panel-content-padding-mobile);
     }
 
     .outline-panel {
