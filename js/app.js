@@ -246,12 +246,45 @@ class PortfolioApp {
             });
         }
 
+        const contentWrapper = this.dom.contentWrapper;
+        if (contentWrapper) {
+            contentWrapper.addEventListener('click', (event) => {
+                const iframeContainer = event.target
+                    .closest('[data-iframe-action="fullscreen"]')
+                    ?.closest('.iframe-container');
+                if (!iframeContainer) return;
+
+                event.preventDefault();
+                this.requestFullscreen(iframeContainer);
+            });
+        }
+
         if (!menuToggle || !sidebar || !sidebarOverlay) return;
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
             sidebarOverlay.classList.toggle('active');
         });
         sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+
+    /**
+     * 讓指定元素進入全螢幕（含不同瀏覽器 API 相容）。
+     */
+    requestFullscreen(element) {
+        if (!element) return;
+
+        const requestMethod = element?.requestFullscreen
+            || element.webkitRequestFullscreen
+            || element.mozRequestFullScreen
+            || element.msRequestFullscreen;
+        if (typeof requestMethod !== 'function') return;
+
+        try {
+            const requestResult = requestMethod.call(element);
+            requestResult?.catch?.((error) => console.warn('無法啟用全螢幕模式:', error));
+        } catch (error) {
+            console.warn('無法啟用全螢幕模式:', error);
+        }
     }
 
     /**

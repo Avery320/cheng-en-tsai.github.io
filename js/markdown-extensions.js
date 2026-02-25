@@ -73,6 +73,25 @@ const MarkdownExtensions = (function () {
         return escapeHtml(trimmed);
     }
 
+    const VIDEO_IFRAME_HOST_PATTERN = /^(?:m\.)?(?:youtube(?:-nocookie)?\.com|youtu\.be|(?:player\.)?vimeo\.com|(?:player\.)?dailymotion\.com|(?:player\.)?twitch\.tv)$/i;
+    const IFRAME_FULLSCREEN_BUTTON_HTML = '<button type="button" class="iframe-fullscreen-button" data-iframe-action="fullscreen" title="Fullscreen" aria-label="Show embedded content in fullscreen"><svg class="iframe-fullscreen-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm0-4h2V7h3V5H5v5zm10 7h-3v2h5v-5h-2v3zm0-12v3h2V5h-5v2h3z"></path></svg></button>';
+
+    /**
+     * 判斷 iframe URL 是否為影片平台嵌入。
+     */
+    function isVideoIframeUrl(rawUrl = '') {
+        const normalized = String(rawUrl || '').trim();
+        if (!normalized) return false;
+        if (detectVideoMimeType(normalized)) return true;
+
+        try {
+            const host = new URL(normalized, window.location.href).hostname.replace(/^www\./i, '');
+            return VIDEO_IFRAME_HOST_PATTERN.test(host);
+        } catch (_error) {
+            return false;
+        }
+    }
+
     /**
      * 依檔名副檔名推斷影片 MIME 類型；未知時回傳空字串。
      */
@@ -283,7 +302,7 @@ const MarkdownExtensions = (function () {
 
         const cleanTitle = String(title || '').trim();
         const safeTitle = escapeHtml(cleanTitle || 'Embedded content');
-        const iframeHtml = `<div class="iframe-container"><iframe src="${safeUrl}" loading="lazy" title="${safeTitle}"></iframe></div>`;
+        const iframeHtml = `<div class="iframe-container">${isVideoIframeUrl(url) ? '' : IFRAME_FULLSCREEN_BUTTON_HTML}<iframe src="${safeUrl}" loading="lazy" title="${safeTitle}" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
 
         return renderFigure(iframeHtml, cleanTitle);
     }

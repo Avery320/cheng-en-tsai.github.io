@@ -161,6 +161,39 @@ body {
     border: none;
 }
 
+.iframe-fullscreen-button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.iframe-fullscreen-button:hover {
+    background: rgba(0, 0, 0, 0.62);
+}
+
+.iframe-fullscreen-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.iframe-fullscreen-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
 /* ===== 文字圖片混合排版 ===== */
 .media-layout {
     /* 多欄混合排版（由 markdown layout 指令控制欄寬）。 */
