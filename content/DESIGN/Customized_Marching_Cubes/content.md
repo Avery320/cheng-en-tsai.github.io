@@ -61,15 +61,3 @@
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/003.jpg?updatedAt=1772043550549)
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/004.jpg)
 :::
-
-
-:::gallery{height=280px,border=false,radius=true}
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/002.jpg)
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/003.jpg?updatedAt=1772043550549)
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/004.jpg)
-![掠過夜側｜Night-Side Pass](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/001.jpg)
-![轉向深空｜Deep-Space Turn](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/001-2.jpg)
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe_%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F%201.jpg?updatedAt=1765525969324)
-![零件星雲 | Module Nebula](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe-02.jpg?updatedAt=1765525968916)
-![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe-03.jpg?updatedAt=1765525968583)
-:::
