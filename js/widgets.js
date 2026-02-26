@@ -165,6 +165,9 @@ ${createNavButtonHtml('next', 'Show next image')}
             src: element.getAttribute('data-gallery-zoom-src') || ''
         }));
 
+        // Splide options/API reference:
+        // https://splidejs.com/guides/options/
+        // https://splidejs.com/guides/apis/
         const main = new window.Splide(mainElement, {
             type: 'loop',
             perPage: 1,

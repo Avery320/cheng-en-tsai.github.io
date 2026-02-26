@@ -1,4 +1,9 @@
-# [Portfolio](https://avery320.github.io/cheng-en-tsai.github.io/)
+# cheng-en-tsai.github.io
+
+[![Website](https://img.shields.io/badge/Website-avery320.github.io-2563eb?logo=googlechrome&logoColor=white)](https://avery320.github.io/cheng-en-tsai.github.io/)
+[![Splide.js](https://img.shields.io/badge/Splide.js-Carousel-1f2937?logo=javascript&logoColor=white)](https://splidejs.com/)
+[![Marked.js](https://img.shields.io/badge/Marked.js-Markdown%20Parser-0f172a?logo=markdown&logoColor=white)](https://marked.js.org/)
+[![License](https://img.shields.io/badge/License-MIT-16a34a.svg)](#授權)
 
 個人作品集網站，採用分屏式互動介面設計。
 
@@ -22,6 +27,18 @@
 - HTML / CSS / JavaScript
 - Marked.js（Markdown 解析）
 - Splide.js（gallery 輪播）
+
+## Splide API 整合
+
+- 套件來源：`index.html` 透過 jsDelivr 載入 Splide core CSS 與 runtime JS。
+- 結構來源：`js/markdown-extensions.js` 輸出 Splide 規範結構（`splide / splide__track / splide__list / splide__slide`）。
+- 初始化來源：`js/widgets.js` 以 `new Splide(...)` 建立主輪播與縮圖輪播，並使用 `main.sync(thumbs)` 做連動。
+- 主要 API：
+  - `new Splide(mainElement, options)`
+  - `new Splide(thumbsElement, options)`
+  - `main.sync(thumbs)`
+  - `thumbs.mount()` / `main.mount()`
+  - `main.go('<' | '>')`
 
 ## 專案結構
 
@@ -190,7 +207,6 @@
 - 會自動讀取目前頁面的 `h1~h6` 建立左側章節大綱。
 - 支援巢狀階層、章節收合與展開（符號：`⌵` / `▸`）。
 - 捲動中央內容時，左側會自動高亮目前章節，並自動將 active 項目捲動到可視區。
-
 
 ## 新增專案
 

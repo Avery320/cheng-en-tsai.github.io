@@ -267,6 +267,8 @@ const MarkdownExtensions = (function () {
             style: styleValue
         });
 
+        // Splide structure reference:
+        // https://splidejs.com/guides/structure/
         return `<section ${wrapperAttributes}>
 <div class="splide media-gallery-main" data-gallery-role="main" aria-label="Image gallery">
 <div class="splide__track">
