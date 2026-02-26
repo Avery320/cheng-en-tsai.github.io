@@ -30,7 +30,7 @@
 
     /* Grid 參數 (供 JS 讀取) */
     --grid-gap: 8px;
-    --grid-height: 280px;
+    --media-arrangement-mobile-gap: var(--spacing-lg);
     --media-block-margin: var(--spacing-lg);
 
     /* 版面參數 */
@@ -303,9 +303,13 @@ body {
 }
 
 @media (max-width: 768px) {
-    .media-layout {
-        /* 小螢幕時改成單欄，提升閱讀與觸控體驗。 */
+    .image-grid {
+        display: grid;
+    }
+
+    :is(.media-layout, .image-grid) {
+        /* 小螢幕時統一由媒體排列邏輯改成單欄。 */
         grid-template-columns: minmax(0, 1fr);
-        gap: var(--spacing-lg);
+        gap: var(--media-arrangement-mobile-gap);
     }
 }

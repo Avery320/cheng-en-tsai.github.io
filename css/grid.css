@@ -1,8 +1,8 @@
 /* ===== Justified Image Gallery ===== */
 .image-grid {
-    /* 桌機版使用 flex 進行橫向對齊與換行。 */
+    /* 使用單列 flex 進行橫向對齊。 */
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: var(--grid-gap, 8px);
 }
 
@@ -17,9 +17,9 @@
 }
 
 .content-wrapper .image-grid img {
-    height: var(--grid-height, 280px);
-    width: auto;
-    object-fit: cover;
+    height: auto;
+    width: 100%;
+    object-fit: contain;
     border-radius: var(--radius-md);
     margin: 0;
     background-color: var(--bg-secondary);
@@ -59,30 +59,4 @@
 
 .content-wrapper .image-grid img[data-justified="true"] {
     opacity: 1;
-}
-
-/* 響應式：小螢幕改為單欄 */
-@media (max-width: 768px) {
-    .image-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
-
-    .content-wrapper .image-grid img {
-        height: auto;
-        width: 100%;
-        display: block;
-    }
-
-    .image-grid .media-image-figure {
-        width: 100%;
-    }
-
-    .image-grid .media-figure {
-        width: 100%;
-    }
-
-    .content-wrapper .image-grid .media-image-figure img {
-        width: 100%;
-    }
 }
