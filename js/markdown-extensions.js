@@ -16,7 +16,9 @@ const MarkdownExtensions = (function () {
     const optionsApi = window.MarkdownOptions;
     const justifyApi = window.MarkdownJustify;
     const DEFAULT_MEDIA_OPTIONS = optionsApi?.DEFAULT_MEDIA_OPTIONS || { border: false, radius: true };
+    const DEFAULT_GALLERY_OPTIONS = optionsApi?.DEFAULT_GALLERY_OPTIONS || { height: '360px', border: false, radius: true };
     const parseMediaOptions = optionsApi?.parseMediaOptions || (() => ({ ...DEFAULT_MEDIA_OPTIONS }));
+    const parseGalleryOptions = optionsApi?.parseGalleryOptions || (() => ({ ...DEFAULT_GALLERY_OPTIONS }));
     const getMediaOptionClasses = optionsApi?.getMediaOptionClasses
         || ((options = DEFAULT_MEDIA_OPTIONS) => [options?.border ? 'media-with-border' : '', options?.radius ? 'media-radius-on' : ''].filter(Boolean));
 
@@ -62,7 +64,7 @@ const MarkdownExtensions = (function () {
     }
 
     const VIDEO_IFRAME_HOST_PATTERN = /^(?:m\.)?(?:youtube(?:-nocookie)?\.com|youtu\.be|(?:player\.)?vimeo\.com|(?:player\.)?dailymotion\.com|(?:player\.)?twitch\.tv)$/i;
-    const IFRAME_FULLSCREEN_BUTTON_HTML = '<button type="button" class="iframe-fullscreen-button" data-iframe-action="fullscreen" title="Fullscreen" aria-label="Show embedded content in fullscreen"><svg class="iframe-fullscreen-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm0-4h2V7h3V5H5v5zm10 7h-3v2h5v-5h-2v3zm0-12v3h2V5h-5v2h3z"></path></svg></button>';
+    const IFRAME_FULLSCREEN_BUTTON_HTML = '<button type="button" class="iframe-fullscreen-button ui-overlay-icon-button" data-iframe-action="fullscreen" title="Fullscreen" aria-label="Show embedded content in fullscreen"><svg class="ui-overlay-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm0-4h2V7h3V5H5v5zm10 7h-3v2h5v-5h-2v3zm0-12v3h2V5h-5v2h3z"></path></svg></button>';
 
     /**
      * 判斷 iframe URL 是否為影片平台嵌入。
@@ -211,6 +213,79 @@ const MarkdownExtensions = (function () {
     }
 
     /**
+     * 解析 gallery 區塊內的圖片語法。
+     */
+    function parseGalleryImages(markdown = '') {
+        const images = [];
+        const imagePattern = /^[ \t]{0,3}!\[([^\]]*)\]\((.*?)\)\s*$/gm;
+        let match;
+        while ((match = imagePattern.exec(markdown)) !== null) {
+            const title = String(match[1] || '').trim();
+            const url = String(match[2] || '').trim();
+            if (!url) continue;
+            images.push({ title, url });
+        }
+        return images;
+    }
+
+    /**
+     * 渲染 gallery 容器（由 widgets 層接手互動初始化）。
+     */
+    function renderGallery(images = [], options = DEFAULT_GALLERY_OPTIONS) {
+        if (!Array.isArray(images) || images.length === 0) return '';
+
+        const mainSlides = [];
+        const thumbSlides = [];
+
+        images.forEach((image, index) => {
+            const cleanTitle = String(image?.title || '').trim();
+            const safeTitle = escapeHtml(cleanTitle);
+            const safeUrl = sanitizeUrl(image?.url || '');
+            if (!safeUrl) return;
+
+            const zoomAttributes = toHtmlAttributes({
+                type: 'button',
+                class: 'gallery-zoom-trigger',
+                'data-gallery-zoom-src': safeUrl,
+                'aria-label': cleanTitle ? `View ${cleanTitle}` : `View image ${index + 1}`
+            });
+
+            mainSlides.push(
+                `<li class="splide__slide"><button ${zoomAttributes}><img src="${safeUrl}" alt="${safeTitle}" loading="lazy"></button></li>`
+            );
+            thumbSlides.push(
+                `<li class="splide__slide"><img src="${safeUrl}" alt="${safeTitle}" loading="lazy"></li>`
+            );
+        });
+
+        if (mainSlides.length === 0) return '';
+
+        const styleValue = `--gallery-height:${options.height};`;
+        const wrapperAttributes = toHtmlAttributes({
+            class: ['media-gallery', 'media-figure', ...getMediaOptionClasses(options)].join(' ').trim(),
+            'data-widget': 'gallery',
+            style: styleValue
+        });
+
+        return `<section ${wrapperAttributes}>
+<div class="splide media-gallery-main" data-gallery-role="main" aria-label="Image gallery">
+<div class="splide__track">
+<ul class="splide__list">
+${mainSlides.join('\n')}
+</ul>
+</div>
+</div>
+<div class="splide media-gallery-thumbs" data-gallery-role="thumbs" aria-label="Gallery thumbnails">
+<div class="splide__track">
+<ul class="splide__list">
+${thumbSlides.join('\n')}
+</ul>
+</div>
+</div>
+</section>`;
+    }
+
+    /**
      * 生成平均分配比例（例如 3 欄 -> 33.333...）。
      */
     function getEvenRatios(count) {
@@ -320,7 +395,7 @@ const MarkdownExtensions = (function () {
     }
 
     /**
-     * 建立 marked 擴充：layout/grid/cover/video/gif/iframe/image/br。
+     * 建立 marked 擴充：gallery/layout/grid/cover/video/gif/iframe/image/br。
      */
     function buildMarkedExtensions() {
         return [
@@ -344,6 +419,32 @@ const MarkdownExtensions = (function () {
                 },
                 renderer(token) {
                     return renderLineBreak(token.count);
+                }
+            },
+            {
+                // :::gallery{height=...} ... :::
+                name: 'galleryBlock',
+                level: 'block',
+                start(src) {
+                    const index = src.indexOf(':::gallery');
+                    return index >= 0 ? index : undefined;
+                },
+                tokenizer(src) {
+                    const match = /^:::gallery(?:\{([^}\n]*)\})?[ \t]*\n([\s\S]*?)\n:::[ \t]*(?:\n|$)/.exec(src);
+                    if (!match) return undefined;
+
+                    const images = parseGalleryImages(match[2] || '');
+                    if (images.length === 0) return undefined;
+
+                    return {
+                        type: 'galleryBlock',
+                        raw: match[0],
+                        options: parseGalleryOptions(match[1] || ''),
+                        images
+                    };
+                },
+                renderer(token) {
+                    return renderGallery(token.images, token.options);
                 }
             },
             {
@@ -512,7 +613,7 @@ const MarkdownExtensions = (function () {
          * 對所有 .image-grid 重新套用 justify 計算。
          */
         justifyImages() {
-            if (typeof justifyApi.justifyImages !== 'function') {
+            if (!justifyApi || typeof justifyApi.justifyImages !== 'function') {
                 return;
             }
 

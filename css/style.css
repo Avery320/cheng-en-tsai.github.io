@@ -115,7 +115,7 @@ body {
 
 .media-figure.media-with-border {
     --media-frame-border-width: 2px;
-    --media-frame-border-color: #3f3f3fa3;
+    --media-frame-border-color: var(--text-primary);
 }
 
 .media-image-figure > img {
@@ -181,13 +181,11 @@ body {
     border: none;
 }
 
-.iframe-fullscreen-button {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    z-index: 2;
-    width: 30px;
-    height: 30px;
+.ui-overlay-icon-button {
+    --ui-overlay-icon-button-size: 30px;
+    --ui-overlay-icon-size: 16px;
+    width: var(--ui-overlay-icon-button-size);
+    height: var(--ui-overlay-icon-button-size);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -199,19 +197,26 @@ body {
     transition: background var(--transition);
 }
 
-.iframe-fullscreen-button:hover {
+.ui-overlay-icon-button:hover {
     background: rgba(0, 0, 0, 0.62);
 }
 
-.iframe-fullscreen-button:focus-visible {
+.ui-overlay-icon-button:focus-visible {
     outline: 2px solid #ffffff;
     outline-offset: 2px;
 }
 
-.iframe-fullscreen-icon {
-    width: 16px;
-    height: 16px;
+.ui-overlay-icon {
+    width: var(--ui-overlay-icon-size);
+    height: var(--ui-overlay-icon-size);
     fill: currentColor;
+}
+
+.iframe-fullscreen-button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
 }
 
 /* ===== 文字圖片混合排版 ===== */

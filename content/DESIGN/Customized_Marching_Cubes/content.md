@@ -7,7 +7,7 @@
 ---
 
 ## Introduction
-:::layout[50,50] 
+:::layout[50,50]
 @slot
 本作品以 Marching Cubes 演算法為基礎，從體素（Voxel）資料所對應的基本拓樸出發，發展一系列可被重新詮釋的幾何構件與造型變化。透過將不同 case 視為形態語彙的組成單元，作品得以在規則框架內持續延伸，生成多種具有辨識度的三維型態。
 
@@ -60,4 +60,16 @@
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/002.jpg)
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/003.jpg?updatedAt=1772043550549)
 ![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/004.jpg)
+:::
+
+
+:::gallery{height=280px,border=false,radius=true}
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/002.jpg)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/003.jpg?updatedAt=1772043550549)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/004.jpg)
+![掠過夜側｜Night-Side Pass](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/001.jpg)
+![轉向深空｜Deep-Space Turn](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/001-2.jpg)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe_%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F%201.jpg?updatedAt=1765525969324)
+![零件星雲 | Module Nebula](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe-02.jpg?updatedAt=1765525968916)
+![](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/Section%20in%20Universe-03.jpg?updatedAt=1765525968583)
 :::

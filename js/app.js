@@ -305,9 +305,11 @@ class PortfolioApp {
         if (!wrapper) return;
 
         this.outline?.beforeRender();
+        this.destroyWidgets();
+        const extensionsApi = window.MarkdownExtensions;
 
-        const html = (window.MarkdownExtensions && typeof MarkdownExtensions.render === 'function')
-            ? MarkdownExtensions.render(markdown)
+        const html = (extensionsApi && typeof extensionsApi.render === 'function')
+            ? extensionsApi.render(markdown)
             : marked.parse(markdown);
 
         wrapper.innerHTML = html;
@@ -317,11 +319,25 @@ class PortfolioApp {
 
         this.outline?.render();
         this.justifyImages();
+        this.mountWidgets();
     }
 
     justifyImages() {
-        if (window.MarkdownExtensions && typeof MarkdownExtensions.justifyImages === 'function') {
-            MarkdownExtensions.justifyImages();
+        const extensionsApi = window.MarkdownExtensions;
+        if (extensionsApi && typeof extensionsApi.justifyImages === 'function') {
+            extensionsApi.justifyImages();
+        }
+    }
+
+    destroyWidgets() {
+        if (window.MarkdownWidgets && typeof window.MarkdownWidgets.destroyAll === 'function') {
+            window.MarkdownWidgets.destroyAll(this.dom.contentWrapper);
+        }
+    }
+
+    mountWidgets() {
+        if (window.MarkdownWidgets && typeof window.MarkdownWidgets.mountAll === 'function') {
+            window.MarkdownWidgets.mountAll(this.dom.contentWrapper);
         }
     }
 

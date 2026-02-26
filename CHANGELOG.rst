@@ -1,6 +1,12 @@
 更新日誌
 ========
 
+[0.8.0] - 2026-02-26
+--------------------
+- 新增 `:::gallery{height=...,border=...,radius=...}` 區塊：主圖 + 縮圖輪播，支援點擊放大檢視與左右切換
+- 重構 `grid.css`：移除 `!important`，改以明確選擇器維持同等顯示結果
+- 新增/拆分檔案：`css/gallery.css`、`js/widgets.js`，將圖庫互動邏輯與通用樣式解耦
+
 [0.7.0] - 2026-02-25
 --------------------
 - 設計重構：前端程式拆分為 `app.js`、`outline.js`、`markdown-extensions.js`、`options.js`、`justify.js`，降低耦合並提升可維護性

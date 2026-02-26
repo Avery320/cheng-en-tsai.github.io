@@ -21,6 +21,7 @@
 
 - HTML / CSS / JavaScript
 - Marked.js（Markdown 解析）
+- Splide.js（gallery 輪播）
 
 ## 專案結構
 
@@ -30,13 +31,15 @@
 │   ├── typography.css            # 字體 token 與標題/導航字級
 │   ├── panels.css                # 工具列、三欄面板、RWD 抽屜導航
 │   ├── style.css                 # 內容區與媒體通用樣式（表格 / iframe / layout）
-│   └── grid.css                  # :::grid 的 Justified 圖片排版
+│   ├── grid.css                  # :::grid 的 Justified 圖片排版
+│   └── gallery.css               # :::gallery 輪播圖庫與 lightbox 樣式
 ├── js/
 │   ├── app.js                    # 應用啟動、Hash 路由、內容載入、導航互動
 │   ├── outline.js                # 左側文件大綱（h1~h6）生成與捲動同步
 │   ├── markdown-extensions.js    # 自訂 Markdown 指令解析與 HTML 輸出
-│   ├── options.js                # 媒體參數 {border,radius} 解析與 class 映射
-│   └── justify.js                # 圖片網格比例計算與重排
+│   ├── options.js                # 共用媒體/圖庫參數解析（border/radius/height）
+│   ├── justify.js                # 圖片網格比例計算與重排
+│   └── widgets.js                # gallery 互動元件掛載（Splide + lightbox）
 └── content/
     ├── config.json               # 分類與專案清單（右側導航來源）
     ├── about.md                  # About 頁內容
@@ -58,6 +61,21 @@
 - `:::grid` 用於圖片並排，套用 Justified Gallery。
 - 圖片標題由 `![title](url)` 的 `title` 產生，置中顯示於圖片下方。
 - 連續兩張圖片不需要空行，也可正確顯示各自標題。
+
+#### Gallery（輪播圖庫）
+```md
+:::gallery{height=280px,border=false,radius=true}
+![](url)
+![title](url)
+:::
+```
+
+- `:::gallery` 會輸出主視窗 + 下方縮圖，並啟用左右循環輪播與點擊放大檢視。
+- 放大檢視僅顯示圖片與左右切換，不顯示 caption 文字。
+- 區塊參數支援：`height`、`border`、`radius`。
+- `height` 以 `px` 為規格（例如 `280px`；純數字會自動轉為 `px`）。
+- `border/radius` 套用在 gallery 主視窗，不套用在縮圖。
+- `gallery` 內單張圖片僅支援 `![...](...)`，不支援單張 `{border,radius}`。
 
 #### Layout（文字 / 圖片 / 影片混合）
 ```md
@@ -156,7 +174,7 @@
 
 #### 共用媒體樣式參數
 
-- 適用於 `![]()`、`@video`、`@gif`、`@iframe`。
+- 適用於 `![]()`、`@video`、`@gif`、`@iframe`，以及 `:::gallery` 區塊參數。
 - 寫法：在語法尾端加 `{key=value,key=value}`。
 - 目前支援：
   - `border=true|false`（預設 `false`）
@@ -165,6 +183,7 @@
 - 視覺效果：
   - `border=true` 時套用 `2px` 邊框。
   - `radius=true` 時套用 `8px` 圓角。
+- 補充：`:::gallery` 區塊內每張圖片不解析 `{border,radius}`，由區塊參數統一控制。
 
 ## 文件大綱功能
 
