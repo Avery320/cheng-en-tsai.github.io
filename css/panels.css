@@ -1,7 +1,7 @@
 /* ===== Shared Tokens ===== */
 :root {
-    --panel-content-padding: 24px;
-    --panel-content-padding-mobile: 16px;
+    --panel-content-padding: 72px;
+    --panel-content-padding-mobile: 36px;
 
     --outline-panel-padding: 10px;
     --outline-panel-gap: 10px;

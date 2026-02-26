@@ -35,7 +35,7 @@
 
     /* 版面參數 */
     --sidebar-width: clamp(240px, 22vw, 360px);
-    --content-max-width: 1280px;
+    --content-max-width: 1080px;
     --mobile-sidebar-width: min(82vw, 320px);
     --outline-panel-width: clamp(210px, 20vw, 270px);
     --cover-aspect-ratio: 16 / 4;
