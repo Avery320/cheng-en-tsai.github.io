@@ -28,7 +28,8 @@
     ],
     
     "PARAMTRIC":[
-        "Smocking"
+        "Smocking",
+        "robot_cnc_sim"
     ],
 
     "WORKSHOP": [

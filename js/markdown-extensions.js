@@ -6,8 +6,6 @@
 const MarkdownExtensions = (function () {
     'use strict';
 
-    const MOBILE_BREAKPOINT = 768;
-    const DEFAULT_GRID_HEIGHT = 280;
     const DEFAULT_LINE_BREAK_COUNT = 1;
     const MAX_LINE_BREAK_COUNT = 6;
     const DEFAULT_VIDEO_MUTED = true;
@@ -620,9 +618,7 @@ ${thumbSlides.join('\n')}
             }
 
             justifyApi.justifyImages({
-                selector: '.image-grid',
-                gridHeight: DEFAULT_GRID_HEIGHT,
-                mobileBreakpoint: MOBILE_BREAKPOINT
+                selector: '.image-grid'
             });
         }
     };
