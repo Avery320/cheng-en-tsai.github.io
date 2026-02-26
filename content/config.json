@@ -3,13 +3,16 @@
         "PROJECT",
         "ROBOT",
         "DESIGN",
+        "PARAMTRIC",
         "WORKSHOP"
     ],
+
     "PROJECT": [
         "Graphcrete",
         "Robotic_Tectionics",
-        "建築研究所"
+        "智慧建造：基於數位雙生演算與機械手臂列印發展減碳預鑄免拆模鋼筋混凝土柱體工法之研究"
     ],
+
     "ROBOT": [
         "RoboSim",
         "Hiwin_rak",
@@ -17,11 +20,17 @@
         "URDF_Loader",
         "RoboSimxGrasshopper"
     ],
+
     "DESIGN": [
         "Mycelium_Vault",
         "Customized_Marching_Cubes",
         "Robotic_Hot_Wire_cutting"
     ],
+    
+    "PARAMTRIC":[
+        "Smocking"
+    ],
+
     "WORKSHOP": [
         "Robot_Clay_Printing"
     ]
