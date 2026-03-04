@@ -260,6 +260,10 @@ class PortfolioApp {
         }
 
         this.setActiveNav(pageConfig.navId, pageConfig.navCategory ?? null);
+        this.outline?.beforeRender();
+        this.destroyWidgets();
+        this.resetContentScroll();
+
         let markdown = pageConfig.fallbackMarkdown;
         try {
             const response = await fetch(pageConfig.markdownPath);
@@ -275,6 +279,12 @@ class PortfolioApp {
 
         if (requestId !== this.pageRequestId) return;
         this.renderContent(renderedMarkdown);
+    }
+
+    resetContentScroll() {
+        const contentScroll = this.dom.contentScroll;
+        if (!contentScroll) return;
+        contentScroll.scrollTop = 0;
     }
 
     processImagePaths(markdown, category, id) {
@@ -304,8 +314,6 @@ class PortfolioApp {
         const wrapper = this.dom.contentWrapper;
         if (!wrapper) return;
 
-        this.outline?.beforeRender();
-        this.destroyWidgets();
         const extensionsApi = window.MarkdownExtensions;
 
         const html = (extensionsApi && typeof extensionsApi.render === 'function')

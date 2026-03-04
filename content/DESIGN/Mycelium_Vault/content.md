@@ -23,17 +23,15 @@
 
 在不同研究中，亦會透過調整培養環境條件，或添加特定化學物質以促進反應效率與生長速率，進而改變菌絲體材料的物理性質與機械性能。這些變因使菌絲體材料在強度、密度與耐久性等方面呈現多樣化特徵，並提供後續在設計與應用上的彈性與可能性。
 @slot
-![material]()
+< ...... >
 :::end-layout
 
 ### 菌絲體磚生產加工方法
 
 ![material_manufacturing_process](https://ik.imagekit.io/cheng3n/Mycelium_Vault/brick_manufacturing_process.jpg)
 
-
-
 ## 設計運算
-< to be continue...>
+< ...... >
 ### 設計策略
 :::layout[40,60] 
 @slot
@@ -47,36 +45,35 @@
 依照上述條件限制，本研究將演算式設計作為主要方法，聚焦於解決磚構造之佈磚問題，透過演算法建立磚單元之排列與組構邏輯。進一步結合幾何圖樣之操作，探討如何透過圖樣生成之方式，整合材料特性與構造系統，使菌絲體磚在輕質條件下，仍能有效形成穩定之抗壓結構。
 
 ### 開羅五邊形鑲嵌與特魯謝圖樣
-< to be continue...>
+< ...... >
 
 ### 設計演算架構
-< to be continue...>
+< ...... >
 
 ## X-Site 設計提案
 
-:::layout[40,30,30] 
-@slot
 將設定完成之演算架構套用於拱頂構造後，可生成如圖所示之結果。透過特魯謝圖樣（Truchet Pattern）於曲面上的連續迭代，使圖樣沿拱頂表面綿延展開，形成具連續性之幾何構成。在設計操作上，本研究建立十六種不同之特魯謝圖樣單元，並透過亂數選擇之方式進行配置，使圖樣於拱頂表面形成具變異性的開孔分布，進而呈現類似有機生成之視覺效果。
-
+@br(2)
 在基地設計構想上，本研究以 X-Site 原有較為線性的動線作為出發，嘗試透過三跨拱頂構造之置入，打破既有空間之單一流動方向，並重新組織廣場空間之使用方式。拱頂構造不僅作為結構系統，同時亦成為空間經驗之介面，透過其尺度與連續性，創造出具有引導性與停留性的空間節點。
-@slot
-![X-Site_plan](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_plan.png){border=true,radius=true}
-@slot
-![X-site_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_perspective.png){border=true,radius=true}
-:::end-layout
 
 :::grid
-![rendering01](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%964.png?updatedAt=1765291394423)
-![rendering02](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%965.png?updatedAt=1765291395237)
-![rendering03](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%966.png?updatedAt=1765291392889)
-![rendering04](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9610.png?updatedAt=1765291394252)
+![X-Site_plan](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_plan.png){border=true,radius=true}
+![X-site_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/x-site_perspective.png){border=true,radius=true}
+:::
+
+## Design Rendering
+:::grid
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%964.png?updatedAt=1765291394423)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%965.png?updatedAt=1765291395237)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%966.png?updatedAt=1765291392889)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9610.png?updatedAt=1765291394252)
 :::
 
 :::grid
-![rendering05](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%968.png?updatedAt=1765291395698)
-![rendering06](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%969.png?updatedAt=1765291394580)
-![rendering07](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9611.png?updatedAt=1765291395846)
-![rendering08](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9612.png?updatedAt=1765291394192)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%968.png?updatedAt=1765291395698)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%969.png?updatedAt=1765291394580)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9611.png?updatedAt=1765291395846)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A8%AD%E8%A8%88%E5%9C%96%E8%AA%AA%E8%88%87%E6%95%88%E6%9E%9C%E5%9C%9612.png?updatedAt=1765291394192)
 :::
 
 

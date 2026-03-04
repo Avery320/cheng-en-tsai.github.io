@@ -70,7 +70,7 @@
 
 :::layout[40,60] 
 @slot
-- < To be Continue...>
+- < ...... >
 
 @slot
 ![Segmented Printing Model](https://ik.imagekit.io/cheng3n/Graphcrete/segmented_printing_model.png?updatedAt=1770897656293)

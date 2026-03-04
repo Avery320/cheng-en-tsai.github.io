@@ -37,4 +37,4 @@
 :::
 
 ## 模擬流程
-@gif[sim](https://ik.imagekit.io/cheng3n/robot_gh/simulation.gif)
+@gif[sim](https://ik.imagekit.io/cheng3n/robot_gh/sim.gif)

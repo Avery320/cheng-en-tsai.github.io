@@ -2,7 +2,7 @@
 
 - Designer: Avery Tsai
 - Location: Pingtung, Taiwan  
-- Date: 2023.06
+- Date: 2022.06
 
 ---
 
@@ -14,18 +14,16 @@
 在建模流程上，作品主要以 Rhino SubD 進行造型塑形，將原本較為離散、硬邊的體素幾何轉化為連續且具張力的曲面形式。形態生成的驅動方式包含隨機點位在體素空間中的分佈控制，以及引入如 康威生命遊戲（Game of Life） 等規則型演算法，讓局部結構依條件演化並形成不同的構件組合。
 
 進一步延伸時，作品也嘗試將每個型態視為獨立單元，透過演算法定義其行為與任務，並使不同型態之間能以規則進行組合，形成多型態協同的系統構想。整體而言，本作品聚焦於以既有演算法為生成起點，結合 SubD 的建模語言，探索體素拓樸在造型與組構上的多種可能性。
-@br(4)
 
----
-#### Game of Life
-本作品使用了 Game of Life（康威生命遊戲） 規則進行迭代生成點位，並將每次迭代的結果，在空間中垂直機錄下來，轉換為 3D 的體素（Voxel）資料，作為形體生成的基礎。接著使用 Marching Cubes 從體素場中提取主要外形，形成整體輪廓。
-
-在細部表現上，作品將 Marching Cubes 的標準案例拓樸對應為一組自訂構件（Customized Marching Cubes Elements），以構件取代原本的面片輸出，使局部結構具有更明確的造型語彙。最後依體素矩陣的位置關係進行元件聚合，完成整體構成。
 @slot
 ![Customazied Marching Cubes Elements](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/elements.jpg){border=true,radius=true}
 :::end-layout
 
-![Game of Life](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/game_of_life.jpg)
+#### Game of Life
+本作品使用了 Game of Life（康威生命遊戲） 規則進行迭代生成點位，並將每次迭代的結果，在空間中垂直機錄下來，轉換為 3D 的體素（Voxel）資料，作為形體生成的基礎。接著使用 Marching Cubes 從體素場中提取主要外形，形成整體輪廓。
+
+在細部表現上，作品將 Marching Cubes 的標準案例拓樸對應為一組自訂構件（Customized Marching Cubes Elements），以構件取代原本的面片輸出，使局部結構具有更明確的造型語彙。最後依體素矩陣的位置關係進行元件聚合，完成整體構成。
+![Game of Life](https://ik.imagekit.io/cheng3n/Customized_Marching_Cubes/game_of_life.jpg){border=true,radius=true}
 
 #### Random Point Generation
 :::layout[30,35,35]
