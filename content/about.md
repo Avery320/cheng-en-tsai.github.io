@@ -1,13 +1,14 @@
 # Avery's Portfolio
-- [LinkedIn](https://www.linkedin.com/in/cheng-en-tsai-94b77a352?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app)
-- [GitHub](https://github.com/Avery320)
+<!-- - [LinkedIn](https://www.linkedin.com/in/cheng-en-tsai-94b77a352?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app) -->
+<!-- - [GitHub](https://github.com/Avery320) -->
 
 
 ## About Me
-- 我是蔡承恩，即將畢業於國立成功大學建築研究所，我具建築設計與工程背景，現聚焦於機器人控制、數位製造等技術開發。
-- 擅長把建築端的參數化設計、構造邏輯與施工需求，轉譯為可執行的工作流程，包含參數設計、資料串接、軟體整合、 ROS 控制、運動規劃、數位雙生與人機介面整合。
-- 過去在建築師事務所主要為 BIM 設計工程師，並參與了幾項建築專案。
-- 近期主要投入機械手臂混凝土列印技術開發與 No-Code 機器人控制系統開發，並具備自動化流程的開發經驗，能在設計端與工程端之間有效協作，推動技術落地。
+
+嗨！我是蔡承恩，背景來自建築設計，碩士專注於機器人製造與機械手臂開發於建造、營造的實務應用。
+
+我的關注方向集中在 ROS 機器人控制、人機介面與幾何資料整合，特別是建築與機器人間空間資訊、路徑資料與機器人系統之間的銜接關係。
+
 
 ## PROJECT
 - [Graphcrete](#PROJECT/Graphcrete)

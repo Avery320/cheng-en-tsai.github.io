@@ -6,8 +6,6 @@
     --outline-panel-padding: 10px;
     --outline-panel-gap: 10px;
     --outline-header-gap: 8px;
-    --outline-title-size: 20px;
-    --outline-text-size: 16px;
     --outline-toggle-size: 1rem;
     --outline-item-gap: 0.1rem;
     --outline-indent-step: 0.85rem;
@@ -102,8 +100,6 @@
 }
 
 .outline-title {
-    font-size: var(--outline-title-size);
-    font-weight: 600;
     color: var(--text-primary);
 }
 
@@ -141,9 +137,6 @@
     border: none;
     background: transparent;
     color: var(--text-secondary);
-    font-size: var(--outline-text-size);
-    font-weight: var(--font-medium);
-    line-height: 1;
     cursor: pointer;
     transition: color var(--transition);
 }
@@ -157,10 +150,7 @@
     border: none;
     background: transparent;
     color: var(--text-secondary);
-    font-size: var(--outline-text-size);
-    font-weight: var(--font-medium);
     text-align: left;
-    line-height: 1.4;
     cursor: pointer;
     width: 100%;
     padding: var(--spacing-sm) 0;
@@ -174,7 +164,6 @@
 
 .outline-link.active {
     color: var(--text-primary);
-    font-weight: var(--font-bold);
 }
 
 .outline-children {
@@ -184,8 +173,6 @@
 .outline-empty {
     display: none;
     color: var(--text-secondary);
-    font-size: var(--outline-text-size);
-    line-height: 1.45;
 }
 
 .outline-panel.is-empty .outline-nav {
@@ -205,6 +192,7 @@
     color: var(--text-primary);
     cursor: pointer;
     padding: var(--spacing-sm) 0;
+    text-align: right;
     transition: color var(--transition);
 }
 
@@ -224,8 +212,9 @@
 
 .nav-item {
     color: var(--text-secondary);
-    padding: var(--spacing-sm) 0 var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm) 0;
     cursor: pointer;
+    text-align: right;
     transition: color var(--transition);
 }
 
@@ -251,8 +240,6 @@
 }
 
 .toolbar-title {
-    font-size: var(--text-lg);
-    font-weight: var(--font-medium);
     color: var(--text-primary);
 }
 
@@ -362,11 +349,5 @@
     .outline-panel {
         /* 手機版隱藏大綱，交由主內容閱讀優先。 */
         display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .toolbar-title {
-        font-size: var(--text-base);
     }
 }
