@@ -2,9 +2,7 @@
     "categories": [
         "PROJECT",
         "ROBOT",
-        "DESIGN",
-        "PARAMTRIC",
-        "WORKSHOP"
+        "PARAMTRIC_DESIGN"
     ],
 
     "PROJECT": [
@@ -21,18 +19,10 @@
         "RoboSimxGrasshopper"
     ],
 
-    "DESIGN": [
+    "PARAMTRIC_DESIGN": [
         "Mycelium_Vault",
-        "Customized_Marching_Cubes",
-        "Robotic_Hot_Wire_cutting"
-    ],
-    
-    "PARAMTRIC":[
-        "Smocking",
-        "robot_cnc_sim"
-    ],
-
-    "WORKSHOP": [
-        "Robot_Clay_Printing"
+        "Robot_Clay_Printing",
+        "Smocking_Column",
+        "Robotic_Wood_CNC_Sim"
     ]
 }

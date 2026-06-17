@@ -1,4 +1,4 @@
-# Smocking
+# Robotic Wood CNC Simulation
 
 - Designer: Avery Tsai
 - Update: 2022.07
@@ -12,7 +12,7 @@
 :::
 
 ## Introduction
-本專案使用 Grasshopper 的 [Robots](https://github.com/visose/Robots.git) 外掛建立機器手臂切削加工的模擬流程。透過在 GH 中定義刀具（Knife）與工件（Cutting Object）的幾何關係，將設計物件轉換為可執行的切割路徑（Cutting Paths），並在模擬環境中觀察切削後的表面紋理、凹凸變化與路徑策略所帶來的加工效果。
+本專案使用 Grasshopper 的 [**Robots**](https://github.com/visose/Robots.git) 外掛建立機器手臂切削加工的模擬流程。透過在 GH 中定義刀具（Knife）與工件（Cutting Object）的幾何關係，將設計物件轉換為可執行的切割路徑（Cutting Paths），並在模擬環境中觀察切削後的表面紋理、凹凸變化與路徑策略所帶來的加工效果。
 
 :::grid
 ![](https://ik.imagekit.io/cheng3n/robot_gh/001.jpg){border=true,radius=true}
@@ -37,4 +37,4 @@
 :::
 
 ## 模擬流程
-@gif[sim](https://ik.imagekit.io/cheng3n/robot_gh/sim.gif)
+@gif[simulation](https://ik.imagekit.io/cheng3n/robot_gh/sim.gif)

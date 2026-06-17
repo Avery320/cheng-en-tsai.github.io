@@ -1,10 +1,16 @@
 # Mycelium_Vault
-
 - Designer and researcher: Cheng-En Tsai(蔡承恩), Huai-An Tai(戴淮安)
 - Advisor: Yu-Liang Hsu(徐宇亮), Chia-Ching Yen(顏嘉慶)
 - Studio: Biomass Materials x Algorithm Structure Studio (BMAS Stuido)
 - Location: Tainan, Taiwan  
 - Date: 2024.12
+---
+
+:::grid
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E6%9C%9F%E4%B8%AD%E8%A8%88%E7%95%AB%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%B1%95%E7%A4%BA.png)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E7%94%9F%E7%89%A9%E6%9D%90%E6%96%99%E8%A9%A6%E9%A9%97%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C.png)
+![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E6%BC%94%E7%AE%97%E8%A8%AD%E8%A8%88%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%B1%95%E7%A4%BA.png)
+:::
 
 ## Introduction
 隨著全球環境保護議題日益受到重視，能源消耗與永續發展已成為當代設計領域的重要關注焦點。在此背景下，建築材料與其製造與生產方式，亦面臨重新檢視與轉型的需求。如何在設計與建造過程中回應永續性議題，並降低對環境之負擔，已成為當前建築設計的重要課題。本設計以生物質材料為研究前提，以**菌絲體**作為研究對象。透過對材料特性之分析，以及生產流程與加工方法之實際操作與探討，嘗試建立菌絲體材料應用於建築構件之可行性。
@@ -84,11 +90,3 @@
 ![model_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/Model_Perspective.png)
 :::
 
-
-
-## Design and Research Posters
-:::grid
-![poster01](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E6%9C%9F%E4%B8%AD%E8%A8%88%E7%95%AB%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%B1%95%E7%A4%BA.png)
-![poster02](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E7%94%9F%E7%89%A9%E6%9D%90%E6%96%99%E8%A9%A6%E9%A9%97%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C.png)
-![poster03](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E6%BC%94%E7%AE%97%E8%A8%AD%E8%A8%88%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%B1%95%E7%A4%BA.png)
-:::

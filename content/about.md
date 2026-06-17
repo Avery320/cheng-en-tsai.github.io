@@ -22,14 +22,9 @@
 - [URDF_Loader](#ROBOT/URDF_Loader)
 - [RoboSim x Grasshopper](#ROBOT/RoboSimxGrasshopper)
 
-## DESIGN
-- [Mycelium_Vault](#DESIGN/Mycelium_Vault)
-- [Customized_Marching_Cubes](#DESIGN/Customized_Marching_Cubes)
-- [Robotic_Hot_Wire_cutting](#DESIGN/Robotic_Hot_Wire_cutting)
+## PARAMTRIC_DESIGN
+- [Mycelium_Vault](#PARAMTRIC_DESIGN/Mycelium_Vault)
+- [Robot_Caly_Printing](#PARAMTRIC_DESIGN/Robot_Clay_Printing)
+- [Smocking_Column](#PARAMTRIC_DESIGN/Smocking_Column)
+- [Robotic_Wood_CNC_Sim](#PARAMTRIC_DESIGN/robotic_wood_cnc_sim)
 
-## WORKSHOP
-- [Robot_Caly_Printing](#WORKSHOP/Robot_Caly_Printing)
-
-
-## Contact
-- Email: n76124052@gs.ncku.edu.tw
