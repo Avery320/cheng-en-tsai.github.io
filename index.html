@@ -27,7 +27,13 @@
     <div class="container">
         <!-- 頂部工具列（全寬） -->
         <header class="top-toolbar" id="topToolbar">
-            <a class="toolbar-title" id="toolbarTitle" href="#about" aria-label="回到 About">Avery's Portfolio</a>
+            <a class="toolbar-home-link" id="homeLink" href="#about" aria-label="回到主頁">
+                <svg class="toolbar-panel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M3 10.5 12 3l9 7.5"></path>
+                    <path d="M5 9.5V21h14V9.5"></path>
+                    <path d="M9 21v-7h6v7"></path>
+                </svg>
+            </a>
             <div class="toolbar-actions">
                 <nav class="toolbar-socials" aria-label="個人連結">
                     <a class="toolbar-social-link" href="https://github.com/Avery320" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
@@ -77,11 +83,7 @@
             <!-- 右側導航側邊欄 -->
             <aside class="sidebar" id="sidebar">
                 <nav class="nav" id="nav">
-                    <!-- ABOUT (固定) -->
-                    <div class="nav-section">
-                        <div class="nav-title" data-section="about">ABOUT</div>
-                    </div>
-                    <!-- 其他分類由 JS 動態生成 -->
+                    <!-- 分類由 JS 動態生成 -->
                 </nav>
             </aside>
         </div>

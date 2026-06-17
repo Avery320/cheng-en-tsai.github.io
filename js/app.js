@@ -15,6 +15,7 @@ class PortfolioApp {
             sidebar: document.getElementById('sidebar'),
             sidebarOverlay: document.getElementById('sidebarOverlay'),
             menuToggle: document.getElementById('menuToggle'),
+            homeLink: document.getElementById('homeLink'),
             outlinePanel: document.getElementById('outlinePanel'),
             outlineNav: document.getElementById('outlineNav'),
             outlineTitle: document.getElementById('outlineTitle')
@@ -118,8 +119,7 @@ class PortfolioApp {
         const nav = this.dom.nav;
         if (!nav) return;
 
-        const sections = Array.from(nav.querySelectorAll('.nav-section'));
-        sections.slice(1).forEach((section) => section.remove());
+        nav.querySelectorAll('.nav-section').forEach((section) => section.remove());
 
         this.config.categories.forEach((category) => {
             const projects = Array.isArray(this.config[category]) ? this.config[category] : [];
@@ -152,7 +152,7 @@ class PortfolioApp {
     }
 
     setupEventListeners() {
-        const { sidebar, sidebarOverlay, menuToggle } = this.dom;
+        const { sidebar, sidebarOverlay, menuToggle, homeLink } = this.dom;
         const drawerModeQuery = window.matchMedia('(max-width: 1024px)');
         const isDrawerMode = () => drawerModeQuery.matches;
         const setSidebarOpen = (isOpen) => {
@@ -175,10 +175,7 @@ class PortfolioApp {
                 const titleElement = event.target.closest('.nav-title');
                 if (titleElement) {
                     const section = titleElement.dataset.section;
-                    if (section === 'about') {
-                        this.updateHash('about');
-                        closeSidebar();
-                    } else if (section) {
+                    if (section) {
                         const targetList = document.getElementById(`${section.toLowerCase()}List`);
                         if (!targetList) return;
                         this.setExpandedNavList(targetList, !targetList.classList.contains('expanded'));
@@ -197,6 +194,12 @@ class PortfolioApp {
                 closeSidebar();
             });
         }
+
+        homeLink?.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.navigateHome();
+            closeSidebar();
+        });
 
         window.addEventListener('hashchange', () => {
             this.handleInitialRoute();
@@ -231,6 +234,18 @@ class PortfolioApp {
         });
         sidebarOverlay.addEventListener('click', closeSidebar);
         resetSidebar();
+    }
+
+    navigateHome() {
+        const homeConfig = this.getPageConfigByHash('about');
+        if (!homeConfig) return;
+
+        if (window.location.hash === '#about') {
+            this.loadPage(homeConfig, false);
+            return;
+        }
+
+        this.updateHash('about');
     }
 
     requestFullscreen(element) {
@@ -365,10 +380,7 @@ class PortfolioApp {
             element.classList.remove('active');
         });
 
-        if (id === 'about') {
-            document.querySelector('[data-section="about"]')?.classList.add('active');
-            return;
-        }
+        if (id === 'about') return;
 
         const activeItem = document.querySelector(`.nav-item[data-id="${id}"]`);
         if (activeItem) activeItem.classList.add('active');

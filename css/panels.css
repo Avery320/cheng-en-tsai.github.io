@@ -240,13 +240,9 @@
     justify-content: space-between;
 }
 
-.toolbar-title {
-    color: var(--text-primary);
-    min-width: 0;
-    overflow: hidden;
+.toolbar-home-link {
+    flex: 0 0 auto;
     text-decoration: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .toolbar-actions {
@@ -262,6 +258,7 @@
     gap: 0.35rem;
 }
 
+.toolbar-home-link,
 .toolbar-social-link,
 .menu-toggle {
     display: inline-flex;
@@ -280,11 +277,13 @@
     text-decoration: none;
 }
 
+.toolbar-home-link:hover,
 .toolbar-social-link:hover,
 .menu-toggle:hover {
     color: var(--text-secondary);
 }
 
+.toolbar-home-link:focus-visible,
 .toolbar-social-link:focus-visible,
 .menu-toggle:focus-visible {
     outline: 2px solid var(--text-primary);

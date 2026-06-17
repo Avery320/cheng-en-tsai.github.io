@@ -104,11 +104,6 @@ body {
     line-height: 1.35;
 }
 
-.toolbar-title {
-    font-size: var(--text-lg);
-    font-weight: var(--font-medium);
-}
-
 .media-caption {
     font-size: var(--text-base);
     line-height: 1.32;
@@ -127,10 +122,4 @@ body {
 .nav-title.active,
 .nav-item.active {
     font-weight: var(--font-bold);
-}
-
-@media (max-width: 480px) {
-    .toolbar-title {
-        font-size: var(--text-base);
-    }
 }
