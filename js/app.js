@@ -152,11 +152,21 @@ class PortfolioApp {
     }
 
     setupEventListeners() {
-        const { sidebar, sidebarOverlay } = this.dom;
-        const closeSidebar = () => {
+        const { sidebar, sidebarOverlay, menuToggle } = this.dom;
+        const drawerModeQuery = window.matchMedia('(max-width: 1024px)');
+        const isDrawerMode = () => drawerModeQuery.matches;
+        const setSidebarOpen = (isOpen) => {
             if (!sidebar || !sidebarOverlay) return;
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
+
+            const shouldOpen = Boolean(isOpen);
+            sidebar.classList.toggle('open', shouldOpen);
+            sidebarOverlay.classList.toggle('active', isDrawerMode() && shouldOpen);
+            menuToggle?.setAttribute('aria-expanded', String(shouldOpen));
+        };
+        const resetSidebar = () => setSidebarOpen(!isDrawerMode());
+        const closeSidebar = () => {
+            if (!isDrawerMode()) return;
+            setSidebarOpen(false);
         };
 
         const nav = this.dom.nav;
@@ -200,6 +210,7 @@ class PortfolioApp {
                 this.outline?.updateActiveByScroll();
             }, 150);
         });
+        drawerModeQuery.addEventListener('change', resetSidebar);
 
         const contentWrapper = this.dom.contentWrapper;
         if (contentWrapper) {
@@ -214,12 +225,12 @@ class PortfolioApp {
             });
         }
 
-        if (!this.dom.menuToggle || !sidebar || !sidebarOverlay) return;
-        this.dom.menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            sidebarOverlay.classList.toggle('active');
+        if (!menuToggle || !sidebar || !sidebarOverlay) return;
+        menuToggle.addEventListener('click', () => {
+            setSidebarOpen(!sidebar.classList.contains('open'));
         });
         sidebarOverlay.addEventListener('click', closeSidebar);
+        resetSidebar();
     }
 
     requestFullscreen(element) {
