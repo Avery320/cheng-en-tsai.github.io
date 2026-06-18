@@ -1,22 +1,20 @@
 {
     "categories": [
-        "PROJECT",
         "ROBOT",
+        "PROJECT",
         "PARAMTRIC_DESIGN"
+    ],
+
+    "ROBOT": [
+        "RoboSim",
+        "Hiwin_rak",
+        "ROS_Docker"
     ],
 
     "PROJECT": [
         "Graphcrete",
         "Robotic_Tectionics",
         "智慧建造：基於數位雙生演算與機械手臂列印發展減碳預鑄免拆模鋼筋混凝土柱體工法之研究"
-    ],
-
-    "ROBOT": [
-        "RoboSim",
-        "Hiwin_rak",
-        "ROS_Docker",
-        "URDF_Loader",
-        "RoboSimxGrasshopper"
     ],
 
     "PARAMTRIC_DESIGN": [
