@@ -1,11 +1,14 @@
 # ROS_Docker
-
-- Developer: Avery Tsai
-- Update: 2026.06
-- GitHub: [ros2_docker](https://github.com/Avery320/ros2-docker)
+[GitHub](https://github.com/Avery320/ros2-docker)
 
 ## Intruduction
-ROS Docker 為提供建築產業開發者連線 RoboSim 的基礎開發環境（也可使用其他 ROS2），專為機器人開發者設計。
+ROS Docker 為提供建築產業開發者連線 [RoboSim](#ROBOT/RoboSim) 的基礎開發環境（也可使用其他 ROS2），專為機器人開發者設計。
+
+:::gallery{height=420px}
+![rviz](content/ROBOT/ROS_Docker/assets/rviz.png)
+![remote_development](content/ROBOT/ROS_Docker/assets/remote_development.png)
+:::
+
 使用 ROS2 Jazzy ，並採用分層架構設計，支援 VNC 遠端桌面和 SSH 連線。本專案採用兩層 Image 架構，將基礎環境與應用環境分離：
 
 ### ROS2 Base Image (jazzy/)
@@ -26,8 +29,3 @@ ROS Docker 為提供建築產業開發者連線 RoboSim 的基礎開發環境（
 - 視覺化: RViz2, RQt, PlotJuggler
 - 運動學: KDL, urdf-parser, xacro
 - Python 工具: transforms3d, ikpy, numpy, scipy, matplotlib
-
-:::gallery{height=420px}
-![rviz](content/ROBOT/ROS_Docker/assets/rviz.png)
-![remote_development](content/ROBOT/ROS_Docker/assets/remote_development.png)
-:::

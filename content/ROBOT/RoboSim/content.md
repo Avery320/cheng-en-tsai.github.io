@@ -1,11 +1,8 @@
 # RoboSim
 
-- Developer: Avery Tsai
-- Update: 2026.06
 
-- GitHub: [RoboSim](https://github.com/avery320/robot-demo)
-- Web Link: [RoboSim](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html)
-- Link: [ros-docker](#ROBOT/ROS_Docker)
+[GitHub](https://github.com/avery320/robot-demo) | [Web](https://avery320.github.io/robot-demo/javascript/example/bundle/main.html) | [ros-docker](#ROBOT/ROS_Docker)
+
 
 ## Introduction
 RoboSim 是一個面向營建機器人應用的控制平台，聚焦在銜接建築設計資料與機械手臂建造流程之間的落差。平台整合機器人模型顯示、幾何資料管理、Grasshopper 資料串接與控制流程，讓參數化設計中的空間與路徑資訊能更直覺地進入機器人操作環境。

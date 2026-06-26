@@ -1,6 +1,7 @@
 # 整合機械手臂與電腦視覺發展自組立低碳循環建材暨建構系統
 ### The Integration of Robotic Arm and Computer Vision Apply to the Development of Self-Construction Low Carbon Circular Materials and Tectonics System
 
+@iframe[](https://player.vimeo.com/video/1033609545)
 
 ## 專案背景
 本計畫以智慧工地為應用場景，探索機器人在建築施工流程中的自動化協作可能。研究整合機械手臂、自走車、電腦視覺與數位雙生模型，聚焦於工地環境中的自主移動、定位感知與自動疊磚流程，作為機器人施工系統導入現場的基礎實踐。
@@ -30,12 +31,6 @@
 :::end-layout
 
 ![](https://ik.imagekit.io/cheng3n/Robotic_Tectionics/storyboard.jpg){border=true,radius=false}
-
-
-
-
-## 研究成果
-@iframe[](https://player.vimeo.com/video/1033609545)
 
 
 ## Project Team

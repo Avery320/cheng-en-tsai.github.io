@@ -2,13 +2,7 @@
 :root {
     --panel-content-padding: 72px;
     --panel-content-padding-mobile: 36px;
-
-    --outline-panel-padding: 10px;
-    --outline-panel-gap: 10px;
-    --outline-header-gap: 8px;
-    --outline-toggle-size: 1rem;
-    --outline-item-gap: 0.1rem;
-    --outline-indent-step: 0.85rem;
+    --menu-panel-width: clamp(240px, 22vw, 360px);
 }
 
 /* ===== Panel Layout ===== */
@@ -24,7 +18,7 @@
 }
 
 .workspace {
-    /* 工具列下方的主工作區：左/中內容 + 右側導航。 */
+    /* 工具列下方的主工作區。選單改由浮層顯示，不佔用內容寬度。 */
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
@@ -40,24 +34,33 @@
 }
 
 .content-panel {
-    /* 左：大綱；右：內容。桌機版固定雙欄。 */
+    /* 主內容區由內層 content-scroll 負責獨立捲動。 */
     flex: 1;
     min-height: 0;
     overflow: hidden;
     display: grid;
-    grid-template-columns: var(--outline-panel-width) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
     align-items: stretch;
     gap: 0;
 }
 
 .sidebar {
-    /* 右側主導航面板。 */
-    flex: 0 0 var(--sidebar-width);
-    width: var(--sidebar-width);
+    position: fixed;
+    top: var(--toolbar-height);
+    right: calc(-1 * var(--menu-panel-width));
+    z-index: 1201;
+    width: var(--menu-panel-width);
+    height: calc(100vh - var(--toolbar-height));
+    height: calc(100dvh - var(--toolbar-height));
     background: var(--bg-secondary);
     padding: clamp(1.5rem, 2.5vw, var(--spacing-xl));
     overflow-y: auto;
+    transition: right var(--transition);
+}
+
+.sidebar.open {
+    right: 0;
 }
 
 .content-scroll {
@@ -77,113 +80,8 @@
 }
 
 .nav {
-    /* 右側導航在面板內維持頂部吸附。 */
     position: sticky;
     top: 0;
-}
-
-/* ===== Document Outline ===== */
-.outline-panel {
-    /* 左側文件大綱面板。 */
-    display: flex;
-    flex-direction: column;
-    gap: var(--outline-panel-gap);
-    min-height: 0;
-    min-width: 0;
-    background: var(--bg-secondary);
-    padding: var(--outline-panel-padding);
-    height: 100%;
-    overflow: hidden;
-}
-
-.outline-header {
-    display: flex;
-    align-items: center;
-    padding-bottom: var(--outline-header-gap);
-}
-
-.outline-title {
-    color: var(--text-primary);
-}
-
-.outline-nav {
-    flex: 1 1 auto;
-    min-height: 0;
-    /* 左側大綱面板獨立捲動。 */
-    overflow-y: auto;
-    padding-top: 2px;
-    padding-right: 0.1rem;
-}
-
-.outline-list {
-    list-style: none;
-}
-
-.outline-item + .outline-item {
-    margin-top: var(--outline-item-gap);
-}
-
-.outline-row {
-    display: flex;
-    align-items: center;
-    gap: 0.2rem;
-}
-
-.outline-node-toggle,
-.outline-node-spacer {
-    width: var(--outline-toggle-size);
-    height: var(--outline-toggle-size);
-    flex: 0 0 var(--outline-toggle-size);
-}
-
-.outline-node-toggle {
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: color var(--transition);
-}
-
-.outline-node-toggle:hover {
-    color: var(--text-primary);
-}
-
-.outline-link {
-    /* 標題層級以 --outline-level 控制左縮排。 */
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    text-align: left;
-    cursor: pointer;
-    width: 100%;
-    padding: var(--spacing-sm) 0;
-    padding-left: calc((var(--outline-level, 1) - 1) * var(--outline-indent-step));
-    transition: color var(--transition);
-}
-
-.outline-link:hover {
-    color: var(--text-primary);
-}
-
-.outline-link.active {
-    color: var(--text-primary);
-}
-
-.outline-children {
-    margin-top: var(--outline-item-gap);
-}
-
-.outline-empty {
-    display: none;
-    color: var(--text-secondary);
-}
-
-.outline-panel.is-empty .outline-nav {
-    display: none;
-}
-
-.outline-panel.is-empty .outline-empty {
-    display: block;
 }
 
 /* ===== Navigation ===== */
@@ -322,15 +220,16 @@
 
 /* ===== Overlay ===== */
 .sidebar-overlay {
-    /* 行動版右側導航展開時的遮罩。 */
+    /* 選單展開時的遮罩。 */
     display: none;
     position: fixed;
-    top: 0;
+    top: var(--toolbar-height);
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - var(--toolbar-height));
+    height: calc(100dvh - var(--toolbar-height));
     background: var(--overlay-color);
-    z-index: 999;
+    z-index: 1200;
     opacity: 0;
     transition: opacity var(--transition);
 }
@@ -343,16 +242,11 @@
 /* ===== Responsive Panels ===== */
 @media (max-width: 1279px) {
     :root {
-        --sidebar-width: clamp(220px, 26vw, 320px);
-        --outline-panel-width: clamp(180px, 22vw, 230px);
+        --menu-panel-width: clamp(220px, 26vw, 320px);
     }
 }
 
 @media (max-width: 1024px) {
-    :root {
-        --outline-panel-width: clamp(180px, 24vw, 220px);
-    }
-
     .top-toolbar {
         position: fixed;
         top: 0;
@@ -362,56 +256,17 @@
     }
 
     .workspace {
-        /* 抽屜導航模式下，固定工具列需預留內容起始高度。 */
+        /* 固定工具列需預留內容起始高度。 */
         padding-top: var(--toolbar-height);
-    }
-
-    .sidebar,
-    .sidebar-overlay {
-        top: var(--toolbar-height);
-        height: calc(100vh - var(--toolbar-height));
-        height: calc(100dvh - var(--toolbar-height));
-    }
-
-    .sidebar {
-        position: fixed;
-        right: calc(-1 * var(--mobile-sidebar-width));
-        width: var(--mobile-sidebar-width);
-        z-index: 1000;
-        transition: right var(--transition);
-    }
-
-    .sidebar.open {
-        right: 0;
-    }
-}
-
-@media (min-width: 1025px) {
-    .sidebar {
-        transition: flex-basis var(--transition), width var(--transition), padding var(--transition);
-    }
-
-    .sidebar:not(.open) {
-        flex-basis: 0;
-        width: 0;
-        padding-left: 0;
-        padding-right: 0;
-        overflow: hidden;
     }
 }
 
 @media (max-width: 768px) {
-    .content-panel {
-        /* 手機版收斂為單欄，避免左側大綱佔用閱讀空間。 */
-        grid-template-columns: minmax(0, 1fr);
+    :root {
+        --menu-panel-width: min(82vw, 320px);
     }
 
     .content-wrapper {
         padding: var(--spacing-lg) var(--panel-content-padding-mobile);
-    }
-
-    .outline-panel {
-        /* 手機版隱藏大綱，交由主內容閱讀優先。 */
-        display: none;
     }
 }

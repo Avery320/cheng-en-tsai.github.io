@@ -15,28 +15,10 @@ class PortfolioApp {
             sidebar: document.getElementById('sidebar'),
             sidebarOverlay: document.getElementById('sidebarOverlay'),
             menuToggle: document.getElementById('menuToggle'),
-            homeLink: document.getElementById('homeLink'),
-            outlinePanel: document.getElementById('outlinePanel'),
-            outlineNav: document.getElementById('outlineNav'),
-            outlineTitle: document.getElementById('outlineTitle')
+            homeLink: document.getElementById('homeLink')
         };
 
-        this.outline = this.createOutlineController();
         this.init();
-    }
-
-    createOutlineController() {
-        if (typeof window.DocumentOutline !== 'function') return null;
-
-        return new window.DocumentOutline({
-            outlinePanel: this.dom.outlinePanel,
-            outlineNav: this.dom.outlineNav,
-            outlineTitle: this.dom.outlineTitle,
-            contentWrapper: this.dom.contentWrapper,
-            contentScroll: this.dom.contentScroll,
-            getHash: () => window.location.hash,
-            decodeRouteSegment: (segment) => this.decodeRouteSegment(segment)
-        });
     }
 
     async init() {
@@ -153,21 +135,17 @@ class PortfolioApp {
 
     setupEventListeners() {
         const { sidebar, sidebarOverlay, menuToggle, homeLink } = this.dom;
-        const drawerModeQuery = window.matchMedia('(max-width: 1024px)');
-        const isDrawerMode = () => drawerModeQuery.matches;
-        const setSidebarOpen = (isOpen) => {
+        const setMenuOpen = (isOpen) => {
             if (!sidebar || !sidebarOverlay) return;
 
             const shouldOpen = Boolean(isOpen);
             sidebar.classList.toggle('open', shouldOpen);
-            sidebarOverlay.classList.toggle('active', isDrawerMode() && shouldOpen);
+            sidebar.setAttribute('aria-hidden', String(!shouldOpen));
+            sidebarOverlay.classList.toggle('active', shouldOpen);
             menuToggle?.setAttribute('aria-expanded', String(shouldOpen));
+            menuToggle?.setAttribute('aria-label', shouldOpen ? '關閉專案選單' : '開啟專案選單');
         };
-        const resetSidebar = () => setSidebarOpen(!isDrawerMode());
-        const closeSidebar = () => {
-            if (!isDrawerMode()) return;
-            setSidebarOpen(false);
-        };
+        const closeMenu = () => setMenuOpen(false);
 
         const nav = this.dom.nav;
         if (nav) {
@@ -191,14 +169,14 @@ class PortfolioApp {
                 if (!category || !id) return;
 
                 this.updateHash(`${category}/${id}`);
-                closeSidebar();
+                closeMenu();
             });
         }
 
         homeLink?.addEventListener('click', (event) => {
             event.preventDefault();
             this.navigateHome();
-            closeSidebar();
+            closeMenu();
         });
 
         window.addEventListener('hashchange', () => {
@@ -210,10 +188,8 @@ class PortfolioApp {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 this.justifyImages();
-                this.outline?.updateActiveByScroll();
             }, 150);
         });
-        drawerModeQuery.addEventListener('change', resetSidebar);
 
         const contentWrapper = this.dom.contentWrapper;
         if (contentWrapper) {
@@ -230,10 +206,15 @@ class PortfolioApp {
 
         if (!menuToggle || !sidebar || !sidebarOverlay) return;
         menuToggle.addEventListener('click', () => {
-            setSidebarOpen(!sidebar.classList.contains('open'));
+            setMenuOpen(!sidebar.classList.contains('open'));
         });
-        sidebarOverlay.addEventListener('click', closeSidebar);
-        resetSidebar();
+        sidebarOverlay.addEventListener('click', closeMenu);
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+                closeMenu();
+            }
+        });
+        closeMenu();
     }
 
     navigateHome() {
@@ -286,7 +267,6 @@ class PortfolioApp {
         }
 
         this.setActiveNav(pageConfig.navId, pageConfig.navCategory ?? null);
-        this.outline?.beforeRender();
         this.destroyWidgets();
         this.resetContentScroll();
 
@@ -351,7 +331,6 @@ class PortfolioApp {
         void wrapper.offsetWidth;
         wrapper.classList.add('fade-in');
 
-        this.outline?.render();
         this.justifyImages();
         this.mountWidgets();
     }

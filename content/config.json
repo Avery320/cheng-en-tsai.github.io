@@ -8,6 +8,7 @@
     "ROBOT": [
         "RoboSim",
         "Hiwin_rak",
+        "RoboSight",
         "ROS_Docker"
     ],
 

@@ -5,15 +5,13 @@
 [![Marked.js](https://img.shields.io/badge/Marked.js-Markdown%20Parser-0f172a?logo=markdown&logoColor=white)](https://marked.js.org/)
 [![License](https://img.shields.io/badge/License-MIT-16a34a.svg)](#授權)
 
-個人作品集網站，採用分屏式互動介面設計。
+個人作品集網站，採用工具列與彈出式專案選單的互動介面設計。
 
 ## 網頁風格
 
-- 上方工具列全寬顯示，右側導航位於工具列下方（桌機/手機一致）
-- 三欄式佈局：左側章節大綱、中央內容區、右側分類導航
-- 左側章節大綱自動擷取 `h1~h6`，可收合章節並同步目前閱讀位置
-- 左側大綱與中央內容採獨立捲動，長頁面閱讀更穩定
-- 行動裝置優化：直式畫面自動隱藏左側大綱，右側改為漢堡選單側邊欄
+- 上方工具列全寬顯示，專案分類由 menu 按鈕開啟浮層選單
+- 主內容區獨立捲動，專案選單不佔用閱讀寬度
+- 行動裝置沿用相同的彈出式選單互動
 - 使用 Markdown 管理內容
 - 支援首頁扉頁封面（Notion 風格）
 - 支援圖片並排網格（Justified Gallery）
@@ -43,22 +41,21 @@
 ## 專案結構
 
 ```text
-├── index.html                    # 入口頁：載入樣式與腳本、定義三欄容器
+├── index.html                    # 入口頁：載入樣式與腳本、定義主內容與導航容器
 ├── css/
 │   ├── typography.css            # 字體 token 與標題/導航字級
-│   ├── panels.css                # 工具列、三欄面板、RWD 抽屜導航
+│   ├── panels.css                # 工具列、內容面板、彈出式選單
 │   ├── style.css                 # 內容區與媒體通用樣式（表格 / iframe / layout）
 │   ├── grid.css                  # :::grid 的 Justified 圖片排版
 │   └── gallery.css               # :::gallery 輪播圖庫與 lightbox 樣式
 ├── js/
 │   ├── app.js                    # 應用啟動、Hash 路由、內容載入、導航互動
-│   ├── outline.js                # 左側文件大綱（h1~h6）生成與捲動同步
 │   ├── markdown-extensions.js    # 自訂 Markdown 指令解析與 HTML 輸出
 │   ├── options.js                # 共用媒體/圖庫參數解析（border/radius/height）
 │   ├── justify.js                # 圖片網格比例計算與重排
 │   └── widgets.js                # gallery 互動元件掛載（Splide + lightbox）
 └── content/
-    ├── config.json               # 分類與專案清單（右側導航來源）
+    ├── config.json               # 分類與專案清單（menu 選單來源）
     ├── about.md                  # About 頁內容
     └── <CATEGORY>/<PROJECT>/     # 專案資料夾（含 content.md / assets）
 ```
@@ -201,12 +198,6 @@
   - `border=true` 時套用 `2px` 邊框。
   - `radius=true` 時套用 `8px` 圓角。
 - 補充：`:::gallery` 區塊內每張圖片不解析 `{border,radius}`，由區塊參數統一控制。
-
-## 文件大綱功能
-
-- 會自動讀取目前頁面的 `h1~h6` 建立左側章節大綱。
-- 支援巢狀階層、章節收合與展開（符號：`⌵` / `▸`）。
-- 捲動中央內容時，左側會自動高亮目前章節，並自動將 active 項目捲動到可視區。
 
 ## 新增專案
 

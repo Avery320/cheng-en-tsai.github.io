@@ -2,9 +2,6 @@
 
 # Hiwin Robot Arm Kinematics (hiwin_rak)
 
-- Developer: Avery Tsai
-- Update: 2025.12
-
 ## Introdcution
 Hiwin_rak 這是一個基於 ROS 開發的 Hiwin 機械手臂控制專案，採用即時控制的方式控制機器人，專案以上銀科技官方提供的 [hiwin_ros](https://github.com/HIWINCorporation/hiwin_ros.git) 為基礎，使用 [hiwin_robot_client_library](https://github.com/HIWINCorporation/hiwin_robot_client_library.git) 中的 TCP 協議與實體機械手臂通訊達到透過 ROS 控制機器人的目標。
 @br(2)
@@ -12,7 +9,7 @@ Hiwin_rak 這是一個基於 ROS 開發的 Hiwin 機械手臂控制專案，採�
 @br(2)
 本專案用於控制 HIWIN 機械手臂夾取鋼筋，放置於混凝土模具中為目標，因此該控制方法自定義 ROS Message 與使用 JSONL 的檔案格式，與設計常使用的 Rhino/Grasshopper 軟體整合，其目的為使用 Rhino/Grasshopper 進行機械手臂的工作路徑規劃，並交由 ROS 計算機器人的運動軌跡控制機器人。
 @br(2)
-本專也與 [**RoboSim**](#ROBOT/RoboSim) 進行整合，將該方法以 docker 的方式打包運行，使用 RoboSim 完整的控制介面進行操作。
+本專也與 [RoboSim](#ROBOT/RoboSim) 進行整合，將該方法以 docker 的方式打包運行，使用 RoboSim 完整的控制介面進行操作。
 
 ![hiwin_rak + HIWIN Robotic Arm + Grasshopper]()
 
