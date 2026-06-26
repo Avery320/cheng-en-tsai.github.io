@@ -1,7 +1,4 @@
 # Smocking_Column
-- Designer: Avery Tsai
-- Update: 2022.07
----
 
 :::gallery{height=480px}
 ![](https://ik.imagekit.io/cheng3n/smocking/Smocking%20Column%2001.jpg)

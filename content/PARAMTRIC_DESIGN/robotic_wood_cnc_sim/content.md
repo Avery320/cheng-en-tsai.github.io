@@ -1,10 +1,5 @@
 # Robotic Wood CNC Simulation
 
-- Designer: Avery Tsai
-- Update: 2022.07
-
----
-
 :::gallery{height=480px}
 ![](https://ik.imagekit.io/cheng3n/robot_gh/s-2.jpg)
 ![](https://ik.imagekit.io/cheng3n/robot_gh/s-2-2.jpg)

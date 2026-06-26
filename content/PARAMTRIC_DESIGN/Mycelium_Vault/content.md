@@ -1,10 +1,4 @@
 # Mycelium_Vault
-- Designer and researcher: Cheng-En Tsai(蔡承恩), Huai-An Tai(戴淮安)
-- Advisor: Yu-Liang Hsu(徐宇亮), Chia-Ching Yen(顏嘉慶)
-- Studio: Biomass Materials x Algorithm Structure Studio (BMAS Stuido)
-- Location: Tainan, Taiwan  
-- Date: 2024.12
----
 
 :::grid
 ![](https://ik.imagekit.io/cheng3n/Mycelium_Vault/%E8%A1%A8%E7%8F%BE%E6%B3%95Poster_%E6%9C%9F%E4%B8%AD%E8%A8%88%E7%95%AB%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%B1%95%E7%A4%BA.png)
@@ -90,3 +84,9 @@
 ![model_perspective](https://ik.imagekit.io/cheng3n/Mycelium_Vault/Model_Perspective.png)
 :::
 
+## Design Team
+- Designer and researcher: Cheng-En Tsai(蔡承恩), Huai-An Tai(戴淮安)
+- Advisor: Yu-Liang Hsu(徐宇亮), Chia-Ching Yen(顏嘉慶)
+- Studio: Biomass Materials x Algorithm Structure Studio (BMAS Stuido)
+- Location: Tainan, Taiwan  
+- Date: 2024.12

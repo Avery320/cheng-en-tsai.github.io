@@ -1,11 +1,5 @@
 # Robot Clay Printing
 
-- Designer: Avery Tsai
-- Location: Tainan, Taiwan
-- Update: 2024.02
-
----
-
 ## Work
 :::grid
 ![coral01](https://ik.imagekit.io/cheng3n/Robot_Caly_Printing/coral01.png?updatedAt=1765221147582)

@@ -20,6 +20,7 @@
 
     "PARAMTRIC_DESIGN": [
         "Mycelium_Vault",
+        "Customized_Marching_Cubes",
         "Robot_Clay_Printing",
         "Smocking_Column",
         "Robotic_Wood_CNC_Sim"
