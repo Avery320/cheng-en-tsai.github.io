@@ -1,10 +1,5 @@
 # RoboSight
-
-- Developer: Avery Tsai
-- Update: 2026.06
-
-- GitHub: [RoboSight](https://github.com/avery320/robot-demo)
-- Link: [ros-docker](#ROBOT/ROS_Docker)
+[GitHub](https://github.com/avery320/robot-demo) | [ros-docker](#ROBOT/ROS_Docker)
 
 ## Introduction
 RoboSight 是一個透過 iOS 設備作為機器人外部感測裝置的專案。使用 Zonoh 作為 middleware 與 ROS 連線。目前已開發：
