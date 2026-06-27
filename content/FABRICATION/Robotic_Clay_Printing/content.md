@@ -1,4 +1,4 @@
-# Robot Clay Printing
+# Robotic Clay Printing
 
 ## Work
 :::grid
