@@ -3,6 +3,7 @@
     --panel-content-padding: 72px;
     --panel-content-padding-mobile: 36px;
     --menu-panel-width: clamp(240px, 22vw, 360px);
+    --content-padding: var(--panel-content-padding);
 }
 
 /* ===== Panel Layout ===== */
@@ -48,7 +49,7 @@
 .sidebar {
     position: fixed;
     top: var(--toolbar-height);
-    right: calc(-1 * var(--menu-panel-width));
+    right: calc((100% - min(100%, var(--content-max-width))) / 2 + var(--content-padding));
     z-index: 1201;
     width: var(--menu-panel-width);
     height: calc(100vh - var(--toolbar-height));
@@ -56,11 +57,21 @@
     background: var(--bg-secondary);
     padding: clamp(1.5rem, 2.5vw, var(--spacing-xl));
     overflow-y: auto;
-    transition: right var(--transition);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    /* 預設隱藏狀態，原地向右偏移 30px 並淡出 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(30px);
+    transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
 }
 
 .sidebar.open {
-    right: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
 }
 
 .content-scroll {
@@ -76,7 +87,7 @@
     width: min(100%, var(--content-max-width));
     margin: 0 auto;
     min-width: 0;
-    padding: var(--spacing-panel) var(--panel-content-padding);
+    padding: var(--spacing-panel) var(--content-padding);
 }
 
 .nav {
@@ -130,15 +141,21 @@
 /* ===== Toolbar ===== */
 .top-toolbar {
     /* 頂部工具列（行動版固定在頂端）。 */
-    display: flex;
     flex-shrink: 0;
     height: var(--toolbar-height);
     background: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
-    padding: 0 var(--spacing-md);
+}
+
+.toolbar-inner {
+    display: flex;
     align-items: center;
-    gap: var(--spacing-md);
     justify-content: space-between;
+    width: min(100%, var(--content-max-width));
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 var(--content-padding);
+    gap: var(--spacing-md);
 }
 
 .toolbar-home-link {
@@ -264,9 +281,10 @@
 @media (max-width: 768px) {
     :root {
         --menu-panel-width: min(82vw, 320px);
+        --content-padding: var(--panel-content-padding-mobile);
     }
 
     .content-wrapper {
-        padding: var(--spacing-lg) var(--panel-content-padding-mobile);
+        padding: var(--spacing-lg) var(--content-padding);
     }
 }

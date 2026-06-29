@@ -35,9 +35,9 @@
 **Human-computer interface | iOS APP | ROS**
 
 :::grid
-![Start Page](content/ROBOT/RoboSight/assets/robosight.PNG)
-![Camera](content/ROBOT/RoboSight/assets/camera.PNG)
-![Robot](content/ROBOT/RoboSight/assets/robot.PNG)
+![Start Page](content/ROBOT/RoboSight/asset/robosight.PNG)
+![Camera](content/ROBOT/RoboSight/asset/camera.PNG)
+![Robot](content/ROBOT/RoboSight/asset/robot.PNG)
 :::
 
         

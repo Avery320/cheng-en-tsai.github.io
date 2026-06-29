@@ -14,11 +14,11 @@ RoboSight 是一個透過 iOS 設備作為機器人外部感測裝置的專案�
 
 ## RoboSight Interface
 :::grid
-![Start Page](assets/robosight.PNG)
-![Camera](assets/camera.PNG)
-![Robot](assets/robot.PNG)
+![Start Page](content/ROBOT/RoboSight/asset/robosight.PNG)
+![Camera](content/ROBOT/RoboSight/asset/camera.PNG)
+![Robot](content/ROBOT/RoboSight/asset/robot.PNG)
 :::
 
 ### ROS integration on [RoboSim](https://github.com/Avery320/robot-demo)
-![](assets/ros_integration.png)
+![](content/ROBOT/RoboSight/asset/ros_integration.png)
 
